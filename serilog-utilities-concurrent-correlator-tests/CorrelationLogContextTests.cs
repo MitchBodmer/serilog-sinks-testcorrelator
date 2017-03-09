@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
 
@@ -32,6 +34,39 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             Log.Logger.Information("This log message template.");
 
             SerilogLogEvents.Bag.WithCorrelationLogContextGuid(correlationLogContextGuid)
+                .Should()
+                .NotContain(logEvent => logEvent.MessageTemplate.Text == "This log message template.");
+        }
+
+        [Fact]
+        public void A_CorrelationLogContext_does_not_enrich_logEvents_that_are_not_running_in_the_same_logical_call_context()
+        {
+            var usingEnteredSignal = new ManualResetEvent(false);
+
+            var loggingFinishedSignal = new ManualResetEvent(false);
+
+            var logTask = Task.Run(() =>
+            {
+                usingEnteredSignal.WaitOne();
+
+                Log.Logger.Information("This log message template.");
+
+                loggingFinishedSignal.Set();
+            });
+
+            var logContextTask = Task.Run(() =>
+            {
+                using (var context = new CorrelationLogContext())
+                {
+                    usingEnteredSignal.Set();
+                    loggingFinishedSignal.WaitOne();
+                    return context.Guid;
+                }
+            });
+
+            Task.WaitAll(logTask, logContextTask);
+
+            SerilogLogEvents.Bag.WithCorrelationLogContextGuid(logContextTask.Result)
                 .Should()
                 .NotContain(logEvent => logEvent.MessageTemplate.Text == "This log message template.");
         }
