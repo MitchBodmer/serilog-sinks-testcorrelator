@@ -70,5 +70,23 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 .Should()
                 .NotContain(logEvent => logEvent.MessageTemplate.Text == "This log message template.");
         }
+
+        [Fact]
+        public void A_CorrelationLogContext_does_enrich_logEvents_that_are_running_in_the_same_logical_call_context()
+        {
+            using (var context = new CorrelationLogContext())
+            {
+                var logTask = Task.Run(() =>
+                {
+                    Log.Logger.Information("This log message template.");
+                });
+
+                Task.WaitAll(logTask);
+
+                SerilogLogEvents.Bag.WithCorrelationLogContextGuid(context.Guid)
+                    .Should()
+                    .Contain(logEvent => logEvent.MessageTemplate.Text == "This log message template.");
+            }
+        }
     }
 }
