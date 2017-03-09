@@ -9,11 +9,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator
 
         public CorrelationLogContext()
         {
-            Id = Guid.NewGuid();
-            this.context = LogContext.PushProperty("CorrelationId", Id);
+            Guid = Guid.NewGuid();
+            this.context = LogContext.PushProperty("CorrelationId", Guid);
         }
 
-        public Guid Id { get; }
+        public Guid Guid { get; }
 
         public void Dispose()
         {

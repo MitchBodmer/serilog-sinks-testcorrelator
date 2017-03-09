@@ -7,9 +7,8 @@ namespace Serilog.Utilities.ConcurrentCorrelator
 {
     public static class EnumerableOfLogEventExtensions
     {
-        public static IEnumerable<LogEvent> WithCorrelationLogContext(
-            this IEnumerable<LogEvent> logEvents,
-            CorrelationLogContext correlationLogContext)
+        public static IEnumerable<LogEvent> WithCorrelationLogContextGuid(
+            this IEnumerable<LogEvent> logEvents, Guid correlationLogContextGuid)
         {
             return logEvents.Where(
                 logEvent =>
@@ -19,7 +18,8 @@ namespace Serilog.Utilities.ConcurrentCorrelator
                         Guid result;
 
                         Guid.TryParse(logEvent.Properties["CorrelationId"].ToString(), out result);
-                        return result == correlationLogContext.Id;
+
+                        return result == correlationLogContextGuid;
                     }
 
                     return false;
