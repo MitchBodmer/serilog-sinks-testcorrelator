@@ -63,6 +63,25 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
+        public void WithCorrelationLogContextGuid_returns_all_log_events_that_have_been_logged_with_the_correlation_guid
+            ()
+        {
+            var correlationGuid = Guid.NewGuid();
+
+            var logEventsWithCorrelationGuid = new List<LogEvent>
+            {
+                GetLogEventWithCorrelationGuid(correlationGuid),
+                GetLogEventWithCorrelationGuid(correlationGuid),
+                GetLogEventWithCorrelationGuid(correlationGuid),
+                GetLogEventWithCorrelationGuid(correlationGuid)
+            };
+
+            logEventsWithCorrelationGuid.WithCorrelationLogContextGuid(correlationGuid)
+                .Should()
+                .Contain(logEventsWithCorrelationGuid);
+        }
+
+        [Fact]
         public void WithCorrelationLogContextGuid_does_not_return_a_log_event_without_a_correlation_guid()
         {
             new List<LogEvent>
