@@ -20,15 +20,13 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
         private LogEvent GetLogEventWithCorrelationGuid(Guid correlationGuid)
         {
-            var logEventWithCorrelationGuid = new LogEvent(DateTimeOffset.Now,
+            return new LogEvent(DateTimeOffset.Now,
                 LogEventLevel.Information, null,
                 new MessageTemplate("Message template.", new List<MessageTemplateToken>()),
                 new List<LogEventProperty>
                 {
                     new LogEventProperty("CorrelationGuid", new ScalarValue(correlationGuid))
                 });
-
-            return logEventWithCorrelationGuid;
         }
 
         [Fact]
