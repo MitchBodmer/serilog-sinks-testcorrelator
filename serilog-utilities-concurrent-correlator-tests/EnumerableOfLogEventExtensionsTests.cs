@@ -46,8 +46,8 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        public void WithCorrelationLogContextGuid_returns_one_log_event_if_one_has_been_logged_with_the_correlation_guid
-            ()
+        public void
+            WithCorrelationLogContextGuid_returns_one_log_event_if_one_has_been_logged_with_the_correlation_guid()
         {
             var correlationGuid = Guid.NewGuid();
 
@@ -62,8 +62,8 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        public void WithCorrelationLogContextGuid_returns_all_log_events_that_have_been_logged_with_the_correlation_guid
-            ()
+        public void
+            WithCorrelationLogContextGuid_returns_all_log_events_that_have_been_logged_with_the_correlation_guid()
         {
             var correlationGuid = Guid.NewGuid();
 
@@ -90,8 +90,8 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        public void WithCorrelationLogContextGuid_filters_all_log_events_that_do_not_have_the_correct_correlation_guid
-    ()
+        public void
+            WithCorrelationLogContextGuid_filters_all_log_events_that_do_not_have_the_correct_correlation_guid()
         {
             var correlationGuid = Guid.NewGuid();
 
@@ -119,7 +119,9 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 GetLogEventWithCorrelationGuid(Guid.NewGuid()),
             };
 
-            var allLogEvents = logEventsWithCorrectCorrelationGuid.Concat(logEventsWithNoCorrelationGuid.Concat(logEventsWithWrongCorrelationGuid));
+            var allLogEvents =
+                logEventsWithCorrectCorrelationGuid.Concat(
+                    logEventsWithNoCorrelationGuid.Concat(logEventsWithWrongCorrelationGuid));
 
             allLogEvents.WithCorrelationLogContextGuid(correlationGuid)
                 .Should()
