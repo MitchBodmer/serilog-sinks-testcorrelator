@@ -16,15 +16,15 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        public void WithCorrelationLogContextGuid_does_not_return_a_log_event_without_a_correlation_id()
+        public void WithCorrelationLogContextGuid_does_not_return_a_log_event_without_a_correlation_guid()
         {
-            var logEventWithoutCorrelationId = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null,
+            var logEventWithoutCorrelationGuid = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null,
                 new MessageTemplate("Message template.", new List<MessageTemplateToken>()),
                 new List<LogEventProperty>());
 
             new List<LogEvent>
             {
-                logEventWithoutCorrelationId
+                logEventWithoutCorrelationGuid
             }.WithCorrelationLogContextGuid(Guid.NewGuid()).Should().BeEmpty();
         }
     }

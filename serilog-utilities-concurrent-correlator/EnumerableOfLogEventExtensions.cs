@@ -13,11 +13,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator
             return logEvents.Where(
                 logEvent =>
                 {
-                    if (logEvent.Properties.ContainsKey("CorrelationId"))
+                    if (logEvent.Properties.ContainsKey("CorrelationGuid"))
                     {
                         Guid result;
 
-                        Guid.TryParse(logEvent.Properties["CorrelationId"].ToString(), out result);
+                        Guid.TryParse(logEvent.Properties["CorrelationGuid"].ToString(), out result);
 
                         return result == correlationLogContextGuid;
                     }
