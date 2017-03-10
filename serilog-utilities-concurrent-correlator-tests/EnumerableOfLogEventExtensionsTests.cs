@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -88,6 +89,43 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             {
                 GetLogEventWithoutCorrelationGuid()
             }.WithCorrelationLogContextGuid(Guid.NewGuid()).Should().BeEmpty();
+        }
+
+        [Fact]
+        public void WithCorrelationLogContextGuid_filters_all_log_events_that_do_not_have_the_correct_correlation_guid
+    ()
+        {
+            var correlationGuid = Guid.NewGuid();
+
+            var logEventsWithCorrectCorrelationGuid = new List<LogEvent>
+            {
+                GetLogEventWithCorrelationGuid(correlationGuid),
+                GetLogEventWithCorrelationGuid(correlationGuid),
+                GetLogEventWithCorrelationGuid(correlationGuid),
+                GetLogEventWithCorrelationGuid(correlationGuid)
+            };
+
+            var logEventsWithNoCorrelationGuid = new List<LogEvent>
+            {
+                GetLogEventWithoutCorrelationGuid(),
+                GetLogEventWithoutCorrelationGuid(),
+                GetLogEventWithoutCorrelationGuid(),
+                GetLogEventWithoutCorrelationGuid()
+            };
+
+            var logEventsWithWrongCorrelationGuid = new List<LogEvent>
+            {
+                GetLogEventWithCorrelationGuid(Guid.NewGuid()),
+                GetLogEventWithCorrelationGuid(Guid.NewGuid()),
+                GetLogEventWithCorrelationGuid(Guid.NewGuid()),
+                GetLogEventWithCorrelationGuid(Guid.NewGuid()),
+            };
+
+            var allLogEvents = logEventsWithCorrectCorrelationGuid.Concat(logEventsWithNoCorrelationGuid.Concat(logEventsWithWrongCorrelationGuid));
+
+            allLogEvents.WithCorrelationLogContextGuid(correlationGuid)
+                .Should()
+                .Contain(logEventsWithCorrectCorrelationGuid);
         }
     }
 }
