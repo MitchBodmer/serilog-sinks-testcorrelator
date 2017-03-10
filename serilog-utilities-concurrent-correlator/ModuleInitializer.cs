@@ -1,7 +1,7 @@
 ﻿using Serilog;
 using Serilog.Utilities.ConcurrentCorrelator;
 
-// Used by the ModuleInit. All code inside the Initialize method is ran as soon as the assembly is loaded.
+// Used by the ModuleInit. All code inside the Initialize method is run as soon as the assembly is loaded.
 public static class ModuleInitializer
 {
     public static void Initialize()
