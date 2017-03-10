@@ -9,7 +9,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
     public class CorrelationLogContextTests
     {
         [Fact]
-        public void A_CorrelationLogContext_enriches_logEvents_logged_inside_its_scope()
+        public void A_CorrelationLogContext_does_enrich_logEvents_logged_inside_its_scope()
         {
             using (var correlationLogContext = new CorrelationLogContext())
             {
@@ -39,7 +39,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        public void A_CorrelationLogContext_does_not_enrich_logEvents_that_are_not_running_in_the_same_logical_call_context()
+        public void A_CorrelationLogContext_does_not_enrich_logEvents_that_are_not_logged_in_the_same_logical_call_context()
         {
             var usingEnteredSignal = new ManualResetEvent(false);
 
@@ -72,7 +72,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        public void A_CorrelationLogContext_does_enrich_logEvents_that_are_running_in_the_same_logical_call_context()
+        public void A_CorrelationLogContext_does_enrich_logEvents_that_are_logged_in_the_same_logical_call_context()
         {
             using (var context = new CorrelationLogContext())
             {
