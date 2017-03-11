@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="CorrelationLogContextTests.cs" />
     <Compile Include="EnumerableOfLogEventExtensionsTests.cs" />
+    <Compile Include="ModuleInitializerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

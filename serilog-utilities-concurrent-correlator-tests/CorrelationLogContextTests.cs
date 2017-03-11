@@ -9,20 +9,20 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
     public class CorrelationLogContextTests
     {
         [Fact]
-        public void A_CorrelationLogContext_does_enrich_logEvents_logged_inside_its_scope()
+        public void A_CorrelationLogContext_does_enrich_LogEvents_inside_its_scope()
         {
             using (var correlationLogContext = new CorrelationLogContext())
             {
-                Log.Logger.Information("This log message template.");
+                Log.Logger.Information("Message template.");
 
                 SerilogLogEvents.Bag.WithCorrelationLogContextGuid(correlationLogContext.Guid)
                     .Should()
-                    .OnlyContain(logEvent => logEvent.MessageTemplate.Text == "This log message template.");
+                    .OnlyContain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
             }
         }
 
         [Fact]
-        public void A_CorrelationLogContext_does_not_enrich_logEvents_logged_outside_its_scope()
+        public void A_CorrelationLogContext_does_not_enrich_LogEvents_outside_its_scope()
         {
             Guid correlationLogContextGuid;
 
@@ -31,15 +31,33 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 correlationLogContextGuid = correlationLogContext.Guid;
             }
 
-            Log.Logger.Information("This log message template.");
+            Log.Logger.Information("Message template.");
 
             SerilogLogEvents.Bag.WithCorrelationLogContextGuid(correlationLogContextGuid)
                 .Should()
-                .NotContain(logEvent => logEvent.MessageTemplate.Text == "This log message template.");
+                .NotContain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
         }
 
         [Fact]
-        public void A_CorrelationLogContext_does_not_enrich_logEvents_that_are_not_logged_in_the_same_logical_call_context()
+        public void A_CorrelationLogContext_does_enrich_LogEvents_inside_the_same_logical_call_context()
+        {
+            using (var context = new CorrelationLogContext())
+            {
+                var logTask = Task.Run(() =>
+                {
+                    Log.Logger.Information("Message template.");
+                });
+
+                Task.WaitAll(logTask);
+
+                SerilogLogEvents.Bag.WithCorrelationLogContextGuid(context.Guid)
+                    .Should()
+                    .Contain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
+            }
+        }
+
+        [Fact]
+        public void A_CorrelationLogContext_does_not_enrich_LogEvents_outside_the_same_logical_call_context()
         {
             var usingEnteredSignal = new ManualResetEvent(false);
 
@@ -49,7 +67,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             {
                 usingEnteredSignal.WaitOne();
 
-                Log.Logger.Information("This log message template.");
+                Log.Logger.Information("Message template.");
 
                 loggingFinishedSignal.Set();
             });
@@ -68,25 +86,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             SerilogLogEvents.Bag.WithCorrelationLogContextGuid(logContextTask.Result)
                 .Should()
-                .NotContain(logEvent => logEvent.MessageTemplate.Text == "This log message template.");
-        }
-
-        [Fact]
-        public void A_CorrelationLogContext_does_enrich_logEvents_that_are_logged_in_the_same_logical_call_context()
-        {
-            using (var context = new CorrelationLogContext())
-            {
-                var logTask = Task.Run(() =>
-                {
-                    Log.Logger.Information("This log message template.");
-                });
-
-                Task.WaitAll(logTask);
-
-                SerilogLogEvents.Bag.WithCorrelationLogContextGuid(context.Guid)
-                    .Should()
-                    .Contain(logEvent => logEvent.MessageTemplate.Text == "This log message template.");
-            }
+                .NotContain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
         }
     }
 }

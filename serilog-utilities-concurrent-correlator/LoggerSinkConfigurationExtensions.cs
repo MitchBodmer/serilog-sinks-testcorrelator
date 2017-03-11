@@ -9,18 +9,21 @@ namespace Serilog.Utilities.ConcurrentCorrelator
 {
     public static class LoggerSinkConfigurationExtensions
     {
-        public static LoggerConfiguration ProducerConsumerCollection(this LoggerSinkConfiguration sinkConfiguration, IProducerConsumerCollection<LogEvent> logEventsList, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Verbose, LoggingLevelSwitch levelSwitch = null)
+        internal static LoggerConfiguration ConcurrentBag(this LoggerSinkConfiguration sinkConfiguration,
+            ConcurrentBag<LogEvent> concurrentBag, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Verbose,
+            LoggingLevelSwitch levelSwitch = null)
         {
-            if (logEventsList == null)
+            if (concurrentBag == null)
             {
-                throw new ArgumentNullException(nameof(logEventsList));
+                throw new ArgumentNullException(nameof(concurrentBag));
             }
             if (sinkConfiguration == null)
             {
                 throw new ArgumentNullException(nameof(sinkConfiguration));
             }
 
-            return sinkConfiguration.Observers(events => events.Do(logEvent => logEventsList.TryAdd(logEvent)).Subscribe(), restrictedToMinimumLevel, levelSwitch);
+            return sinkConfiguration.Observers(events => events.Do(concurrentBag.Add).Subscribe(),
+                restrictedToMinimumLevel, levelSwitch);
         }
     }
 }
