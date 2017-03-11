@@ -14,7 +14,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         {
             return new LogEvent(DateTimeOffset.Now,
                 LogEventLevel.Information, null,
-                new MessageTemplate("Message template.", new List<MessageTemplateToken>()),
+                new MessageTemplate("Message template.", Enumerable.Empty<MessageTemplateToken>()),
                 new List<LogEventProperty>());
         }
 
@@ -22,7 +22,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         {
             return new LogEvent(DateTimeOffset.Now,
                 LogEventLevel.Information, null,
-                new MessageTemplate("Message template.", new List<MessageTemplateToken>()),
+                new MessageTemplate("Message template.", Enumerable.Empty<MessageTemplateToken>()),
                 new List<LogEventProperty>
                 {
                     new LogEventProperty("CorrelationGuid", new ScalarValue(correlationGuid))
