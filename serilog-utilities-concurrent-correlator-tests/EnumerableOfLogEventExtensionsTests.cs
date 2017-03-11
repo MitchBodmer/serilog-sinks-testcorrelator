@@ -30,14 +30,14 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        public void WithCorrelationLogContextGuid_returns_empty_if_no_log_events_have_been_logged()
+        public void WithCorrelationLogContextGuid_returns_empty_if_no_logEvents_have_been_logged()
         {
             new List<LogEvent>().WithCorrelationLogContextGuid(Guid.NewGuid()).Should().BeEmpty();
         }
 
         [Fact]
         public void
-            WithCorrelationLogContextGuid_returns_empty_if_no_log_events_have_been_logged_with_the_correlation_guid()
+            WithCorrelationLogContextGuid_returns_empty_if_no_LogEvents_have_been_logged_with_the_correlation_guid()
         {
             new List<LogEvent>
             {
@@ -47,7 +47,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
         [Fact]
         public void
-            WithCorrelationLogContextGuid_returns_one_log_event_if_one_has_been_logged_with_the_correlation_guid()
+            WithCorrelationLogContextGuid_returns_one_LogEvent_if_one_has_been_logged_with_the_correlation_guid()
         {
             var correlationGuid = Guid.NewGuid();
 
@@ -63,7 +63,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
         [Fact]
         public void
-            WithCorrelationLogContextGuid_returns_all_log_events_that_have_been_logged_with_the_correlation_guid()
+            WithCorrelationLogContextGuid_returns_all_LogEvents_that_have_been_logged_with_the_correlation_guid()
         {
             var correlationGuid = Guid.NewGuid();
 
@@ -81,7 +81,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        public void WithCorrelationLogContextGuid_does_not_return_a_log_event_without_a_correlation_guid()
+        public void WithCorrelationLogContextGuid_does_not_return_a_LogEvent_without_a_correlation_guid()
         {
             new List<LogEvent>
             {
@@ -91,7 +91,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
         [Fact]
         public void
-            WithCorrelationLogContextGuid_filters_all_log_events_that_do_not_have_the_correct_correlation_guid()
+            WithCorrelationLogContextGuid_filters_all_LogEvents_that_do_not_have_the_correct_correlation_guid()
         {
             var correlationGuid = Guid.NewGuid();
 
