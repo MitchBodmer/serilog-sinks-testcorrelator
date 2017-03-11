@@ -72,7 +72,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 GetLogEventWithCorrelationGuid(correlationGuid),
                 GetLogEventWithCorrelationGuid(correlationGuid),
                 GetLogEventWithCorrelationGuid(correlationGuid),
-                GetLogEventWithCorrelationGuid(correlationGuid)
+                GetLogEventWithCorrelationGuid(correlationGuid),
             };
 
             logEventsWithCorrelationGuid.WithCorrelationLogContextGuid(correlationGuid)
@@ -100,7 +100,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 GetLogEventWithCorrelationGuid(correlationGuid),
                 GetLogEventWithCorrelationGuid(correlationGuid),
                 GetLogEventWithCorrelationGuid(correlationGuid),
-                GetLogEventWithCorrelationGuid(correlationGuid)
+                GetLogEventWithCorrelationGuid(correlationGuid),
             };
 
             var logEventsWithNoCorrelationGuid = new List<LogEvent>
@@ -108,7 +108,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 GetLogEventWithoutCorrelationGuid(),
                 GetLogEventWithoutCorrelationGuid(),
                 GetLogEventWithoutCorrelationGuid(),
-                GetLogEventWithoutCorrelationGuid()
+                GetLogEventWithoutCorrelationGuid(),
             };
 
             var logEventsWithWrongCorrelationGuid = new List<LogEvent>
