@@ -9,9 +9,19 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         public void When_the_module_is_loaded_the_global_logger_is_not_a_SilentLogger()
         {
             //Force the module to load.
-            using (new CorrelationLogContext()) 
+            using (new CorrelationLogContext())
             {
                 Log.Logger.GetType().FullName.Should().NotBe("Serilog.Core.Pipeline.SilentLogger");
+            }
+        }
+
+        [Fact]
+        public void When_the_module_is_loaded_the_global_logger_is_a_Logger()
+        {
+            //Force the module to load.
+            using (new CorrelationLogContext())
+            {
+                Log.Logger.GetType().FullName.Should().Be("Serilog.Core.Logger");
             }
         }
     }
