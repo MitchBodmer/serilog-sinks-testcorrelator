@@ -7,7 +7,7 @@ public static class ModuleInitializer
     public static void Initialize()
     {
         Log.Logger =
-            new LoggerConfiguration().WriteTo.ProducerConsumerCollection(
+            new LoggerConfiguration().WriteTo.ConcurrentBag(
                     SerilogLogEvents.Bag)
                 .Enrich.FromLogContext()
                 .CreateLogger();
