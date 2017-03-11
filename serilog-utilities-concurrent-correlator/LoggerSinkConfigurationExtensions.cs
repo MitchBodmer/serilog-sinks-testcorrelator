@@ -9,7 +9,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator
 {
     public static class LoggerSinkConfigurationExtensions
     {
-        public static LoggerConfiguration ProducerConsumerCollection(this LoggerSinkConfiguration sinkConfiguration, IProducerConsumerCollection<LogEvent> logEventsList, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Verbose, LoggingLevelSwitch levelSwitch = null)
+        internal static LoggerConfiguration ProducerConsumerCollection(this LoggerSinkConfiguration sinkConfiguration, IProducerConsumerCollection<LogEvent> logEventsList, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Verbose, LoggingLevelSwitch levelSwitch = null)
         {
             if (logEventsList == null)
             {
