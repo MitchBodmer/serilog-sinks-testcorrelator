@@ -91,7 +91,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
         [Fact]
         public void
-            WithCorrelationLogContextGuid_filters_all_LogEvents_that_do_not_have_the_correct_correlation_guid()
+            WithCorrelationLogContextGuid_filters_all_LogEvents_without_the_correct_correlation_guid()
         {
             var correlationGuid = Guid.NewGuid();
 

@@ -10,7 +10,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
     public class ModuleInitializerTests
     {
         [Fact]
-        public void When_the_module_is_loaded_the_global_logger_is_not_a_SilentLogger()
+        public void After_the_module_is_loaded_the_global_logger_is_not_a_SilentLogger()
         {
             //Force the module to load.
             using (new CorrelationLogContext())
@@ -20,7 +20,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        public void When_the_module_is_loaded_the_global_logger_is_a_Logger()
+        public void After_the_module_is_loaded_the_global_logger_is_a_Logger()
         {
             //Force the module to load.
             using (new CorrelationLogContext())
@@ -36,7 +36,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [InlineData(LogEventLevel.Fatal)]
         [InlineData(LogEventLevel.Verbose)]
         [InlineData(LogEventLevel.Warning)]
-        public void When_the_module_is_loaded_the_static_SerilogLogEvents_bag_receives_logs_of_all_LogEventLevels(LogEventLevel level)
+        public void After_the_module_is_loaded_the_static_SerilogLogEvents_bag_receives_LogEvents_of_all_LogEventLevels(LogEventLevel level)
         {
             //Force the module to load.
             using (new CorrelationLogContext())
