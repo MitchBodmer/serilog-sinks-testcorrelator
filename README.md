@@ -4,7 +4,7 @@ The Serilog Concurrent Correlator is a small library for unit testing Serilog lo
 
 # The Problem
 
-Logging libraries like [Serilog](https://github.com/serilog/serilog) often provide a logger as a static resource to avoid the clutter of having to pass a logger to every class that needs to use one. While convenient in product code, this can often cause a headache when unit testing log output due to the difficulty of determining which test produced which LogEvent.
+Logging libraries like [Serilog](https://github.com/serilog/serilog) often provide a logger as a static resource to avoid the clutter of having to pass a logger to every class that needs one. While convenient in product code, this pattern can often cause a headache when unit testing log output due to the difficulty of determining which test produced which LogEvent.
 
 # Our Solution
 
@@ -17,34 +17,43 @@ This library provides four tools to help you correlate your LogEvents to the tes
 # Examples
 
 ## Basic Usage
-```csharp
-using (var correlationLogContext = new CorrelationLogContext())
-{
-    Log.Logger.Information("Message template.");
 
-    SerilogLogEvents.Bag.WithCorrelationLogContextGuid(correlationLogContext.Guid)
-        .Should()
-        .HaveCount(1);
+```csharp
+[TestMethod]
+public void TestMethod()
+{
+    using (var correlationLogContext = new CorrelationLogContext())
+    {
+        Log.Logger.Information("Message template.");
+
+        SerilogLogEvents.Bag.WithCorrelationLogContextGuid(correlationLogContext.Guid)
+            .Should()
+            .HaveCount(1);
+    }
 }
 ```
 
 ## Concurrency
+
 ```csharp
-using (var context = new CorrelationLogContext())
+[TestMethod]
+public void ConcurrencyTestMethod()
 {
-    var logTask = Task.Run(() =>
+    using (var context = new CorrelationLogContext())
     {
-        Log.Logger.Information("Message template.");
-    });
+        var logTask = Task.Run(() =>
+        {
+            Log.Logger.Information("Message template.");
+        });
 
-    Task.WaitAll(logTask);
+        Task.WaitAll(logTask);
 
-    SerilogLogEvents.Bag.WithCorrelationLogContextGuid(context.Guid)
-        .Should()
-        .HaveCount(1);
+        SerilogLogEvents.Bag.WithCorrelationLogContextGuid(context.Guid)
+            .Should()
+            .HaveCount(1);
+    }
 }
 ```
-
 For more examples check out the unit tests!
 
 # Contributing
