@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SerilogParallelUnitTestingCorrelator")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Serilog.Utilities.ConcurrentCorrelator")]
+[assembly: AssemblyDescription("A small library for unit testing Serilog log events in concurrent testing frameworks.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SerilogParallelUnitTestingCorrelator")]
+[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyProduct("Serilog.Utilities.ConcurrentCorrelator")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
