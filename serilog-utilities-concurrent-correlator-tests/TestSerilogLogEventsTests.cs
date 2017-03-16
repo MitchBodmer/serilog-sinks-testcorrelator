@@ -174,5 +174,21 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                     .Contain(logEvent => logEvent.MessageTemplate.Text == uniqueMessageTemplate);
             }
         }
+
+        [Fact]
+        public void Calling_Initlialize_twice_does_not_clear_all_log_events()
+        {
+            var correlationGuid = Guid.NewGuid();
+
+            var logEventWithCorrelationGuid = GetLogEventWithCorrelationGuid(correlationGuid);
+
+            Log.Logger.Write(logEventWithCorrelationGuid);
+
+            TestSerilogLogEvents.Initialize();
+
+            TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationGuid)
+                .Should()
+                .OnlyContain(logEvent => logEvent == logEventWithCorrelationGuid);
+        }
     }
 }
