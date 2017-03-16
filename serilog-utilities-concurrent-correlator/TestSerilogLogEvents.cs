@@ -8,20 +8,32 @@ namespace Serilog.Utilities.ConcurrentCorrelator
 {
     public static class TestSerilogLogEvents
     {
-        static readonly ConcurrentBag<LogEvent> Bag = new ConcurrentBag<LogEvent>();
+        static readonly ConcurrentBag<LogEvent> bag = new ConcurrentBag<LogEvent>();
+
+        static bool initialized;
+
+        static readonly object initializedLock = new object();
 
         public static void Initialize()
         {
-            Log.Logger =
-                new LoggerConfiguration().MinimumLevel.Verbose()
-                    .WriteTo.ConcurrentBag(Bag)
-                    .Enrich.FromLogContext()
-                    .CreateLogger();
+            lock (initializedLock)
+            {
+                if (initialized == false)
+                {
+                    Log.Logger =
+                        new LoggerConfiguration().MinimumLevel.Verbose()
+                            .WriteTo.ConcurrentBag(bag)
+                            .Enrich.FromLogContext()
+                            .CreateLogger();
+
+                    initialized = true;
+                }
+            }
         }
 
         public static IEnumerable<LogEvent> WithCorrelationLogContextGuid(Guid correlationLogContextGuid)
         {
-            return Bag.Where(logEvent => logEvent.Properties.ContainsKey(correlationLogContextGuid.ToString()));
+            return bag.Where(logEvent => logEvent.Properties.ContainsKey(correlationLogContextGuid.ToString()));
         }
     }
 }
