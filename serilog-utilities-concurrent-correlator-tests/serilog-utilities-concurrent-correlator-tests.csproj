@@ -69,9 +69,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CorrelationLogContextTests.cs" />
-    <Compile Include="EnumerableOfLogEventExtensionsTests.cs" />
-    <Compile Include="ModuleInitializerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SerilogLogEventsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
