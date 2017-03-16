@@ -70,7 +70,7 @@
   <ItemGroup>
     <Compile Include="CorrelationLogContextTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SerilogLogEventsTests.cs" />
+    <Compile Include="TestSerilogLogEventsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

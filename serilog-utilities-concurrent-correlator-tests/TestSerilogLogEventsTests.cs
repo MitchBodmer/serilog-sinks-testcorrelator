@@ -8,11 +8,11 @@ using Xunit;
 
 namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 {
-    public class SerilogLogEventsTests
+    public class TestSerilogLogEventsTests
     {
-        public SerilogLogEventsTests()
+        public TestSerilogLogEventsTests()
         {
-            SerilogLogEvents.Initialize();
+            TestSerilogLogEvents.Initialize();
         }
 
         private LogEvent GetLogEventWithoutCorrelationGuid()
@@ -37,7 +37,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [Fact]
         public void WithCorrelationLogContextGuid_returns_empty_if_no_logEvents_have_been_logged()
         {
-            SerilogLogEvents.WithCorrelationLogContextGuid(Guid.NewGuid()).Should().BeEmpty();
+            TestSerilogLogEvents.WithCorrelationLogContextGuid(Guid.NewGuid()).Should().BeEmpty();
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         {
             Log.Logger.Write(GetLogEventWithCorrelationGuid(Guid.NewGuid()));
 
-            SerilogLogEvents.WithCorrelationLogContextGuid(Guid.NewGuid()).Should().BeEmpty();
+            TestSerilogLogEvents.WithCorrelationLogContextGuid(Guid.NewGuid()).Should().BeEmpty();
         }
 
         [Fact]
@@ -59,7 +59,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             Log.Logger.Write(logEventWithCorrelationGuid);
 
-            SerilogLogEvents.WithCorrelationLogContextGuid(correlationGuid)
+            TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationGuid)
                 .Should()
                 .OnlyContain(logEvent => logEvent == logEventWithCorrelationGuid);
         }
@@ -83,7 +83,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 Log.Logger.Write(logEvent);
             }
 
-            SerilogLogEvents.WithCorrelationLogContextGuid(correlationGuid)
+            TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationGuid)
                 .Should()
                 .Contain(logEventsWithCorrelationGuid);
         }
@@ -93,7 +93,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         {
             Log.Logger.Write(GetLogEventWithoutCorrelationGuid());
 
-            SerilogLogEvents.WithCorrelationLogContextGuid(Guid.NewGuid()).Should().BeEmpty();
+            TestSerilogLogEvents.WithCorrelationLogContextGuid(Guid.NewGuid()).Should().BeEmpty();
         }
 
         [Fact]
@@ -135,7 +135,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 Log.Logger.Write(logEvent);
             }
 
-            SerilogLogEvents.WithCorrelationLogContextGuid(correlationGuid)
+            TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationGuid)
                 .Should()
                 .Contain(logEventsWithCorrectCorrelationGuid);
         }
@@ -170,7 +170,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                     new MessageTemplate(uniqueMessageTemplate, Enumerable.Empty<MessageTemplateToken>()),
                     Enumerable.Empty<LogEventProperty>()));
 
-                SerilogLogEvents.WithCorrelationLogContextGuid(correlationLogContext.Guid).Should()
+                TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationLogContext.Guid).Should()
                     .Contain(logEvent => logEvent.MessageTemplate.Text == uniqueMessageTemplate);
             }
         }
