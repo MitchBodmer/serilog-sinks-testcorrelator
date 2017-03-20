@@ -25,7 +25,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 new MessageTemplate("Message template.", Enumerable.Empty<MessageTemplateToken>()),
                 new List<LogEventProperty>
                 {
-                    new LogEventProperty("CorrelationGuid", new ScalarValue(correlationGuid))
+                    new LogEventProperty(correlationGuid.ToString(), new ScalarValue(null))
                 });
         }
 
