@@ -10,7 +10,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
     {
         public CorrelationLogContextTests()
         {
-            TestSerilogLogEvents.Initialize();
+            TestSerilogLogEvents.ConfigureGlobalLoggerForTesting();
         }
 
         [Fact]

@@ -12,7 +12,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
     {
         public TestSerilogLogEventsTests()
         {
-            TestSerilogLogEvents.Initialize();
+            TestSerilogLogEvents.ConfigureGlobalLoggerForTesting();
         }
 
         private LogEvent GetLogEventWithoutCorrelationGuid()
@@ -141,13 +141,13 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        public void After_Initialize_is_called_the_global_logger_is_not_a_SilentLogger()
+        public void After_ConfigureGlobalLoggerForTesting_is_called_the_global_logger_is_not_a_SilentLogger()
         {
             Log.Logger.GetType().FullName.Should().NotBe("Serilog.Core.Pipeline.SilentLogger");
         }
 
         [Fact]
-        public void After_Initialize_is_called_the_global_logger_is_a_Logger()
+        public void After_ConfigureGlobalLoggerForTesting_is_called_the_global_logger_is_a_Logger()
         {
             Log.Logger.GetType().FullName.Should().Be("Serilog.Core.Logger");
         }
@@ -159,7 +159,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [InlineData(LogEventLevel.Fatal)]
         [InlineData(LogEventLevel.Verbose)]
         [InlineData(LogEventLevel.Warning)]
-        public void After_Initialize_is_called_the_static_SerilogLogEvents_bag_receives_LogEvents_of_all_LogEventLevels(
+        public void After_ConfigureGlobalLoggerForTesting_is_called_the_static_SerilogLogEvents_bag_receives_LogEvents_of_all_LogEventLevels(
             LogEventLevel level)
         {
             using (var correlationLogContext = new CorrelationLogContext())
@@ -176,7 +176,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        public void Calling_Initlialize_twice_does_not_clear_all_log_events()
+        public void Calling_ConfigureGlobalLoggerForTesting_twice_does_not_clear_all_log_events()
         {
             var correlationGuid = Guid.NewGuid();
 
@@ -184,11 +184,21 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             Log.Logger.Write(logEventWithCorrelationGuid);
 
-            TestSerilogLogEvents.Initialize();
+            TestSerilogLogEvents.ConfigureGlobalLoggerForTesting();
 
             TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationGuid)
                 .Should()
                 .OnlyContain(logEvent => logEvent == logEventWithCorrelationGuid);
+        }
+
+        [Fact]
+        public void Calling_ConfigureGlobalLoggerForTesting_is_idempotent()
+        {
+            var oldLogger = Log.Logger;
+
+            TestSerilogLogEvents.ConfigureGlobalLoggerForTesting();
+
+            Log.Logger.Should().Be(oldLogger);
         }
     }
 }

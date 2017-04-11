@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog.Utilities.ConcurrentCorrelator
@@ -10,25 +11,19 @@ namespace Serilog.Utilities.ConcurrentCorrelator
     {
         static readonly ConcurrentBag<LogEvent> bag = new ConcurrentBag<LogEvent>();
 
-        static bool initialized;
+        static readonly Logger testLogger;
 
-        static readonly object initializedLock = new object();
-
-        public static void Initialize()
+        static TestSerilogLogEvents()
         {
-            lock (initializedLock)
-            {
-                if (initialized == false)
-                {
-                    Log.Logger =
-                        new LoggerConfiguration().MinimumLevel.Verbose()
-                            .WriteTo.ConcurrentBag(bag)
-                            .Enrich.FromLogContext()
-                            .CreateLogger();
+            testLogger = new LoggerConfiguration().MinimumLevel.Verbose()
+                .WriteTo.ConcurrentBag(bag)
+                .Enrich.FromLogContext()
+                .CreateLogger();
+        }
 
-                    initialized = true;
-                }
-            }
+        public static void ConfigureGlobalLoggerForTesting()
+        {
+            Log.Logger = testLogger;
         }
 
         public static IEnumerable<LogEvent> WithCorrelationLogContextGuid(Guid correlationLogContextGuid)
