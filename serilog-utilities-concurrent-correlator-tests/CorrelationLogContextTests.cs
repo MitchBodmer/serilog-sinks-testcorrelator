@@ -8,6 +8,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 {
     public class CorrelationLogContextTests
     {
+        public CorrelationLogContextTests()
+        {
+            TestSerilogLogEvents.ConfigureGlobalLoggerForTesting();
+        }
+
         [Fact]
         public void A_CorrelationLogContext_does_enrich_LogEvents_inside_its_scope()
         {
@@ -15,7 +20,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             {
                 Log.Logger.Information("Message template.");
 
-                SerilogLogEvents.Bag.WithCorrelationLogContextGuid(correlationLogContext.Guid)
+                TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationLogContext.Guid)
                     .Should()
                     .OnlyContain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
             }
@@ -33,7 +38,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             Log.Logger.Information("Message template.");
 
-            SerilogLogEvents.Bag.WithCorrelationLogContextGuid(correlationLogContextGuid)
+            TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationLogContextGuid)
                 .Should()
                 .NotContain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
         }
@@ -50,7 +55,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
                 Task.WaitAll(logTask);
 
-                SerilogLogEvents.Bag.WithCorrelationLogContextGuid(context.Guid)
+                TestSerilogLogEvents.WithCorrelationLogContextGuid(context.Guid)
                     .Should()
                     .Contain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
             }
@@ -84,7 +89,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             Task.WaitAll(logTask, logContextTask);
 
-            SerilogLogEvents.Bag.WithCorrelationLogContextGuid(logContextTask.Result)
+            TestSerilogLogEvents.WithCorrelationLogContextGuid(logContextTask.Result)
                 .Should()
                 .NotContain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
         }
@@ -98,11 +103,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 {
                     Log.Logger.Information("Message template.");
 
-                    SerilogLogEvents.Bag.WithCorrelationLogContextGuid(innerCorrelationLogContext.Guid)
+                    TestSerilogLogEvents.WithCorrelationLogContextGuid(innerCorrelationLogContext.Guid)
                         .Should()
                         .OnlyContain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
 
-                    SerilogLogEvents.Bag.WithCorrelationLogContextGuid(outerCorrelationLogContext.Guid)
+                    TestSerilogLogEvents.WithCorrelationLogContextGuid(outerCorrelationLogContext.Guid)
                         .Should()
                         .OnlyContain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
                 }

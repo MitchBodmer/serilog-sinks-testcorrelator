@@ -7,21 +7,12 @@ using Serilog.Events;
 
 namespace Serilog.Utilities.ConcurrentCorrelator
 {
-    public static class LoggerSinkConfigurationExtensions
+    static class LoggerSinkConfigurationExtensions
     {
         internal static LoggerConfiguration ConcurrentBag(this LoggerSinkConfiguration sinkConfiguration,
             ConcurrentBag<LogEvent> concurrentBag, LogEventLevel restrictedToMinimumLevel = LogEventLevel.Verbose,
             LoggingLevelSwitch levelSwitch = null)
         {
-            if (concurrentBag == null)
-            {
-                throw new ArgumentNullException(nameof(concurrentBag));
-            }
-            if (sinkConfiguration == null)
-            {
-                throw new ArgumentNullException(nameof(sinkConfiguration));
-            }
-
             return sinkConfiguration.Observers(events => events.Do(concurrentBag.Add).Subscribe(),
                 restrictedToMinimumLevel, levelSwitch);
         }

@@ -1,6 +1,6 @@
 # Serilog Concurrent Correlator
 
-The Serilog Concurrent Correlator is a small library for unit testing Serilog log events in concurrent testing frameworks.
+The Serilog Concurrent Correlator is a small library for unit testing Serilog logging in concurrent testing frameworks.
 
 # The Problem
 
@@ -8,11 +8,9 @@ Logging libraries like [Serilog](https://github.com/serilog/serilog) often provi
 
 # Our Solution
 
-This library provides four tools to help you correlate your LogEvents to the test that produced them:
-* A module initializer, which configures Serilog's global Logger when the module is loaded.
-* A static global SerilogLogEvents.Bag, which contains all the LogEvents your tests produce.
-* A disposable CorrelationLogContext, which you can create in a using block to enrich all LogEvents within the block's logical call context with a CorrelationGuid property.
-* An extension method for filtering an IEnumerable\<LogEvent\> to those with a specific CorrelationGuid.
+This library provides two tools to help you correlate your LogEvents to the test that produced them:
+* A static global ```TestSerilogLogEvents``` class, which allows you to configure the global logger for testing, and search through the LogEvents your tests produce.
+* A disposable ```CorrelationLogContext```, which you can create in a using block to enrich all ```LogEvents``` within the block's logical call context with a correlating guid.
 
 # Examples
 
@@ -26,7 +24,7 @@ public void TestMethod()
     {
         Log.Logger.Information("Message template.");
 
-        SerilogLogEvents.Bag.WithCorrelationLogContextGuid(correlationLogContext.Guid)
+        TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationLogContext.Guid)
             .Should()
             .HaveCount(1);
     }
@@ -48,13 +46,13 @@ public void ConcurrencyTestMethod()
 
         Task.WaitAll(logTask);
 
-        SerilogLogEvents.Bag.WithCorrelationLogContextGuid(context.Guid)
+        TestSerilogLogEvents.WithCorrelationLogContextGuid(context.Guid)
             .Should()
             .HaveCount(1);
     }
 }
 ```
-For more examples check out the unit tests!
+For more examples check out the [unit tests](https://github.com/Microsoft/serilog-utilities-concurrent-correlator/tree/master/serilog-utilities-concurrent-correlator-tests)!
 
 # Contributing
 
