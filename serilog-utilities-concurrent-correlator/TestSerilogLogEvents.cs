@@ -15,7 +15,8 @@ namespace Serilog.Utilities.ConcurrentCorrelator
 
         static TestSerilogLogEvents()
         {
-            testLogger = new LoggerConfiguration().MinimumLevel.Verbose()
+            testLogger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
                 .WriteTo.ConcurrentBag(bag)
                 .Enrich.FromLogContext()
                 .CreateLogger();
