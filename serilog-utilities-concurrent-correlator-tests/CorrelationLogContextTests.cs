@@ -2,11 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using Xunit;
 
 namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 {
+    [TestClass]
     public class CorrelationLogContextTests
     {
         public CorrelationLogContextTests()
@@ -16,6 +18,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
         [Fact]
         [Test]
+        [TestMethod]
         public void A_CorrelationLogContext_does_enrich_LogEvents_inside_its_scope()
         {
             using (var correlationLogContext = new CorrelationLogContext())
@@ -30,6 +33,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
         [Fact]
         [Test]
+        [TestMethod]
         public void A_CorrelationLogContext_does_not_enrich_LogEvents_outside_its_scope()
         {
             Guid correlationLogContextGuid;
@@ -48,6 +52,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
         [Fact]
         [Test]
+        [TestMethod]
         public void A_CorrelationLogContext_does_enrich_LogEvents_inside_the_same_logical_call_context()
         {
             using (var context = new CorrelationLogContext())
@@ -67,6 +72,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
         [Fact]
         [Test]
+        [TestMethod]
         public void A_CorrelationLogContext_does_not_enrich_LogEvents_outside_the_same_logical_call_context()
         {
             var usingEnteredSignal = new ManualResetEvent(false);
@@ -101,6 +107,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
         [Fact]
         [Test]
+        [TestMethod]
         public void A_CorrelationLogContext_within_a_CorrelationLogContext_adds_an_additional_CorrelationLogContext_to_LogEvents()
         {
             using (var outerCorrelationLogContext = new CorrelationLogContext())
