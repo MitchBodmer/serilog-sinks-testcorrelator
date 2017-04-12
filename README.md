@@ -17,7 +17,6 @@ This library provides two tools to help you correlate your LogEvents to the test
 ## Basic Usage
 
 ```csharp
-[TestMethod]
 public void TestMethod()
 {
     using (var correlationLogContext = new CorrelationLogContext())
@@ -34,7 +33,6 @@ public void TestMethod()
 ## Concurrency
 
 ```csharp
-[TestMethod]
 public void ConcurrencyTestMethod()
 {
     using (var context = new CorrelationLogContext())
