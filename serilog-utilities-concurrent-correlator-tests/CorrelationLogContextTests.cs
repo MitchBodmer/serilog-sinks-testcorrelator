@@ -73,6 +73,33 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [Fact]
         [Test]
         [TestMethod]
+        public void A_CorrelationLogContext_does_enrich_LogEvents_inside_the_same_logical_call_context_even_when_they_are_in_tasks_started_outside_of_it()
+        {
+            Task logTask;
+            Guid guid;
+
+            using (var context = new CorrelationLogContext())
+            {
+                logTask = new Task(() =>
+                {
+                    Log.Logger.Information("Message template.");
+                });
+
+                guid = context.Guid;
+            }
+
+            logTask.Start();
+
+            Task.WaitAll(logTask);
+
+            TestSerilogLogEvents.WithCorrelationLogContextGuid(guid)
+                .Should()
+                .Contain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
+        }
+
+        [Fact]
+        [Test]
+        [TestMethod]
         public void A_CorrelationLogContext_does_not_enrich_LogEvents_outside_the_same_logical_call_context()
         {
             var usingEnteredSignal = new ManualResetEvent(false);
