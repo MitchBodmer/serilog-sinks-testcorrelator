@@ -34,6 +34,26 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [Fact]
         [Test]
         [TestMethod]
+        public void A_CorrelationLogContext_does_enrich_LogEvents_inside_its_scope_even_in_extracted_methods()
+        {
+            using (var correlationLogContext = new CorrelationLogContext())
+            {
+                LogInformationMessage();
+
+                TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationLogContext.Guid)
+                    .Should()
+                    .OnlyContain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
+            }
+        }
+
+        private static void LogInformationMessage()
+        {
+            Log.Logger.Information("Message template.");
+        }
+
+        [Fact]
+        [Test]
+        [TestMethod]
         public void A_CorrelationLogContext_does_not_enrich_LogEvents_outside_its_scope()
         {
             Guid correlationLogContextGuid;
