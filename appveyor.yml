@@ -1,4 +1,4 @@
-version: 1.0.1
+version: '1.0.1.{build}'
 image: Visual Studio 2017
 configuration: Release
 platform: Any CPU
@@ -6,7 +6,6 @@ assembly_info:
   patch: true
   file: '**\AssemblyInfo.*'
   assembly_version: '{version}'
-  assembly_file_version: '{version}.{build}'
 before_build:
 - cmd: nuget restore
 build:
