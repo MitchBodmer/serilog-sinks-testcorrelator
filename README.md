@@ -18,7 +18,7 @@ This library provides two tools to help you correlate your LogEvents to the test
 ## Examples
 
 ### Initialization
-Put this wherever pre-test setup occurs in your test framework.
+Put this line wherever pre-test setup happens in your test framework.
 
 ```csharp
 TestSerilogLogEvents.ConfigureGlobalLoggerForTesting();
