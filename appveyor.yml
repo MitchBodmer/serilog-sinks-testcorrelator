@@ -1,0 +1,21 @@
+version: 1.0.0
+image: Visual Studio 2017
+configuration: Release
+platform: Any CPU
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}.{build}'
+before_build:
+- cmd: nuget restore
+build:
+  publish_nuget: true
+  publish_nuget_symbols: true
+  verbosity: detailed
+deploy:
+- provider: NuGet
+  api_key:
+    secure: nrvEl2qb2BnEzXO8I3wdMRCawAa8hMpiVbmNBciLPagEaBmeJyA5yM4Ntdj7M0To
+  on:
+    branch: master
