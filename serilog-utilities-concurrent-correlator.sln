@@ -1,11 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "serilog-utilities-concurrent-correlator", "serilog-utilities-concurrent-correlator\serilog-utilities-concurrent-correlator.csproj", "{BF409844-1CA5-4817-8906-CB1C91F4948A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "serilog-utilities-concurrent-correlator-tests", "serilog-utilities-concurrent-correlator-tests\serilog-utilities-concurrent-correlator-tests.csproj", "{D7AF91A0-2039-4C46-B0E4-F9D3B3091F89}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{22CF5E35-E44D-4570-B7C0-37A75D8A5D0B}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		NuGet.Config = NuGet.Config
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
