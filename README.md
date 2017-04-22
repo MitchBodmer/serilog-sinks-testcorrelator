@@ -1,6 +1,6 @@
 # Serilog Concurrent Correlator
 
-[![AppVeyor Badge](https://ci.appveyor.com/api/projects/status/nbg49c0hsufk1da8/branch/master?svg=true)](https://ci.appveyor.com/project/SerilogUtilitiesConcurrentCorrelatorSA/serilog-utilities-concurrent-correlator/branch/master)
+[![AppVeyor Badge](https://ci.appveyor.com/api/projects/status/wf2emjam7xsviebw/branch/master?svg=true)](https://ci.appveyor.com/project/SerilogUtilitiesConcurrentCorrelatorSA/serilog-utilities-concurrent-correlator/branch/master)
 [![NuGet Badge](https://buildstats.info/nuget/Serilog.Utilities.ConcurrentCorrelator)](https://www.nuget.org/packages/Serilog.Utilities.ConcurrentCorrelator/)
 
 The Serilog Concurrent Correlator is a small library for unit testing Serilog logging in concurrent testing frameworks.
