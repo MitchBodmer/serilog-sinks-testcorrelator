@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Serilog.Context;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -27,6 +28,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator
             Log.Logger = TestLogger;
         }
 
+        public static CorrelationLogContext EstablishContext()
+        {
+            return new CorrelationLogContext();
+        }
+
         public static IEnumerable<LogEvent> WithCorrelationLogContextGuid(Guid correlationLogContextGuid)
         {
             if (!GlobalLoggerIsConfiguredForTesting())
@@ -39,6 +45,24 @@ namespace Serilog.Utilities.ConcurrentCorrelator
         static bool GlobalLoggerIsConfiguredForTesting()
         {
             return Log.Logger == TestLogger;
+        }
+
+        public class CorrelationLogContext : IDisposable
+        {
+            readonly IDisposable context;
+
+            internal CorrelationLogContext()
+            {
+                Guid = Guid.NewGuid();
+                context = LogContext.PushProperty(Guid.ToString(), null);
+            }
+
+            public Guid Guid { get; }
+
+            public void Dispose()
+            {
+                context.Dispose();
+            }
         }
     }
 }

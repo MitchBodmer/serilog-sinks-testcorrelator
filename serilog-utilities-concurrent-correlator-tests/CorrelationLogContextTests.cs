@@ -21,7 +21,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [TestMethod]
         public void A_CorrelationLogContext_does_enrich_LogEvents_inside_its_scope()
         {
-            using (var correlationLogContext = new CorrelationLogContext())
+            using (var correlationLogContext = TestSerilogLogEvents.EstablishContext())
             {
                 Log.Logger.Information("Message template.");
 
@@ -36,7 +36,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [TestMethod]
         public void A_CorrelationLogContext_does_enrich_LogEvents_inside_its_scope_even_in_extracted_methods()
         {
-            using (var correlationLogContext = new CorrelationLogContext())
+            using (var correlationLogContext = TestSerilogLogEvents.EstablishContext())
             {
                 LogInformationMessage();
 
@@ -58,7 +58,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         {
             Guid correlationLogContextGuid;
 
-            using (var correlationLogContext = new CorrelationLogContext())
+            using (var correlationLogContext = TestSerilogLogEvents.EstablishContext())
             {
                 correlationLogContextGuid = correlationLogContext.Guid;
             }
@@ -75,7 +75,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [TestMethod]
         public void A_CorrelationLogContext_does_enrich_LogEvents_inside_the_same_logical_call_context()
         {
-            using (var context = new CorrelationLogContext())
+            using (var context = TestSerilogLogEvents.EstablishContext())
             {
                 var logTask = Task.Run(() =>
                 {
@@ -98,7 +98,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             Task logTask;
             Guid guid;
 
-            using (var context = new CorrelationLogContext())
+            using (var context = TestSerilogLogEvents.EstablishContext())
             {
                 logTask = new Task(() =>
                 {
@@ -137,7 +137,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             var logContextTask = Task.Run(() =>
             {
-                using (var context = new CorrelationLogContext())
+                using (var context = TestSerilogLogEvents.EstablishContext())
                 {
                     usingEnteredSignal.Set();
                     loggingFinishedSignal.WaitOne();
@@ -162,7 +162,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 Log.Logger.Information("Message template.");
             });
 
-            using (var context = new CorrelationLogContext())
+            using (var context = TestSerilogLogEvents.EstablishContext())
             {
                 logTask.Start();
 
@@ -179,9 +179,9 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [TestMethod]
         public void A_CorrelationLogContext_within_a_CorrelationLogContext_adds_an_additional_CorrelationLogContext_to_LogEvents()
         {
-            using (var outerCorrelationLogContext = new CorrelationLogContext())
+            using (var outerCorrelationLogContext = TestSerilogLogEvents.EstablishContext())
             {
-                using (var innerCorrelationLogContext = new CorrelationLogContext())
+                using (var innerCorrelationLogContext = TestSerilogLogEvents.EstablishContext())
                 {
                     Log.Logger.Information("Message template.");
 

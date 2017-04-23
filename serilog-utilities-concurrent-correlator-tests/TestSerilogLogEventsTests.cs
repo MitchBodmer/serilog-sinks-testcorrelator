@@ -211,7 +211,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         public void After_ConfigureGlobalLoggerForTesting_is_called_the_static_SerilogLogEvents_bag_receives_LogEvents_of_all_LogEventLevels(
             LogEventLevel level)
         {
-            using (var correlationLogContext = new CorrelationLogContext())
+            using (var correlationLogContext = TestSerilogLogEvents.EstablishContext())
             {
                 var uniqueMessageTemplate = Guid.NewGuid().ToString();
 
