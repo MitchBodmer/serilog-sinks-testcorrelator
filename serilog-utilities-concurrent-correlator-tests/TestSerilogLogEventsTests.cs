@@ -160,16 +160,36 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [Fact]
         [Test]
         [TestMethod]
-        public void WithCorrelationLogContextGuid_throws_an_exception_if_ConfigureGlobalLoggerForTesting_has_not_been_called()
+        public void EstablishContext_throws_an_exception_if_the_global_logger_is_not_configured_for_testing()
         {
             using (ShimsContext.Create())
             {
-                ShimLog.LoggerGet = () => null;
+                SetGlobalLoggerToNull();
+
+                Action throwingAction = () => TestSerilogLogEvents.EstablishContext();
+
+                throwingAction.ShouldThrow<Exception>();
+            }
+        }
+
+        [Fact]
+        [Test]
+        [TestMethod]
+        public void WithCorrelationLogContextGuid_throws_an_exception_if_the_global_logger_is_not_configured_for_testing()
+        {
+            using (ShimsContext.Create())
+            {
+                SetGlobalLoggerToNull();
 
                 Action throwingAction = () => TestSerilogLogEvents.WithCorrelationLogContextGuid(Guid.NewGuid());
 
                 throwingAction.ShouldThrow<Exception>();
             }
+        }
+
+        static void SetGlobalLoggerToNull()
+        {
+            ShimLog.LoggerGet = () => null;
         }
 
         [Fact]

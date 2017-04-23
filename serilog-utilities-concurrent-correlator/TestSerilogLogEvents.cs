@@ -30,6 +30,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator
 
         public static CorrelationLogContext EstablishContext()
         {
+            if (!GlobalLoggerIsConfiguredForTesting())
+            {
+                throw new Exception();
+            }
+
             return new CorrelationLogContext();
         }
 
