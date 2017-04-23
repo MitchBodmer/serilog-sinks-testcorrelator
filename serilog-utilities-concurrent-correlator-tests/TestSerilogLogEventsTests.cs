@@ -18,7 +18,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             TestSerilogLogEvents.ConfigureGlobalLoggerForTesting();
         }
 
-        private LogEvent GetLogEventWithoutCorrelationGuid()
+        static LogEvent GetLogEventWithoutCorrelationGuid()
         {
             return new LogEvent(DateTimeOffset.Now,
                 LogEventLevel.Information, null,
@@ -26,7 +26,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 new List<LogEventProperty>());
         }
 
-        private LogEvent GetLogEventWithCorrelationGuid(Guid correlationGuid)
+        static LogEvent GetLogEventWithCorrelationGuid(Guid correlationGuid)
         {
             return new LogEvent(DateTimeOffset.Now,
                 LogEventLevel.Information, null,

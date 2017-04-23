@@ -46,7 +46,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             }
         }
 
-        private static void LogInformationMessage()
+        static void LogInformationMessage()
         {
             Log.Logger.Information("Message template.");
         }
