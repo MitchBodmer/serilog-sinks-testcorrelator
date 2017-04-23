@@ -10,14 +10,14 @@ namespace Serilog.Utilities.ConcurrentCorrelator
         public CorrelationLogContext()
         {
             Guid = Guid.NewGuid();
-            this.context = LogContext.PushProperty(Guid.ToString(), null);
+            context = LogContext.PushProperty(Guid.ToString(), null);
         }
 
         public Guid Guid { get; }
 
         public void Dispose()
         {
-            this.context.Dispose();
+            context.Dispose();
         }
     }
 }
