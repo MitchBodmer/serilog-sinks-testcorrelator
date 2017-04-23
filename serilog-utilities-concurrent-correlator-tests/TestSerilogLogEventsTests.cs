@@ -160,7 +160,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [Fact]
         [Test]
         [TestMethod]
-        public void EstablishContext_throws_an_exception_if_the_global_logger_is_not_configured_for_testing()
+        public void EstablishContext_throws_a_TestSerilogEventsNotConfiguredException_if_the_global_logger_is_not_configured_for_testing()
         {
             using (ShimsContext.Create())
             {
@@ -168,14 +168,16 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
                 Action throwingAction = () => TestSerilogLogEvents.EstablishContext();
 
-                throwingAction.ShouldThrow<Exception>();
+                throwingAction.ShouldThrow<TestSerilogLogEvents.TestSerilogEventsNotConfiguredException>()
+                    .WithMessage(
+                        "The global logger has not been configured for testing. This can either be because you did not call TestSerilogEvents.ConfigureGlobalLoggerForTesting(), or because other code has overridden the global logger.");
             }
         }
 
         [Fact]
         [Test]
         [TestMethod]
-        public void WithCorrelationLogContextGuid_throws_an_exception_if_the_global_logger_is_not_configured_for_testing()
+        public void WithCorrelationLogContextGuid_throws_a_TestSerilogEventsNotConfiguredException_if_the_global_logger_is_not_configured_for_testing()
         {
             using (ShimsContext.Create())
             {
@@ -183,7 +185,9 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
                 Action throwingAction = () => TestSerilogLogEvents.WithCorrelationLogContextGuid(Guid.NewGuid());
 
-                throwingAction.ShouldThrow<Exception>();
+                throwingAction.ShouldThrow<TestSerilogLogEvents.TestSerilogEventsNotConfiguredException>()
+                    .WithMessage(
+                        "The global logger has not been configured for testing. This can either be because you did not call TestSerilogEvents.ConfigureGlobalLoggerForTesting(), or because other code has overridden the global logger.");
             }
         }
 

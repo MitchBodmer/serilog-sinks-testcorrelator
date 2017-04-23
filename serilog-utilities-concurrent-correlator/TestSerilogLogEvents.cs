@@ -30,21 +30,24 @@ namespace Serilog.Utilities.ConcurrentCorrelator
 
         public static CorrelationLogContext EstablishContext()
         {
-            if (!GlobalLoggerIsConfiguredForTesting())
-            {
-                throw new Exception();
-            }
+            ThrowIfGlobalLoggerIsNotConfiguredForTesting();
 
             return new CorrelationLogContext();
         }
 
         public static IEnumerable<LogEvent> WithCorrelationLogContextGuid(Guid correlationLogContextGuid)
         {
+            ThrowIfGlobalLoggerIsNotConfiguredForTesting();
+
+            return Bag.Where(logEvent => logEvent.Properties.ContainsKey(correlationLogContextGuid.ToString()));
+        }
+
+        static void ThrowIfGlobalLoggerIsNotConfiguredForTesting()
+        {
             if (!GlobalLoggerIsConfiguredForTesting())
             {
-                throw new Exception();
+                throw new TestSerilogEventsNotConfiguredException();
             }
-            return Bag.Where(logEvent => logEvent.Properties.ContainsKey(correlationLogContextGuid.ToString()));
         }
 
         static bool GlobalLoggerIsConfiguredForTesting()
@@ -69,5 +72,14 @@ namespace Serilog.Utilities.ConcurrentCorrelator
                 context.Dispose();
             }
         }
+
+        public class TestSerilogEventsNotConfiguredException : Exception
+        {
+            internal TestSerilogEventsNotConfiguredException() :
+                base(
+                    "The global logger has not been configured for testing. This can either be because you did not call TestSerilogEvents.ConfigureGlobalLoggerForTesting(), or because other code has overridden the global logger.")
+            { }
+        }
     }
+
 }
