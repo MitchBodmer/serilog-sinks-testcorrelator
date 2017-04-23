@@ -29,7 +29,16 @@ namespace Serilog.Utilities.ConcurrentCorrelator
 
         public static IEnumerable<LogEvent> WithCorrelationLogContextGuid(Guid correlationLogContextGuid)
         {
+            if (!GlobalLoggerIsConfiguredForTesting())
+            {
+                throw new Exception();
+            }
             return Bag.Where(logEvent => logEvent.Properties.ContainsKey(correlationLogContextGuid.ToString()));
+        }
+
+        static bool GlobalLoggerIsConfiguredForTesting()
+        {
+            return Log.Logger == TestLogger;
         }
     }
 }

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using Serilog.Events;
+using Serilog.Fakes;
 using Serilog.Parsing;
 using Xunit;
 
@@ -153,6 +155,21 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationGuid)
                 .Should()
                 .Contain(logEventsWithCorrectCorrelationGuid);
+        }
+
+        [Fact]
+        [Test]
+        [TestMethod]
+        public void WithCorrelationLogContextGuid_throws_an_exception_if_ConfigureGlobalLoggerForTesting_has_not_been_called()
+        {
+            using (ShimsContext.Create())
+            {
+                ShimLog.LoggerGet = () => null;
+
+                Action throwingAction = () => TestSerilogLogEvents.WithCorrelationLogContextGuid(Guid.NewGuid());
+
+                throwingAction.ShouldThrow<Exception>();
+            }
         }
 
         [Fact]
