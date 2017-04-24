@@ -1,9 +1,7 @@
 ﻿using System;
 using FluentAssertions;
-using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
-using Serilog.Fakes;
 using Xunit;
 
 namespace Serilog.Utilities.ConcurrentCorrelator.Tests
@@ -56,15 +54,19 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         public void
             EstablishTestLogContext_throws_a_TestSerilogEventsNotConfiguredException_if_the_global_logger_is_not_configured_for_testing()
         {
-            using (ShimsContext.Create())
+            try
             {
-                SetGlobalLoggerToNull();
+                MisconfigureGlobalLoggerForTesting();
 
                 Action throwingAction = () => TestSerilogLogEvents.EstablishTestLogContext();
 
                 throwingAction.ShouldThrow<TestSerilogLogEvents.TestSerilogEventsNotConfiguredException>()
                     .WithMessage(
                         "The global logger has not been configured for testing. This can either be because you did not call ConfigureGlobalLoggerForTesting, or because other code has overridden the global logger.");
+            }
+            finally
+            {
+                TestSerilogLogEvents.ConfigureGlobalLoggerForTesting();
             }
         }
 
@@ -74,22 +76,29 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         public void
             WithTestLogContextIdentifier_throws_a_TestSerilogEventsNotConfiguredException_if_the_global_logger_is_not_configured_for_testing()
         {
-            using (ShimsContext.Create())
-            using (var context = TestSerilogLogEvents.EstablishTestLogContext())
+            try
             {
-                SetGlobalLoggerToNull();
+                using (var context = TestSerilogLogEvents.EstablishTestLogContext())
+                {
+                    MisconfigureGlobalLoggerForTesting();
 
-                Action throwingAction = () => TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Identifier);
+                    Action throwingAction =
+                        () => TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Identifier);
 
-                throwingAction.ShouldThrow<TestSerilogLogEvents.TestSerilogEventsNotConfiguredException>()
-                    .WithMessage(
-                        "The global logger has not been configured for testing. This can either be because you did not call ConfigureGlobalLoggerForTesting, or because other code has overridden the global logger.");
+                    throwingAction.ShouldThrow<TestSerilogLogEvents.TestSerilogEventsNotConfiguredException>()
+                        .WithMessage(
+                            "The global logger has not been configured for testing. This can either be because you did not call ConfigureGlobalLoggerForTesting, or because other code has overridden the global logger.");
+                }
+            }
+            finally
+            {
+                TestSerilogLogEvents.ConfigureGlobalLoggerForTesting();
             }
         }
 
-        static void SetGlobalLoggerToNull()
+        static void MisconfigureGlobalLoggerForTesting()
         {
-            ShimLog.LoggerGet = () => null;
+            Log.Logger = new LoggerConfiguration().CreateLogger();
         }
     }
 }
