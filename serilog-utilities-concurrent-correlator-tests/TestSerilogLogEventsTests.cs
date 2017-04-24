@@ -56,27 +56,27 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [Fact]
         [Test]
         [TestMethod]
-        public void WithCorrelationLogContextGuid_returns_empty_if_no_LogEvents_have_been_logged()
+        public void WithTestLogContextGuid_returns_empty_if_no_LogEvents_have_been_logged()
         {
-            TestSerilogLogEvents.WithCorrelationLogContextGuid(Guid.NewGuid()).Should().BeEmpty();
+            TestSerilogLogEvents.WithTestLogContextGuid(Guid.NewGuid()).Should().BeEmpty();
         }
 
         [Fact]
         [Test]
         [TestMethod]
         public void
-            WithCorrelationLogContextGuid_returns_empty_if_no_LogEvents_have_been_logged_with_the_correlation_guid()
+            WithTestLogContextGuid_returns_empty_if_no_LogEvents_have_been_logged_with_the_correlation_guid()
         {
             Log.Write(GetLogEventWithCorrelationGuid(Guid.NewGuid()));
 
-            TestSerilogLogEvents.WithCorrelationLogContextGuid(Guid.NewGuid()).Should().BeEmpty();
+            TestSerilogLogEvents.WithTestLogContextGuid(Guid.NewGuid()).Should().BeEmpty();
         }
 
         [Fact]
         [Test]
         [TestMethod]
         public void
-            WithCorrelationLogContextGuid_returns_one_LogEvent_if_one_has_been_logged_with_the_correlation_guid()
+            WithTestLogContextGuid_returns_one_LogEvent_if_one_has_been_logged_with_the_correlation_guid()
         {
             var correlationGuid = Guid.NewGuid();
 
@@ -84,14 +84,14 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             Log.Write(logEventWithCorrelationGuid);
 
-            TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationGuid).Should().ContainSingle();
+            TestSerilogLogEvents.WithTestLogContextGuid(correlationGuid).Should().ContainSingle();
         }
 
         [Fact]
         [Test]
         [TestMethod]
         public void
-            WithCorrelationLogContextGuid_returns_all_LogEvents_that_have_been_logged_with_the_correlation_guid()
+            WithTestLogContextGuid_returns_all_LogEvents_that_have_been_logged_with_the_correlation_guid()
         {
             var correlationGuid = Guid.NewGuid();
 
@@ -108,24 +108,24 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 Log.Write(logEvent);
             }
 
-            TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationGuid).Should().BeEquivalentTo(logEventsWithCorrelationGuid);
+            TestSerilogLogEvents.WithTestLogContextGuid(correlationGuid).Should().BeEquivalentTo(logEventsWithCorrelationGuid);
         }
 
         [Fact]
         [Test]
         [TestMethod]
-        public void WithCorrelationLogContextGuid_does_not_return_a_LogEvent_without_a_correlation_guid()
+        public void WithTestLogContextGuid_does_not_return_a_LogEvent_without_a_correlation_guid()
         {
             Log.Write(GetLogEventWithoutCorrelationGuid());
 
-            TestSerilogLogEvents.WithCorrelationLogContextGuid(Guid.NewGuid()).Should().BeEmpty();
+            TestSerilogLogEvents.WithTestLogContextGuid(Guid.NewGuid()).Should().BeEmpty();
         }
 
         [Fact]
         [Test]
         [TestMethod]
         public void
-            WithCorrelationLogContextGuid_filters_all_LogEvents_without_the_correct_correlation_guid()
+            WithTestLogContextGuid_filters_all_LogEvents_without_the_correct_correlation_guid()
         {
             var correlationGuid = Guid.NewGuid();
 
@@ -162,7 +162,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 Log.Write(logEvent);
             }
 
-            TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationGuid).Should().BeEquivalentTo(logEventsWithCorrectCorrelationGuid);
+            TestSerilogLogEvents.WithTestLogContextGuid(correlationGuid).Should().BeEquivalentTo(logEventsWithCorrectCorrelationGuid);
         }
 
         [Fact]
@@ -174,7 +174,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             {
                 SetGlobalLoggerToNull();
 
-                Action throwingAction = () => TestSerilogLogEvents.EstablishContext();
+                Action throwingAction = () => TestSerilogLogEvents.EstablishTestLogContext();
 
                 throwingAction.ShouldThrow<TestSerilogLogEvents.TestSerilogEventsNotConfiguredException>()
                     .WithMessage(
@@ -185,13 +185,13 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [Fact]
         [Test]
         [TestMethod]
-        public void WithCorrelationLogContextGuid_throws_a_TestSerilogEventsNotConfiguredException_if_the_global_logger_is_not_configured_for_testing()
+        public void WithTestLogContextGuid_throws_a_TestSerilogEventsNotConfiguredException_if_the_global_logger_is_not_configured_for_testing()
         {
             using (ShimsContext.Create())
             {
                 SetGlobalLoggerToNull();
 
-                Action throwingAction = () => TestSerilogLogEvents.WithCorrelationLogContextGuid(Guid.NewGuid());
+                Action throwingAction = () => TestSerilogLogEvents.WithTestLogContextGuid(Guid.NewGuid());
 
                 throwingAction.ShouldThrow<TestSerilogLogEvents.TestSerilogEventsNotConfiguredException>()
                     .WithMessage(
@@ -235,11 +235,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         public void After_ConfigureGlobalLoggerForTesting_is_called_the_static_SerilogLogEvents_bag_receives_LogEvents_of_all_LogEventLevels(
             LogEventLevel logEventLevel)
         {
-            using (var correlationLogContext = TestSerilogLogEvents.EstablishContext())
+            using (var correlationLogContext = TestSerilogLogEvents.EstablishTestLogContext())
             {
                 Log.Write(GetLogEventWithLogEventLevel(logEventLevel));
 
-                TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationLogContext.Guid).Should().ContainSingle();
+                TestSerilogLogEvents.WithTestLogContextGuid(correlationLogContext.Guid).Should().ContainSingle();
             }
         }
 
@@ -256,7 +256,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             TestSerilogLogEvents.ConfigureGlobalLoggerForTesting();
 
-            TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationGuid).Should().ContainSingle();
+            TestSerilogLogEvents.WithTestLogContextGuid(correlationGuid).Should().ContainSingle();
         }
 
         [Fact]

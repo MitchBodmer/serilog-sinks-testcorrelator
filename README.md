@@ -13,7 +13,7 @@ Logging libraries like [Serilog](https://github.com/serilog/serilog) often provi
 
 This library provides two tools to help you correlate your LogEvents to the test that produced them:
 * A static global ```TestSerilogLogEvents``` class, which allows you to configure the global logger for testing, and search through the LogEvents your tests produce.
-* A disposable ```CorrelationLogContext```, which you can create in a using block to enrich all ```LogEvents``` within the block's logical call context with a correlating GUID.
+* A disposable ```TestLogContext```, which you can create in a using block to enrich all ```LogEvents``` within the block's logical call context with a correlating GUID.
 
 ## Examples
 
@@ -29,11 +29,11 @@ TestSerilogLogEvents.ConfigureGlobalLoggerForTesting();
 ```csharp
 public void TestMethod()
 {
-    using (var correlationLogContext = new CorrelationLogContext())
+    using (var correlationLogContext = new TestLogContext())
     {
         Log.Logger.Information("Message template.");
 
-        TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationLogContext.Guid)
+        TestSerilogLogEvents.WithTestLogContextGuid(correlationLogContext.Guid)
             .Should()
             .HaveCount(1);
     }
@@ -45,7 +45,7 @@ public void TestMethod()
 ```csharp
 public void ConcurrencyTestMethod()
 {
-    using (var context = new CorrelationLogContext())
+    using (var context = new TestLogContext())
     {
         var logTask = Task.Run(() =>
         {
@@ -54,7 +54,7 @@ public void ConcurrencyTestMethod()
 
         Task.WaitAll(logTask);
 
-        TestSerilogLogEvents.WithCorrelationLogContextGuid(context.Guid)
+        TestSerilogLogEvents.WithTestLogContextGuid(context.Guid)
             .Should()
             .HaveCount(1);
     }

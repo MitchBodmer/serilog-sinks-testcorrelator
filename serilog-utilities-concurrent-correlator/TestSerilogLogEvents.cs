@@ -28,14 +28,14 @@ namespace Serilog.Utilities.ConcurrentCorrelator
             Log.Logger = TestLogger;
         }
 
-        public static CorrelationLogContext EstablishContext()
+        public static TestLogContext EstablishTestLogContext()
         {
             ThrowIfGlobalLoggerIsNotConfiguredForTesting();
 
-            return new CorrelationLogContext();
+            return new TestLogContext();
         }
 
-        public static IEnumerable<LogEvent> WithCorrelationLogContextGuid(Guid correlationLogContextGuid)
+        public static IEnumerable<LogEvent> WithTestLogContextGuid(Guid correlationLogContextGuid)
         {
             ThrowIfGlobalLoggerIsNotConfiguredForTesting();
 
@@ -55,11 +55,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator
             return Log.Logger == TestLogger;
         }
 
-        public class CorrelationLogContext : IDisposable
+        public class TestLogContext : IDisposable
         {
             readonly IDisposable context;
 
-            internal CorrelationLogContext()
+            internal TestLogContext()
             {
                 Guid = Guid.NewGuid();
                 context = LogContext.PushProperty(Guid.ToString(), null);
