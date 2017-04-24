@@ -23,11 +23,9 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         {
             using (var correlationLogContext = TestSerilogLogEvents.EstablishContext())
             {
-                Log.Logger.Information("Message template.");
+                Log.Information("");
 
-                TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationLogContext.Guid)
-                    .Should()
-                    .OnlyContain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
+                TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationLogContext.Guid).Should().ContainSingle();
             }
         }
 
@@ -38,17 +36,15 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         {
             using (var correlationLogContext = TestSerilogLogEvents.EstablishContext())
             {
-                LogInformationMessage();
+                LogInformation();
 
-                TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationLogContext.Guid)
-                    .Should()
-                    .OnlyContain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
+                TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationLogContext.Guid).Should().ContainSingle();
             }
         }
 
-        static void LogInformationMessage()
+        static void LogInformation()
         {
-            Log.Logger.Information("Message template.");
+            Log.Information("");
         }
 
         [Fact]
@@ -63,11 +59,9 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 correlationLogContextGuid = correlationLogContext.Guid;
             }
 
-            Log.Logger.Information("Message template.");
+            Log.Information("");
 
-            TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationLogContextGuid)
-                .Should()
-                .NotContain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
+            TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationLogContextGuid).Should().BeEmpty();
         }
 
         [Fact]
@@ -79,14 +73,12 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             {
                 var logTask = Task.Run(() =>
                 {
-                    Log.Logger.Information("Message template.");
+                    Log.Information("");
                 });
 
                 Task.WaitAll(logTask);
 
-                TestSerilogLogEvents.WithCorrelationLogContextGuid(context.Guid)
-                    .Should()
-                    .Contain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
+                TestSerilogLogEvents.WithCorrelationLogContextGuid(context.Guid).Should().ContainSingle();
             }
         }
 
@@ -102,7 +94,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             {
                 logTask = new Task(() =>
                 {
-                    Log.Logger.Information("Message template.");
+                    Log.Information("");
                 });
 
                 guid = context.Guid;
@@ -112,9 +104,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             Task.WaitAll(logTask);
 
-            TestSerilogLogEvents.WithCorrelationLogContextGuid(guid)
-                .Should()
-                .Contain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
+            TestSerilogLogEvents.WithCorrelationLogContextGuid(guid).Should().ContainSingle();
         }
 
         [Fact]
@@ -130,7 +120,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             {
                 usingEnteredSignal.WaitOne();
 
-                Log.Logger.Information("Message template.");
+                Log.Information("");
 
                 loggingFinishedSignal.Set();
             });
@@ -147,9 +137,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             Task.WaitAll(logTask, logContextTask);
 
-            TestSerilogLogEvents.WithCorrelationLogContextGuid(logContextTask.Result)
-                .Should()
-                .NotContain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
+            TestSerilogLogEvents.WithCorrelationLogContextGuid(logContextTask.Result).Should().BeEmpty();
         }
 
         [Fact]
@@ -159,7 +147,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         {
             var logTask = new Task(() =>
             {
-                Log.Logger.Information("Message template.");
+                Log.Information("");
             });
 
             using (var context = TestSerilogLogEvents.EstablishContext())
@@ -168,9 +156,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
                 Task.WaitAll(logTask);
 
-                TestSerilogLogEvents.WithCorrelationLogContextGuid(context.Guid)
-                    .Should()
-                    .NotContain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
+                TestSerilogLogEvents.WithCorrelationLogContextGuid(context.Guid).Should().BeEmpty();
             }
         }
 
@@ -183,15 +169,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             {
                 using (var innerCorrelationLogContext = TestSerilogLogEvents.EstablishContext())
                 {
-                    Log.Logger.Information("Message template.");
+                    Log.Information("");
 
-                    TestSerilogLogEvents.WithCorrelationLogContextGuid(innerCorrelationLogContext.Guid)
-                        .Should()
-                        .OnlyContain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
+                    TestSerilogLogEvents.WithCorrelationLogContextGuid(innerCorrelationLogContext.Guid).Should().ContainSingle();
 
-                    TestSerilogLogEvents.WithCorrelationLogContextGuid(outerCorrelationLogContext.Guid)
-                        .Should()
-                        .OnlyContain(logEvent => logEvent.MessageTemplate.Text == "Message template.");
+                    TestSerilogLogEvents.WithCorrelationLogContextGuid(outerCorrelationLogContext.Guid).Should().ContainSingle();
                 }
             }
         }

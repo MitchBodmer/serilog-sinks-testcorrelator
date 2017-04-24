@@ -24,7 +24,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         {
             return new LogEvent(DateTimeOffset.Now,
                 LogEventLevel.Information, null,
-                new MessageTemplate("Message template.", Enumerable.Empty<MessageTemplateToken>()),
+                new MessageTemplate("", Enumerable.Empty<MessageTemplateToken>()),
                 new List<LogEventProperty>());
         }
 
@@ -32,7 +32,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         {
             return new LogEvent(DateTimeOffset.Now,
                 LogEventLevel.Information, null,
-                new MessageTemplate("Message template.", Enumerable.Empty<MessageTemplateToken>()),
+                new MessageTemplate("", Enumerable.Empty<MessageTemplateToken>()),
                 new List<LogEventProperty>
                 {
                     new LogEventProperty(correlationGuid.ToString(), new ScalarValue(null))
@@ -53,7 +53,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         public void
             WithCorrelationLogContextGuid_returns_empty_if_no_LogEvents_have_been_logged_with_the_correlation_guid()
         {
-            Log.Logger.Write(GetLogEventWithCorrelationGuid(Guid.NewGuid()));
+            Log.Write(GetLogEventWithCorrelationGuid(Guid.NewGuid()));
 
             TestSerilogLogEvents.WithCorrelationLogContextGuid(Guid.NewGuid()).Should().BeEmpty();
         }
@@ -68,7 +68,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             var logEventWithCorrelationGuid = GetLogEventWithCorrelationGuid(correlationGuid);
 
-            Log.Logger.Write(logEventWithCorrelationGuid);
+            Log.Write(logEventWithCorrelationGuid);
 
             TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationGuid)
                 .Should()
@@ -93,7 +93,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             foreach (var logEvent in logEventsWithCorrelationGuid)
             {
-                Log.Logger.Write(logEvent);
+                Log.Write(logEvent);
             }
 
             TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationGuid)
@@ -106,7 +106,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [TestMethod]
         public void WithCorrelationLogContextGuid_does_not_return_a_LogEvent_without_a_correlation_guid()
         {
-            Log.Logger.Write(GetLogEventWithoutCorrelationGuid());
+            Log.Write(GetLogEventWithoutCorrelationGuid());
 
             TestSerilogLogEvents.WithCorrelationLogContextGuid(Guid.NewGuid()).Should().BeEmpty();
         }
@@ -149,7 +149,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             foreach (var logEvent in allLogEvents)
             {
-                Log.Logger.Write(logEvent);
+                Log.Write(logEvent);
             }
 
             TestSerilogLogEvents.WithCorrelationLogContextGuid(correlationGuid)
@@ -239,7 +239,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             {
                 var uniqueMessageTemplate = Guid.NewGuid().ToString();
 
-                Log.Logger.Write(new LogEvent(DateTimeOffset.Now, level, null,
+                Log.Write(new LogEvent(DateTimeOffset.Now, level, null,
                     new MessageTemplate(uniqueMessageTemplate, Enumerable.Empty<MessageTemplateToken>()),
                     Enumerable.Empty<LogEventProperty>()));
 
@@ -257,7 +257,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             var logEventWithCorrelationGuid = GetLogEventWithCorrelationGuid(correlationGuid);
 
-            Log.Logger.Write(logEventWithCorrelationGuid);
+            Log.Write(logEventWithCorrelationGuid);
 
             TestSerilogLogEvents.ConfigureGlobalLoggerForTesting();
 
