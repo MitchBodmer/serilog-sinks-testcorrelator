@@ -8,7 +8,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator
         {
             internal TestSerilogEventsNotConfiguredException() :
                 base(
-                    "The global logger has not been configured for testing. This can either be because you did not call TestSerilogEvents.ConfigureGlobalLoggerForTesting(), or because other code has overridden the global logger.")
+                    $"The global logger has not been configured for testing. This can either be because you did not call {nameof(ConfigureGlobalLoggerForTesting)}, or because other code has overridden the global logger.")
             { }
         }
     }
