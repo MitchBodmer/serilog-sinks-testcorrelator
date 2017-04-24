@@ -87,9 +87,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CorrelationLogContextTests.cs" />
+    <Compile Include="ConfigureGlobalLoggerForTesting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestLogContextTests.cs" />
     <Compile Include="TestSerilogLogEventsTests.cs" />
+    <Compile Include="EventsWithTestLogContextIdentifierTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Fakes Include="Fakes\Serilog.fakes" />

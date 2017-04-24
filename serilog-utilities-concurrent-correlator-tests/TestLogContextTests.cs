@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -8,24 +7,18 @@ using Xunit;
 
 namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 {
-    [TestClass]
-    public class TestLogContextTests
+    public partial class TestSerilogLogEventsTests
     {
-        public TestLogContextTests()
-        {
-            TestSerilogLogEvents.ConfigureGlobalLoggerForTesting();
-        }
-
         [Fact]
         [Test]
         [TestMethod]
         public void A_TestLogContext_does_enrich_LogEvents_inside_its_scope()
         {
-            using (var correlationLogContext = TestSerilogLogEvents.EstablishTestLogContext())
+            using (var context = TestSerilogLogEvents.EstablishTestLogContext())
             {
                 Log.Information("");
 
-                TestSerilogLogEvents.WithTestLogContextGuid(correlationLogContext.Guid).Should().ContainSingle();
+                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Identifier).Should().ContainSingle();
             }
         }
 
@@ -34,11 +27,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [TestMethod]
         public void A_TestLogContext_does_enrich_LogEvents_inside_its_scope_even_in_extracted_methods()
         {
-            using (var correlationLogContext = TestSerilogLogEvents.EstablishTestLogContext())
+            using (var context = TestSerilogLogEvents.EstablishTestLogContext())
             {
                 LogInformation();
 
-                TestSerilogLogEvents.WithTestLogContextGuid(correlationLogContext.Guid).Should().ContainSingle();
+                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Identifier).Should().ContainSingle();
             }
         }
 
@@ -52,16 +45,16 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [TestMethod]
         public void A_TestLogContext_does_not_enrich_LogEvents_outside_its_scope()
         {
-            Guid correlationLogContextGuid;
+            TestSerilogLogEvents.TestLogContext.TestLogContextIdentifier testLogContextIdentifier;
 
-            using (var correlationLogContext = TestSerilogLogEvents.EstablishTestLogContext())
+            using (var context = TestSerilogLogEvents.EstablishTestLogContext())
             {
-                correlationLogContextGuid = correlationLogContext.Guid;
+                testLogContextIdentifier = context.Identifier;
             }
 
             Log.Information("");
 
-            TestSerilogLogEvents.WithTestLogContextGuid(correlationLogContextGuid).Should().BeEmpty();
+            TestSerilogLogEvents.GetLogEventsWithContextIdentifier(testLogContextIdentifier).Should().BeEmpty();
         }
 
         [Fact]
@@ -71,50 +64,48 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         {
             using (var context = TestSerilogLogEvents.EstablishTestLogContext())
             {
-                var logTask = Task.Run(() =>
-                {
-                    Log.Information("");
-                });
+                var logTask = Task.Run(() => { Log.Information(""); });
 
                 Task.WaitAll(logTask);
 
-                TestSerilogLogEvents.WithTestLogContextGuid(context.Guid).Should().ContainSingle();
+                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Identifier).Should().ContainSingle();
             }
         }
 
         [Fact]
         [Test]
         [TestMethod]
-        public void A_TestLogContext_does_enrich_LogEvents_inside_the_same_logical_call_context_even_when_they_are_in_tasks_started_outside_of_it()
+        public void
+            A_TestLogContext_does_enrich_LogEvents_inside_the_same_logical_call_context_even_when_they_are_in_tasks_started_outside_of_it()
         {
             Task logTask;
-            Guid guid;
+            TestSerilogLogEvents.TestLogContext.TestLogContextIdentifier testLogContextIdentifier;
 
             using (var context = TestSerilogLogEvents.EstablishTestLogContext())
             {
-                logTask = new Task(() =>
-                {
-                    Log.Information("");
-                });
+                logTask = new Task(() => { Log.Information(""); });
 
-                guid = context.Guid;
+                testLogContextIdentifier = context.Identifier;
             }
 
             logTask.Start();
 
             Task.WaitAll(logTask);
 
-            TestSerilogLogEvents.WithTestLogContextGuid(guid).Should().ContainSingle();
+            TestSerilogLogEvents.GetLogEventsWithContextIdentifier(testLogContextIdentifier).Should().ContainSingle();
         }
 
         [Fact]
         [Test]
         [TestMethod]
-        public void A_TestLogContext_does_not_enrich_LogEvents_outside_the_same_logical_call_context()
+        public void
+            A_TestLogContext_does_not_enrich_LogEvents_outside_the_same_logical_call_context_even_when_they_run_concurrently()
         {
             var usingEnteredSignal = new ManualResetEvent(false);
 
             var loggingFinishedSignal = new ManualResetEvent(false);
+
+            TestSerilogLogEvents.TestLogContext.TestLogContextIdentifier testLogContextIdentifier = null;
 
             var logTask = Task.Run(() =>
             {
@@ -131,24 +122,22 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 {
                     usingEnteredSignal.Set();
                     loggingFinishedSignal.WaitOne();
-                    return context.Guid;
+                    testLogContextIdentifier = context.Identifier;
                 }
             });
 
             Task.WaitAll(logTask, logContextTask);
 
-            TestSerilogLogEvents.WithTestLogContextGuid(logContextTask.Result).Should().BeEmpty();
+            TestSerilogLogEvents.GetLogEventsWithContextIdentifier(testLogContextIdentifier).Should().BeEmpty();
         }
 
         [Fact]
         [Test]
         [TestMethod]
-        public void A_TestLogContext_does_not_enrich_LogEvents_outside_the_same_logical_call_context_even_when_they_are_in_tasks_started_inside_of_it()
+        public void
+            A_TestLogContext_does_not_enrich_LogEvents_outside_the_same_logical_call_context_even_when_they_are_in_tasks_started_inside_of_it()
         {
-            var logTask = new Task(() =>
-            {
-                Log.Information("");
-            });
+            var logTask = new Task(() => { Log.Information(""); });
 
             using (var context = TestSerilogLogEvents.EstablishTestLogContext())
             {
@@ -156,7 +145,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
                 Task.WaitAll(logTask);
 
-                TestSerilogLogEvents.WithTestLogContextGuid(context.Guid).Should().BeEmpty();
+                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Identifier).Should().BeEmpty();
             }
         }
 
@@ -165,15 +154,19 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [TestMethod]
         public void A_TestLogContext_within_a_TestLogContext_adds_an_additional_TestLogContext_to_LogEvents()
         {
-            using (var outerTestLogContext = TestSerilogLogEvents.EstablishTestLogContext())
+            using (var outerContext = TestSerilogLogEvents.EstablishTestLogContext())
             {
-                using (var innerTestLogContext = TestSerilogLogEvents.EstablishTestLogContext())
+                using (var innerContext = TestSerilogLogEvents.EstablishTestLogContext())
                 {
                     Log.Information("");
 
-                    TestSerilogLogEvents.WithTestLogContextGuid(innerTestLogContext.Guid).Should().ContainSingle();
+                    TestSerilogLogEvents.GetLogEventsWithContextIdentifier(innerContext.Identifier)
+                        .Should()
+                        .ContainSingle();
 
-                    TestSerilogLogEvents.WithTestLogContextGuid(outerTestLogContext.Guid).Should().ContainSingle();
+                    TestSerilogLogEvents.GetLogEventsWithContextIdentifier(outerContext.Identifier)
+                        .Should()
+                        .ContainSingle();
                 }
             }
         }
