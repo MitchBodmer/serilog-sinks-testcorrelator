@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Serilog.Context;
 using Serilog.Core;
 using Serilog.Events;
 
 namespace Serilog.Utilities.ConcurrentCorrelator
 {
-    public static class TestSerilogLogEvents
+    public static partial class TestSerilogLogEvents
     {
         static readonly ConcurrentBag<LogEvent> Bag = new ConcurrentBag<LogEvent>();
 
@@ -35,11 +33,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator
             return new TestLogContext();
         }
 
-        public static IEnumerable<LogEvent> WithTestLogContextGuid(Guid correlationLogContextGuid)
+        public static IEnumerable<LogEvent> GetLogEventsWithContextIdentifier(TestLogContext.TestLogContextIdentifier testLogContextIdentifier)
         {
             ThrowIfGlobalLoggerIsNotConfiguredForTesting();
 
-            return Bag.Where(logEvent => logEvent.Properties.ContainsKey(correlationLogContextGuid.ToString()));
+            return Bag.Where(logEvent => logEvent.Properties.ContainsKey(testLogContextIdentifier.ToString()));
         }
 
         static void ThrowIfGlobalLoggerIsNotConfiguredForTesting()
@@ -53,32 +51,6 @@ namespace Serilog.Utilities.ConcurrentCorrelator
         static bool GlobalLoggerIsConfiguredForTesting()
         {
             return Log.Logger == TestLogger;
-        }
-
-        public class TestLogContext : IDisposable
-        {
-            readonly IDisposable context;
-
-            internal TestLogContext()
-            {
-                Guid = Guid.NewGuid();
-                context = LogContext.PushProperty(Guid.ToString(), null);
-            }
-
-            public Guid Guid { get; }
-
-            public void Dispose()
-            {
-                context.Dispose();
-            }
-        }
-
-        public class TestSerilogEventsNotConfiguredException : Exception
-        {
-            internal TestSerilogEventsNotConfiguredException() :
-                base(
-                    "The global logger has not been configured for testing. This can either be because you did not call TestSerilogEvents.ConfigureGlobalLoggerForTesting(), or because other code has overridden the global logger.")
-            { }
         }
     }
 }
