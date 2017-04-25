@@ -5,11 +5,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator
 {
     public static partial class TestSerilogLogEvents
     {
-        public partial class TestLogContext : IDisposable
+        partial class TestLogContext : IDisposable
         {
             readonly IDisposable context;
 
-            internal TestLogContext()
+            public TestLogContext()
             {
                 Identifier = new TestLogContextIdentifier();
                 context = LogContext.PushProperty(Identifier.ToString(), null);
