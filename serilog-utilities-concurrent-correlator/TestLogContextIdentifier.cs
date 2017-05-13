@@ -8,16 +8,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator
         {
             public class TestLogContextIdentifier
             {
-                Guid guid;
+                public Guid Guid { get; }
 
                 internal TestLogContextIdentifier()
                 {
-                    guid = Guid.NewGuid();
-                }
-
-                public override string ToString()
-                {
-                    return guid.ToString();
+                    Guid = Guid.NewGuid();
                 }
             }
         }

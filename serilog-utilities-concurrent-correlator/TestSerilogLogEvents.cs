@@ -37,7 +37,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator
         {
             ThrowIfGlobalLoggerIsNotConfiguredForTesting();
 
-            return Bag.Where(logEvent => logEvent.Properties.ContainsKey(testLogContextIdentifier.ToString()));
+            return Bag.Where(logEvent => logEvent.Properties.ContainsKey(testLogContextIdentifier.Guid.ToString()));
         }
 
         static void ThrowIfGlobalLoggerIsNotConfiguredForTesting()

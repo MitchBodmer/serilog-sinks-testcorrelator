@@ -12,7 +12,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator
             public TestLogContext()
             {
                 Identifier = new TestLogContextIdentifier();
-                context = LogContext.PushProperty(Identifier.ToString(), null);
+                context = LogContext.PushProperty(Identifier.Guid.ToString(), null);
             }
 
             public TestLogContextIdentifier Identifier { get; }
