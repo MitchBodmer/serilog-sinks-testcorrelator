@@ -42,7 +42,8 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
         [Fact]
         public void
-            EstablishTestLogContext_throws_a_TestSerilogEventsNotConfiguredException_if_the_global_logger_is_not_configured_for_testing()
+            EstablishTestLogContext_throws_a_TestSerilogEventsNotConfiguredException_if_the_global_logger_is_not_configured_for_testing
+            ()
         {
             try
             {
@@ -62,21 +63,19 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
         [Fact]
         public void
-            WithTestLogContextIdentifier_throws_a_TestSerilogEventsNotConfiguredException_if_the_global_logger_is_not_configured_for_testing()
+            WithTestLogContextIdentifier_throws_a_TestSerilogEventsNotConfiguredException_if_the_global_logger_is_not_configured_for_testing
+            ()
         {
             try
             {
-                using (var context = TestSerilogLogEvents.EstablishTestLogContext())
-                {
-                    MisconfigureGlobalLoggerForTesting();
+                MisconfigureGlobalLoggerForTesting();
 
-                    Action throwingAction =
-                        () => TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Guid);
+                Action throwingAction =
+                    () => TestSerilogLogEvents.GetLogEventsWithContextIdentifier(Guid.Empty);
 
-                    throwingAction.ShouldThrow<TestSerilogEventsNotConfiguredException>()
-                        .WithMessage(
-                            "The global logger has not been configured for testing. This can either be because you did not call ConfigureGlobalLoggerForTesting, or because other code has overridden the global logger.");
-                }
+                throwingAction.ShouldThrow<TestSerilogEventsNotConfiguredException>()
+                    .WithMessage(
+                        "The global logger has not been configured for testing. This can either be because you did not call ConfigureGlobalLoggerForTesting, or because other code has overridden the global logger.");
             }
             finally
             {
