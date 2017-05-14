@@ -9,7 +9,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
     public partial class TestSerilogLogEventsTests
     {
         [Fact]
-        public void A_TestLogContext_does_enrich_LogEvents_inside_its_scope()
+        public void A_TestLogContext_does_capture_LogEvents_inside_its_scope()
         {
             using (var context = TestSerilogLogEvents.EstablishTestLogContext())
             {
@@ -20,7 +20,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        public void A_TestLogContext_does_enrich_LogEvents_inside_its_scope_even_in_extracted_methods()
+        public void A_TestLogContext_does_capture_LogEvents_inside_its_scope_even_in_extracted_methods()
         {
             using (var context = TestSerilogLogEvents.EstablishTestLogContext())
             {
@@ -36,7 +36,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        public void A_TestLogContext_does_not_enrich_LogEvents_outside_its_scope()
+        public void A_TestLogContext_does_not_capture_LogEvents_outside_its_scope()
         {
             Guid testLogContextIdentifier;
 
@@ -51,7 +51,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        public void A_TestLogContext_does_enrich_LogEvents_inside_the_same_logical_call_context()
+        public void A_TestLogContext_does_capture_LogEvents_inside_the_same_logical_call_context()
         {
             using (var context = TestSerilogLogEvents.EstablishTestLogContext())
             {
@@ -65,7 +65,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
         [Fact]
         public void
-            A_TestLogContext_does_enrich_LogEvents_inside_the_same_logical_call_context_even_when_they_are_in_tasks_started_outside_of_it()
+            A_TestLogContext_does_capture_LogEvents_inside_the_same_logical_call_context_even_when_they_are_in_tasks_started_outside_of_it()
         {
             Task logTask;
             Guid testLogContextIdentifier;
@@ -86,7 +86,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
         [Fact]
         public void
-            A_TestLogContext_does_not_enrich_LogEvents_outside_the_same_logical_call_context_even_when_they_run_concurrently()
+            A_TestLogContext_does_not_capture_LogEvents_outside_the_same_logical_call_context_even_when_they_run_concurrently()
         {
             var usingEnteredSignal = new ManualResetEvent(false);
 
@@ -120,7 +120,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
         [Fact]
         public void
-            A_TestLogContext_does_not_enrich_LogEvents_outside_the_same_logical_call_context_even_when_they_are_in_tasks_started_inside_of_it()
+            A_TestLogContext_does_not_capture_LogEvents_outside_the_same_logical_call_context_even_when_they_are_in_tasks_started_inside_of_it()
         {
             var logTask = new Task(() => { Log.Information(""); });
 
