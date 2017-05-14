@@ -1,7 +1,5 @@
 ﻿using System;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NUnit.Framework;
 using Xunit;
 
 namespace Serilog.Utilities.ConcurrentCorrelator.Tests
@@ -14,16 +12,12 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        [Test]
-        [TestMethod]
         public void After_ConfigureGlobalLoggerForTesting_is_called_the_global_logger_is_a_Logger()
         {
             Log.Logger.Should().BeOfType<Core.Logger>();
         }
 
         [Fact]
-        [Test]
-        [TestMethod]
         public void Calling_ConfigureGlobalLoggerForTesting_twice_does_not_clear_previously_collected_LogEvents()
         {
             using (var context = TestSerilogLogEvents.EstablishTestLogContext())
@@ -37,8 +31,6 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        [Test]
-        [TestMethod]
         public void Calling_ConfigureGlobalLoggerForTesting_is_idempotent()
         {
             var oldLogger = Log.Logger;
@@ -49,8 +41,6 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        [Test]
-        [TestMethod]
         public void
             EstablishTestLogContext_throws_a_TestSerilogEventsNotConfiguredException_if_the_global_logger_is_not_configured_for_testing()
         {
@@ -71,8 +61,6 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        [Test]
-        [TestMethod]
         public void
             WithTestLogContextIdentifier_throws_a_TestSerilogEventsNotConfiguredException_if_the_global_logger_is_not_configured_for_testing()
         {

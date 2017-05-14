@@ -1,7 +1,5 @@
 ﻿using System.Linq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NUnit.Framework;
 using Xunit;
 
 namespace Serilog.Utilities.ConcurrentCorrelator.Tests
@@ -9,8 +7,6 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
     public partial class TestSerilogLogEventsTests
     {
         [Fact]
-        [Test]
-        [TestMethod]
         public void GetLogEventsWithContextIdentifier_returns_empty_if_no_LogEvents_have_been_logged()
         {
             using (var context = TestSerilogLogEvents.EstablishTestLogContext())
@@ -20,8 +16,6 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        [Test]
-        [TestMethod]
         public void
             GetLogEventsWithContextIdentifier_returns_empty_if_no_LogEvents_have_been_logged_with_the_context_identifier()
         {
@@ -34,8 +28,6 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         }
 
         [Fact]
-        [Test]
-        [TestMethod]
         public void
             GetLogEventsWithContextIdentifier_returns_all_LogEvents_that_have_been_logged_with_the_context_identifier()
         {

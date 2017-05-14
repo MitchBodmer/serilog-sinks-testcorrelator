@@ -2,20 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NUnit.Framework;
 using Serilog.Events;
 using Serilog.Parsing;
 using Xunit;
 
 namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 {
-    [TestClass]
     public partial class TestSerilogLogEventsTests
     {
         [Fact]
-        [Test]
-        [TestMethod]
         public void TestSerilogEvents_allows_you_to_filter_all_LogEvents_without_the_correct_context_identifier()
         {
             Guid testLogContextIdentifier;
@@ -58,19 +53,6 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [InlineData(LogEventLevel.Fatal)]
         [InlineData(LogEventLevel.Verbose)]
         [InlineData(LogEventLevel.Warning)]
-        [TestCase(LogEventLevel.Information)]
-        [TestCase(LogEventLevel.Debug)]
-        [TestCase(LogEventLevel.Error)]
-        [TestCase(LogEventLevel.Fatal)]
-        [TestCase(LogEventLevel.Verbose)]
-        [TestCase(LogEventLevel.Warning)]
-        [DataTestMethod]
-        [DataRow(LogEventLevel.Information)]
-        [DataRow(LogEventLevel.Debug)]
-        [DataRow(LogEventLevel.Error)]
-        [DataRow(LogEventLevel.Fatal)]
-        [DataRow(LogEventLevel.Verbose)]
-        [DataRow(LogEventLevel.Warning)]
         public void TestSerilogLogEvents_receives_LogEvents_of_all_LogEventLevels(LogEventLevel logEventLevel)
         {
             using (var context = TestSerilogLogEvents.EstablishTestLogContext())
