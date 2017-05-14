@@ -10,8 +10,6 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [Fact]
         public void TestSerilogEvents_allows_you_to_filter_all_LogEvents_without_the_correct_context_identifier()
         {
-            Guid testLogContextIdentifier;
-
             Log.Information("");
             Log.Warning("");
             Log.Error("");
@@ -22,6 +20,8 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 Log.Warning("");
                 Log.Error("");
             }
+
+            Guid testLogContextIdentifier;
 
             using (var context = TestSerilogLogEvents.EstablishTestLogContext())
             {
