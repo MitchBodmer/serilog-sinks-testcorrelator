@@ -7,7 +7,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
     public partial class TestSerilogLogEventsTests
     {
         [Fact]
-        public void GetLogEventsWithContextIdentifier_returns_empty_if_no_LogEvents_have_been_logged()
+        public void GetLogEventsWithContextIdentifier_returns_empty_if_no_LogEvents_have_been_emitted()
         {
             using (var context = TestSerilogLogEvents.EstablishTestLogContext())
             {
@@ -17,7 +17,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
         [Fact]
         public void
-            GetLogEventsWithContextIdentifier_returns_empty_if_no_LogEvents_have_been_logged_with_the_context_identifier()
+            GetLogEventsWithContextIdentifier_returns_empty_if_no_LogEvents_have_been_emitted_with_the_context_identifier()
         {
             Log.Information("");
 
@@ -29,7 +29,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
         [Fact]
         public void
-            GetLogEventsWithContextIdentifier_returns_all_LogEvents_that_have_been_logged_with_the_context_identifier()
+            GetLogEventsWithContextIdentifier_returns_all_LogEvents_that_have_been_emitted_with_the_context_identifier()
         {
             using (var context = TestSerilogLogEvents.EstablishTestLogContext())
             {
