@@ -50,11 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConcurrentBagSink.cs" />
-    <Compile Include="ITestLogContextIdentifier.cs" />
     <Compile Include="LoggerSinkConfigurationExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestLogContext.cs" />
-    <Compile Include="TestLogContextIdentifier.cs" />
     <Compile Include="TestSerilogEventsNotConfiguredException.cs" />
     <Compile Include="TestSerilogLogEvents.cs" />
   </ItemGroup>

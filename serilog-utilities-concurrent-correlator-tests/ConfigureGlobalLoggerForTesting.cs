@@ -32,7 +32,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
                 TestSerilogLogEvents.ConfigureGlobalLoggerForTesting();
 
-                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Identifier).Should().ContainSingle();
+                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Guid).Should().ContainSingle();
             }
         }
 
@@ -83,7 +83,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                     MisconfigureGlobalLoggerForTesting();
 
                     Action throwingAction =
-                        () => TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Identifier);
+                        () => TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Guid);
 
                     throwingAction.ShouldThrow<TestSerilogLogEvents.TestSerilogEventsNotConfiguredException>()
                         .WithMessage(

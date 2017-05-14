@@ -15,7 +15,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         {
             using (var context = TestSerilogLogEvents.EstablishTestLogContext())
             {
-                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Identifier).Should().BeEmpty();
+                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Guid).Should().BeEmpty();
             }
         }
 
@@ -29,7 +29,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             using (var context = TestSerilogLogEvents.EstablishTestLogContext())
             {
-                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Identifier).Should().BeEmpty();
+                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Guid).Should().BeEmpty();
             }
         }
 
@@ -48,7 +48,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                     Log.Information("");
                 }
 
-                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Identifier).Should().HaveCount(expectedCount);
+                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Guid).Should().HaveCount(expectedCount);
             }
         }
     }

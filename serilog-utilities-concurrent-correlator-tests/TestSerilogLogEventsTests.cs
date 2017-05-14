@@ -18,7 +18,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [TestMethod]
         public void TestSerilogEvents_allows_you_to_filter_all_LogEvents_without_the_correct_context_identifier()
         {
-            ITestLogContextIdentifier testLogContextIdentifier;
+            Guid testLogContextIdentifier;
 
             Log.Information("");
             Log.Warning("");
@@ -37,7 +37,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 Log.Warning("");
                 Log.Error("");
 
-                testLogContextIdentifier = context.Identifier;
+                testLogContextIdentifier = context.Guid;
             }
 
             TestSerilogLogEvents.GetLogEventsWithContextIdentifier(testLogContextIdentifier)
@@ -77,7 +77,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             {
                 WriteLogEventWithLogEventLevel(logEventLevel);
 
-                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Identifier).Should().ContainSingle();
+                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Guid).Should().ContainSingle();
             }
         }
 

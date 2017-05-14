@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -18,7 +19,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             {
                 Log.Information("");
 
-                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Identifier).Should().ContainSingle();
+                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Guid).Should().ContainSingle();
             }
         }
 
@@ -31,7 +32,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             {
                 LogInformation();
 
-                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Identifier).Should().ContainSingle();
+                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Guid).Should().ContainSingle();
             }
         }
 
@@ -45,11 +46,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [TestMethod]
         public void A_TestLogContext_does_not_enrich_LogEvents_outside_its_scope()
         {
-            ITestLogContextIdentifier testLogContextIdentifier;
+            Guid testLogContextIdentifier;
 
             using (var context = TestSerilogLogEvents.EstablishTestLogContext())
             {
-                testLogContextIdentifier = context.Identifier;
+                testLogContextIdentifier = context.Guid;
             }
 
             Log.Information("");
@@ -68,7 +69,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
                 Task.WaitAll(logTask);
 
-                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Identifier).Should().ContainSingle();
+                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Guid).Should().ContainSingle();
             }
         }
 
@@ -79,13 +80,13 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             A_TestLogContext_does_enrich_LogEvents_inside_the_same_logical_call_context_even_when_they_are_in_tasks_started_outside_of_it()
         {
             Task logTask;
-            ITestLogContextIdentifier testLogContextIdentifier;
+            Guid testLogContextIdentifier;
 
             using (var context = TestSerilogLogEvents.EstablishTestLogContext())
             {
                 logTask = new Task(() => { Log.Information(""); });
 
-                testLogContextIdentifier = context.Identifier;
+                testLogContextIdentifier = context.Guid;
             }
 
             logTask.Start();
@@ -105,7 +106,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             var loggingFinishedSignal = new ManualResetEvent(false);
 
-            ITestLogContextIdentifier testLogContextIdentifier = null;
+            var testLogContextIdentifier = Guid.NewGuid();
 
             var logTask = Task.Run(() =>
             {
@@ -122,7 +123,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 {
                     usingEnteredSignal.Set();
                     loggingFinishedSignal.WaitOne();
-                    testLogContextIdentifier = context.Identifier;
+                    testLogContextIdentifier = context.Guid;
                 }
             });
 
@@ -145,7 +146,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
                 Task.WaitAll(logTask);
 
-                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Identifier).Should().BeEmpty();
+                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Guid).Should().BeEmpty();
             }
         }
 
@@ -160,11 +161,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 {
                     Log.Information("");
 
-                    TestSerilogLogEvents.GetLogEventsWithContextIdentifier(innerContext.Identifier)
+                    TestSerilogLogEvents.GetLogEventsWithContextIdentifier(innerContext.Guid)
                         .Should()
                         .ContainSingle();
 
-                    TestSerilogLogEvents.GetLogEventsWithContextIdentifier(outerContext.Identifier)
+                    TestSerilogLogEvents.GetLogEventsWithContextIdentifier(outerContext.Guid)
                         .Should()
                         .ContainSingle();
                 }

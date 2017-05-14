@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Serilog.Core;
@@ -33,11 +34,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator
             return new TestLogContext();
         }
 
-        public static IEnumerable<LogEvent> GetLogEventsWithContextIdentifier(ITestLogContextIdentifier testLogContextIdentifier)
+        public static IEnumerable<LogEvent> GetLogEventsWithContextIdentifier(Guid testLogContextIdentifier)
         {
             ThrowIfGlobalLoggerIsNotConfiguredForTesting();
 
-            return Bag.Where(logEvent => logEvent.Properties.ContainsKey(testLogContextIdentifier.Guid.ToString()));
+            return Bag.Where(logEvent => logEvent.Properties.ContainsKey(testLogContextIdentifier.ToString()));
         }
 
         static void ThrowIfGlobalLoggerIsNotConfiguredForTesting()

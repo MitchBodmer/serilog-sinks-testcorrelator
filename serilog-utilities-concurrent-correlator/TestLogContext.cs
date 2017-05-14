@@ -11,11 +11,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator
 
             public TestLogContext()
             {
-                Identifier = new TestLogContextIdentifier();
-                context = LogContext.PushProperty(Identifier.Guid.ToString(), null);
+                Guid = Guid.NewGuid();
+                context = LogContext.PushProperty(Guid.ToString(), null);
             }
 
-            public ITestLogContextIdentifier Identifier { get; }
+            public Guid Guid { get; }
 
             public void Dispose()
             {
