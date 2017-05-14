@@ -57,20 +57,10 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         {
             using (var context = TestSerilogLogEvents.EstablishTestLogContext())
             {
-                WriteLogEventWithLogEventLevel(logEventLevel);
+                Log.Write(logEventLevel, "");
 
                 TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Guid).Should().ContainSingle();
             }
-        }
-
-        static void WriteLogEventWithLogEventLevel(LogEventLevel logEventLevel)
-        {
-            Log.Write(new LogEvent(
-                DateTimeOffset.Now,
-                logEventLevel,
-                null,
-                new MessageTemplate("", Enumerable.Empty<MessageTemplateToken>()),
-                new List<LogEventProperty>()));
         }
     }
 }
