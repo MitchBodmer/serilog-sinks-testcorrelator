@@ -7,7 +7,7 @@ using Serilog.Events;
 
 namespace Serilog.Utilities.ConcurrentCorrelator
 {
-    public static partial class TestSerilogLogEvents
+    public static class TestSerilogLogEvents
     {
         static readonly ConcurrentBag<LogEvent> Bag = new ConcurrentBag<LogEvent>();
 
