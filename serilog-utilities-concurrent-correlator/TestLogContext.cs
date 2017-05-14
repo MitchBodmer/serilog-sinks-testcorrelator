@@ -3,7 +3,7 @@ using Serilog.Context;
 
 namespace Serilog.Utilities.ConcurrentCorrelator
 {
-    public class TestLogContext : IDisposable
+    class TestLogContext : ITestLogContext
     {
         readonly IDisposable context;
 

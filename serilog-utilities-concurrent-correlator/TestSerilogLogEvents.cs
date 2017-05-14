@@ -27,7 +27,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator
             Log.Logger = TestLogger;
         }
 
-        public static TestLogContext EstablishTestLogContext()
+        public static ITestLogContext EstablishTestLogContext()
         {
             ThrowIfGlobalLoggerIsNotConfiguredForTesting();
 
