@@ -58,7 +58,6 @@
     <Compile Include="TestSerilogLogEvents.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="serilog-utilities-concurrent-correlator.nuspec" />
   </ItemGroup>
