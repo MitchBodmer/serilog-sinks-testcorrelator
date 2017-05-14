@@ -15,13 +15,9 @@
       serilog
       log
       logging
-      concurrent
-      concurrency
-      thread
-      threading
-      multithreading
       unit
       test
+      testing
       unittest
       unittesting
     </tags>
