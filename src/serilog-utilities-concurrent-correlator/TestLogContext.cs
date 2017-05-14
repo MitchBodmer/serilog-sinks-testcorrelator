@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.Remoting.Messaging;
-using Serilog.Context;
 
 namespace Serilog.Utilities.ConcurrentCorrelator
 {
