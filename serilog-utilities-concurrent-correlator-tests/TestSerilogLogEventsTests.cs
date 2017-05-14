@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using FluentAssertions;
 using Serilog.Events;
-using Serilog.Parsing;
 using Xunit;
 
 namespace Serilog.Utilities.ConcurrentCorrelator.Tests
