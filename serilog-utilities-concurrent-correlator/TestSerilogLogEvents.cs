@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -9,16 +7,15 @@ namespace Serilog.Utilities.ConcurrentCorrelator
 {
     public static class TestSerilogLogEvents
     {
-        static readonly ConcurrentBag<LogEvent> Bag = new ConcurrentBag<LogEvent>();
-
         static readonly Logger TestLogger;
+
+        static readonly TestLogContextSink TestLogContextSink = new TestLogContextSink();
 
         static TestSerilogLogEvents()
         {
             TestLogger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
-                .WriteTo.ConcurrentBag(Bag)
-                .Enrich.FromLogContext()
+                .WriteTo.Sink(TestLogContextSink)
                 .CreateLogger();
         }
 
@@ -31,14 +28,14 @@ namespace Serilog.Utilities.ConcurrentCorrelator
         {
             ThrowIfGlobalLoggerIsNotConfiguredForTesting();
 
-            return new TestLogContext();
+            return TestLogContextSink.CreateTestLogContext();
         }
 
         public static IEnumerable<LogEvent> GetLogEventsWithContextIdentifier(Guid testLogContextIdentifier)
         {
             ThrowIfGlobalLoggerIsNotConfiguredForTesting();
 
-            return Bag.Where(logEvent => logEvent.Properties.ContainsKey(testLogContextIdentifier.ToString()));
+            return TestLogContextSink.GetLogEventsFromTestLogContext(testLogContextIdentifier);
         }
 
         static void ThrowIfGlobalLoggerIsNotConfiguredForTesting()

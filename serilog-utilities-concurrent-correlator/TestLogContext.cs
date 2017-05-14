@@ -1,23 +1,32 @@
 ﻿using System;
+using System.Runtime.Remoting.Messaging;
 using Serilog.Context;
 
 namespace Serilog.Utilities.ConcurrentCorrelator
 {
     class TestLogContext : ITestLogContext
     {
-        readonly IDisposable context;
-
         public TestLogContext()
         {
             Guid = Guid.NewGuid();
-            context = LogContext.PushProperty(Guid.ToString(), null);
+            EnterLogicalCallContextIntoTestLogContext();
         }
 
         public Guid Guid { get; }
 
         public void Dispose()
         {
-            context.Dispose();
+            RemoveLogicalCallContextFromTestLogContext(); 
+        }
+
+        void EnterLogicalCallContextIntoTestLogContext()
+        {
+            CallContext.LogicalSetData(Guid.ToString(), new object());
+        }
+
+        void RemoveLogicalCallContextFromTestLogContext()
+        {
+            CallContext.FreeNamedDataSlot(Guid.ToString());
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Serilog.Events;
 using Xunit;
 
 namespace Serilog.Utilities.ConcurrentCorrelator.Tests
@@ -151,6 +152,21 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                         .Should()
                         .ContainSingle();
                 }
+            }
+        }
+
+        [Fact]
+        public void A_TestLogContext_does_not_enrich_LogEvents_emitted_within_it()
+        {
+            using (var context = TestSerilogLogEvents.EstablishTestLogContext())
+            {
+                Log.Write(LogEventLevel.Information, "");
+
+                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Guid)
+                    .Should()
+                    .ContainSingle()
+                    .Which.Properties.Should()
+                    .BeEmpty();
             }
         }
     }
