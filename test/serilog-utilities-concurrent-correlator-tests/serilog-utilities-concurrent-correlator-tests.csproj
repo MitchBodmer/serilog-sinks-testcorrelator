@@ -73,6 +73,7 @@
     <Compile Include="ConfigureGlobalLoggerForTestingTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EstablishTestLogContextTests.cs" />
+    <Compile Include="TestSerilogEventsNotConfiguredExceptionTests.cs" />
     <Compile Include="TestSerilogLogEventsTests.cs" />
     <Compile Include="GetLogEventsWithContextIdentifierTests.cs" />
   </ItemGroup>

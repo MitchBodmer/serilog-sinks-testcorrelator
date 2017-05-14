@@ -51,9 +51,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
                 Action throwingAction = () => TestSerilogLogEvents.EstablishTestLogContext();
 
-                throwingAction.ShouldThrow<TestSerilogEventsNotConfiguredException>()
-                    .WithMessage(
-                        "Serilog's global logger has not been configured for testing. This can either be because you did not call ConfigureGlobalLoggerForTesting, or because other code has overwritten Logger since you did.");
+                throwingAction.ShouldThrow<TestSerilogEventsNotConfiguredException>();
             }
             finally
             {
@@ -73,9 +71,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 Action throwingAction =
                     () => TestSerilogLogEvents.GetLogEventsWithContextIdentifier(Guid.Empty);
 
-                throwingAction.ShouldThrow<TestSerilogEventsNotConfiguredException>()
-                    .WithMessage(
-                        "Serilog's global logger has not been configured for testing. This can either be because you did not call ConfigureGlobalLoggerForTesting, or because other code has overwritten Logger since you did.");
+                throwingAction.ShouldThrow<TestSerilogEventsNotConfiguredException>();
             }
             finally
             {
