@@ -71,7 +71,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigureGlobalLoggerForTesting.cs" />
+    <Compile Include="ConfigureGlobalLoggerForTestingTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EstablishTestLogContextTests.cs" />
     <Compile Include="TestSerilogLogEventsTests.cs" />
