@@ -5,7 +5,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator
 {
     public static partial class TestSerilogLogEvents
     {
-        partial class TestLogContext : IDisposable
+        public class TestLogContext : IDisposable
         {
             readonly IDisposable context;
 

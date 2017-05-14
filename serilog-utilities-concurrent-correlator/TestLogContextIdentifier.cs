@@ -2,19 +2,13 @@
 
 namespace Serilog.Utilities.ConcurrentCorrelator
 {
-    public static partial class TestSerilogLogEvents
+    class TestLogContextIdentifier : ITestLogContextIdentifier
     {
-        public partial class TestLogContext
-        {
-            class TestLogContextIdentifier : ITestLogContextIdentifier
-            {
-                public Guid Guid { get; }
+        public Guid Guid { get; }
 
-                internal TestLogContextIdentifier()
-                {
-                    Guid = Guid.NewGuid();
-                }
-            }
+        public TestLogContextIdentifier()
+        {
+            Guid = Guid.NewGuid();
         }
     }
 }
