@@ -1,5 +1,6 @@
 ﻿using System;
 using FluentAssertions;
+using Serilog.Context;
 using Serilog.Events;
 using Xunit;
 
@@ -57,6 +58,26 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 Log.Write(logEventLevel, "");
 
                 TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Guid).Should().ContainSingle();
+            }
+        }
+
+        [Fact]
+        public void TestSerilogLogEvents_enriches_LogEvents_from_LogContext()
+        {
+            using (var context = TestSerilogLogEvents.EstablishTestLogContext())
+            {
+                const string propertyName = "Property name";
+
+                using (LogContext.PushProperty(propertyName, new object()))
+                {
+                    Log.Information("");
+                }
+
+                TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Guid)
+                    .Should()
+                    .ContainSingle()
+                    .Which.Properties.Keys.Should()
+                    .ContainSingle(key => key == propertyName);
             }
         }
     }

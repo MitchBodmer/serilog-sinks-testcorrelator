@@ -16,6 +16,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator
             TestLogger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .WriteTo.Sink(TestLogContextSink)
+                .Enrich.FromLogContext()
                 .CreateLogger();
         }
 
