@@ -6,7 +6,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator
     {
         public partial class TestLogContext
         {
-            public class TestLogContextIdentifier
+            class TestLogContextIdentifier : ITestLogContextIdentifier
             {
                 public Guid Guid { get; }
 

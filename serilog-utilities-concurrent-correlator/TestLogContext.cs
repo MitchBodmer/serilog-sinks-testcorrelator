@@ -15,7 +15,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator
                 context = LogContext.PushProperty(Identifier.Guid.ToString(), null);
             }
 
-            public TestLogContextIdentifier Identifier { get; }
+            public ITestLogContextIdentifier Identifier { get; }
 
             public void Dispose()
             {

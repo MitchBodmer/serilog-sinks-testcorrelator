@@ -33,7 +33,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator
             return new TestLogContext();
         }
 
-        public static IEnumerable<LogEvent> GetLogEventsWithContextIdentifier(TestLogContext.TestLogContextIdentifier testLogContextIdentifier)
+        public static IEnumerable<LogEvent> GetLogEventsWithContextIdentifier(ITestLogContextIdentifier testLogContextIdentifier)
         {
             ThrowIfGlobalLoggerIsNotConfiguredForTesting();
 
