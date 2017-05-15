@@ -44,7 +44,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 .HaveCount(3);
         }
 
-        [Xunit.Theory]
+        [Theory]
         [InlineData(LogEventLevel.Information)]
         [InlineData(LogEventLevel.Debug)]
         [InlineData(LogEventLevel.Error)]
