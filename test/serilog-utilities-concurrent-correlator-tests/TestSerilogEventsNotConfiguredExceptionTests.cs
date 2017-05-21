@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Xunit;
 
 namespace Serilog.Utilities.ConcurrentCorrelator.Tests
