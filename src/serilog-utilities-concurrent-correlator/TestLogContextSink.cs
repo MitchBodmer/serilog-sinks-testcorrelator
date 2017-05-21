@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Messaging;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -15,16 +14,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator
         {
             foreach (var guid in testLogContextGuidBags.Keys)
             {
-                if (IsLogicalCallContextWithin(guid))
+                if (LogicalCallContext.Contains(guid))
                 {
                     testLogContextGuidBags[guid].Add(logEvent);
                 }
             }
-        }
-
-        static bool IsLogicalCallContextWithin(Guid testLogContextGuid)
-        {
-            return CallContext.LogicalGetData(testLogContextGuid.ToString()) != null;
         }
 
         public TestLogContext CreateTestLogContext()

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Remoting.Messaging;
 
 namespace Serilog.Utilities.ConcurrentCorrelator
 {
@@ -8,24 +7,14 @@ namespace Serilog.Utilities.ConcurrentCorrelator
         public TestLogContext()
         {
             Guid = Guid.NewGuid();
-            EnterLogicalCallContextIntoTestLogContext();
+            LogicalCallContext.Add(Guid);
         }
 
         public Guid Guid { get; }
 
         public void Dispose()
         {
-            RemoveLogicalCallContextFromTestLogContext(); 
-        }
-
-        void EnterLogicalCallContextIntoTestLogContext()
-        {
-            CallContext.LogicalSetData(Guid.ToString(), new object());
-        }
-
-        void RemoveLogicalCallContextFromTestLogContext()
-        {
-            CallContext.FreeNamedDataSlot(Guid.ToString());
+            LogicalCallContext.Remove(Guid);
         }
     }
 }
