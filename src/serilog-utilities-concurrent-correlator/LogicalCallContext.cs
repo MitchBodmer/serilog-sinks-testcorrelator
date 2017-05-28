@@ -19,41 +19,35 @@ namespace Serilog.Utilities.ConcurrentCorrelator
         public static void Add(Guid guid)
         {
 #if ASYNCLOCAL
-            GuidAsyncLocal.Value = GetOrCreateGuids().Add(guid);
+            GuidAsyncLocal.Value = GetOrCreateGuidList().Add(guid);
 #elif REMOTING
-            CallContext.LogicalSetData(DataSlotName, GetOrCreateGuids().Add(guid));
+            CallContext.LogicalSetData(DataSlotName, GetOrCreateGuidList().Add(guid));
 #endif
         }
 
         public static void Remove(Guid guid)
         {
 #if ASYNCLOCAL
-            GuidAsyncLocal.Value = GuidAsyncLocal.Value.Remove(guid);
+            GuidAsyncLocal.Value = GetOrCreateGuidList().Remove(guid);
 #elif REMOTING
-            CallContext.LogicalSetData(DataSlotName, GetOrCreateGuids().Remove(guid));
+            CallContext.LogicalSetData(DataSlotName, GetOrCreateGuidList().Remove(guid));
 #endif
         }
 
         public static bool Contains(Guid guid)
         {
-#if ASYNCLOCAL
-            return GuidAsyncLocal.Value.Contains(guid);
-#elif REMOTING
-            if (CallContext.LogicalGetData(DataSlotName) is ImmutableList<Guid> guids)
-            {
-                return guids.Contains(guid);
-            }
-            return false;
-#endif
+            return GetOrCreateGuidList().Contains(guid);
         }
 
-        static ImmutableList<Guid> GetOrCreateGuids()
+        static ImmutableList<Guid> GetOrCreateGuidList()
         {
+            return 
 #if ASYNCLOCAL
-            return GuidAsyncLocal.Value ?? ImmutableList<Guid>.Empty;
+                GuidAsyncLocal.Value ??
 #elif REMOTING
-            return CallContext.LogicalGetData(DataSlotName) as ImmutableList<Guid> ?? ImmutableList<Guid>.Empty;
+                CallContext.LogicalGetData(DataSlotName) as ImmutableList<Guid> ??
 #endif
+                ImmutableList<Guid>.Empty;
         }
     }
 }
