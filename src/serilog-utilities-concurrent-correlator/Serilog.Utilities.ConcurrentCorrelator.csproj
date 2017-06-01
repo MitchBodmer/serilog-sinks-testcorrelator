@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net45;netstandard1.3</TargetFrameworks>
+    <Authors>Microsoft</Authors>
+    <PackageLicenseUrl>https://github.com/Microsoft/serilog-utilities-concurrent-correlator/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/Microsoft/serilog-utilities-concurrent-correlator</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Microsoft/serilog-utilities-concurrent-correlator</RepositoryUrl>
+    <PackageTags>serilog;log;logging;unit;test;testing;unittest;unittesting</PackageTags>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Description>A library for unit testing Serilog log events in concurrent testing frameworks.</Description>
+    <Copyright>Copyright © 2017 Microsoft</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog" Version="2.4.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.3.1" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <DefineConstants>$(DefineConstants);REMOTING</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+    <DefineConstants>$(DefineConstants);ASYNCLOCAL</DefineConstants>
+  </PropertyGroup>
+
+</Project>

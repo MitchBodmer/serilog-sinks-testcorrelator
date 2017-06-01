@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp1.1;net452;net46</TargetFrameworks>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\serilog-utilities-concurrent-correlator\serilog-utilities-concurrent-correlator.csproj" />
+    <ProjectReference Include="..\..\src\serilog-utilities-concurrent-correlator\Serilog.Utilities.ConcurrentCorrelator.csproj" />
   </ItemGroup>
 
   <ItemGroup>

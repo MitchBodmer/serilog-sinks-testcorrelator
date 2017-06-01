@@ -16,9 +16,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6AC3F0B2-2B3
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{CEDC90DD-9FFB-4D0E-89AE-BCAE2C285408}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "serilog-utilities-concurrent-correlator", "src\serilog-utilities-concurrent-correlator\serilog-utilities-concurrent-correlator.csproj", "{47342F39-68C4-4AD8-A5C5-B5DDAA71F6ED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Utilities.ConcurrentCorrelator", "src\serilog-utilities-concurrent-correlator\Serilog.Utilities.ConcurrentCorrelator.csproj", "{47342F39-68C4-4AD8-A5C5-B5DDAA71F6ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "serilog-utilities-concurrent-correlator-tests", "test\serilog-utilities-concurrent-correlator-tests\serilog-utilities-concurrent-correlator-tests.csproj", "{ADC5553D-FECB-466D-9748-19FB6CF2882A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Utilities.ConcurrentCorrelator.Tests", "test\serilog-utilities-concurrent-correlator-tests\Serilog.Utilities.ConcurrentCorrelator.Tests.csproj", "{ADC5553D-FECB-466D-9748-19FB6CF2882A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
