@@ -3,13 +3,13 @@ image: Visual Studio 2017
 configuration: Release
 platform: Any CPU
 before_build:
-- 'dotnet restore'
+- dotnet restore
 build_script:
-- 'dotnet build /p:Version={version}'
+- dotnet build /p:Version=%APPVEYOR_BUILD_VERSION%
 artifacts:
-- path: '**\*.nupkg'
+- path: **\*.nupkg
 test_script:
-- 'dotnet test .\test\serilog-utilities-concurrent-correlator-tests\Serilog.Utilities.ConcurrentCorrelator.Tests.csproj --no-build'
+- dotnet test .\test\serilog-utilities-concurrent-correlator-tests\Serilog.Utilities.ConcurrentCorrelator.Tests.csproj --no-build
 deploy:
 - provider: NuGet
   api_key:
