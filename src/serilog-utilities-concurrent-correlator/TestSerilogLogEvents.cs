@@ -9,13 +9,13 @@ namespace Serilog.Utilities.ConcurrentCorrelator
     {
         static readonly Logger TestLogger;
 
-        static readonly TestLogContextSink TestLogContextSink = new TestLogContextSink();
+        static readonly TestCorrelationContextSink TestCorrelationContextSink = new TestCorrelationContextSink();
 
         static TestSerilogLogEvents()
         {
             TestLogger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
-                .WriteTo.Sink(TestLogContextSink)
+                .WriteTo.Sink(TestCorrelationContextSink)
                 .Enrich.FromLogContext()
                 .CreateLogger();
         }
@@ -25,18 +25,18 @@ namespace Serilog.Utilities.ConcurrentCorrelator
             Log.Logger = TestLogger;
         }
 
-        public static ITestLogContext EstablishTestLogContext()
+        public static ITestCorrelationContext CreateTestCorrelationContext()
         {
             ThrowIfGlobalLoggerIsNotConfiguredForTesting();
 
-            return TestLogContextSink.CreateTestLogContext();
+            return TestCorrelationContextSink.CreateTestCorrelationContext();
         }
 
-        public static IEnumerable<LogEvent> GetLogEventsWithContextIdentifier(Guid testLogContextIdentifier)
+        public static IEnumerable<LogEvent> GetLogEventsFromTestCorrelationContext(Guid testCorrelationContextGuid)
         {
             ThrowIfGlobalLoggerIsNotConfiguredForTesting();
 
-            return TestLogContextSink.GetLogEventsFromTestLogContext(testLogContextIdentifier);
+            return TestCorrelationContextSink.GetLogEventsFromTestCorrelationContext(testCorrelationContextGuid);
         }
 
         static void ThrowIfGlobalLoggerIsNotConfiguredForTesting()

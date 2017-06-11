@@ -2,7 +2,7 @@
 
 namespace Serilog.Utilities.ConcurrentCorrelator
 {
-    public interface ITestLogContext : IDisposable
+    public interface ITestCorrelationContext : IDisposable
     {
         Guid Guid { get; }
     }
