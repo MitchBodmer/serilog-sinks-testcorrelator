@@ -22,7 +22,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 Log.Error("");
             }
 
-            Guid testCorrelationContextIdentifier;
+            Guid testCorrelationContextGuid;
 
             using (var context = TestSerilogLogEvents.CreateTestCorrelationContext())
             {
@@ -30,10 +30,10 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 Log.Warning("");
                 Log.Error("");
 
-                testCorrelationContextIdentifier = context.Guid;
+                testCorrelationContextGuid = context.Guid;
             }
 
-            TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(testCorrelationContextIdentifier)
+            TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(testCorrelationContextGuid)
                 .Should()
                 .Contain(logEvent => logEvent.Level == LogEventLevel.Information)
                 .And
