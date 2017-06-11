@@ -9,7 +9,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
     public partial class TestSerilogLogEventsTests
     {
         [Fact]
-        public void TestSerilogEvents_allows_you_to_filter_all_LogEvents_without_the_correct_context_identifier()
+        public void TestSerilogLogEvents_allows_you_to_filter_all_LogEvents_without_the_correct_context_identifier()
         {
             Log.Information("");
             Log.Warning("");
