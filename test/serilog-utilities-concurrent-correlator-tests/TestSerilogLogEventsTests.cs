@@ -9,7 +9,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
     public partial class TestSerilogLogEventsTests
     {
         [Fact]
-        public void TestSerilogLogEvents_allows_you_to_filter_all_LogEvents_without_the_correct_context_identifier()
+        public void TestSerilogLogEvents_allows_you_to_filter_to_LogEvents_emitted_within_a_context()
         {
             Log.Information("");
             Log.Warning("");
@@ -35,12 +35,9 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(testCorrelationContextGuid)
                 .Should()
-                .Contain(logEvent => logEvent.Level == LogEventLevel.Information)
-                .And
-                .Contain(logEvent => logEvent.Level == LogEventLevel.Warning)
-                .And
-                .Contain(logEvent => logEvent.Level == LogEventLevel.Error)
-                .And
+                .ContainSingle(logEvent => logEvent.Level == LogEventLevel.Information).And
+                .ContainSingle(logEvent => logEvent.Level == LogEventLevel.Warning).And
+                .ContainSingle(logEvent => logEvent.Level == LogEventLevel.Error).And
                 .HaveCount(3);
         }
 
