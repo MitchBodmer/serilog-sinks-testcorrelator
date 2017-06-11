@@ -20,7 +20,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator
                 .CreateLogger();
         }
 
-        public static void ConfigureGlobalLoggerForTesting()
+        public static void ConfigureGlobalLoggerForTestCorrelation()
         {
             Log.Logger = TestLogger;
         }
@@ -43,7 +43,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator
         {
             if (!GlobalLoggerIsConfiguredForTesting())
             {
-                throw new TestSerilogEventsNotConfiguredException();
+                throw new GlobalLoggerNotConfiguredForTestCorrelationException();
             }
         }
 
