@@ -1,17 +1,18 @@
 ﻿using System.Linq;
 using FluentAssertions;
+using Serilog;
 using Xunit;
 
-namespace Serilog.Utilities.ConcurrentCorrelator.Tests
+namespace SerilogTestCorrelation.Tests
 {
-    public partial class TestSerilogLogEventsTests
+    public partial class SerilogTestCorrelatorTests
     {
         [Fact]
         public void GetLogEventsFromTestCorrelationContext_returns_empty_if_no_LogEvents_have_been_emitted()
         {
-            using (var context = TestSerilogLogEvents.CreateTestCorrelationContext())
+            using (var context = SerilogTestCorrelator.CreateTestCorrelationContext())
             {
-                TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(context.Guid).Should().BeEmpty();
+                 SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(context.Guid).Should().BeEmpty();
             }
         }
 
@@ -21,9 +22,9 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         {
             Log.Information("");
 
-            using (var context = TestSerilogLogEvents.CreateTestCorrelationContext())
+            using (var context =  SerilogTestCorrelator.CreateTestCorrelationContext())
             {
-                TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(context.Guid).Should().BeEmpty();
+                 SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(context.Guid).Should().BeEmpty();
             }
         }
 
@@ -31,7 +32,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         public void
             GetLogEventsFromTestCorrelationContext_returns_all_LogEvents_that_have_been_emitted_within_the_context()
         {
-            using (var context = TestSerilogLogEvents.CreateTestCorrelationContext())
+            using (var context =  SerilogTestCorrelator.CreateTestCorrelationContext())
             {
                 const int expectedCount = 4;
 
@@ -40,7 +41,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                     Log.Information("");
                 }
 
-                TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(context.Guid).Should().HaveCount(expectedCount);
+                 SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(context.Guid).Should().HaveCount(expectedCount);
             }
         }
     }

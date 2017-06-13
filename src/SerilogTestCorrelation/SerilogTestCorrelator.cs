@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Serilog.Utilities.ConcurrentCorrelator
+namespace SerilogTestCorrelation
 {
-    public static class TestSerilogLogEvents
+    public static class SerilogTestCorrelator
     {
         static readonly Logger TestLogger;
 
         static readonly TestCorrelationContextSink TestCorrelationContextSink = new TestCorrelationContextSink();
 
-        static TestSerilogLogEvents()
+        static SerilogTestCorrelator()
         {
             TestLogger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()

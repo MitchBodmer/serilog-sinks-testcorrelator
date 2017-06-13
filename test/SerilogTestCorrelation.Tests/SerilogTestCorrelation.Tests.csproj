@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\serilog-utilities-concurrent-correlator\Serilog.Utilities.ConcurrentCorrelator.csproj" />
+    <ProjectReference Include="..\..\src\SerilogTestCorrelation\SerilogTestCorrelation.csproj" />
   </ItemGroup>
 
   <ItemGroup>

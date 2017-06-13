@@ -1,21 +1,22 @@
 ﻿using System;
 using FluentAssertions;
+using Serilog;
 using Serilog.Context;
 using Serilog.Events;
 using Xunit;
 
-namespace Serilog.Utilities.ConcurrentCorrelator.Tests
+namespace SerilogTestCorrelation.Tests
 {
-    public partial class TestSerilogLogEventsTests
+    public partial class SerilogTestCorrelatorTests
     {
         [Fact]
-        public void TestSerilogLogEvents_allows_you_to_filter_to_LogEvents_emitted_within_a_context()
+        public void SerilogTestCorrelator_allows_you_to_filter_to_LogEvents_emitted_within_a_context()
         {
             Log.Information("");
             Log.Warning("");
             Log.Error("");
 
-            using (TestSerilogLogEvents.CreateTestCorrelationContext())
+            using (SerilogTestCorrelator.CreateTestCorrelationContext())
             {
                 Log.Information("");
                 Log.Warning("");
@@ -24,7 +25,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             Guid testCorrelationContextGuid;
 
-            using (var context = TestSerilogLogEvents.CreateTestCorrelationContext())
+            using (var context = SerilogTestCorrelator.CreateTestCorrelationContext())
             {
                 Log.Information("");
                 Log.Warning("");
@@ -33,7 +34,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 testCorrelationContextGuid = context.Guid;
             }
 
-            TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(testCorrelationContextGuid)
+            SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(testCorrelationContextGuid)
                 .Should()
                 .ContainSingle(logEvent => logEvent.Level == LogEventLevel.Information).And
                 .ContainSingle(logEvent => logEvent.Level == LogEventLevel.Warning).And
@@ -48,20 +49,20 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [InlineData(LogEventLevel.Fatal)]
         [InlineData(LogEventLevel.Verbose)]
         [InlineData(LogEventLevel.Warning)]
-        public void TestSerilogLogEvents_receives_LogEvents_of_all_LogEventLevels(LogEventLevel logEventLevel)
+        public void SerilogTestCorrelator_receives_LogEvents_of_all_LogEventLevels(LogEventLevel logEventLevel)
         {
-            using (var context = TestSerilogLogEvents.CreateTestCorrelationContext())
+            using (var context = SerilogTestCorrelator.CreateTestCorrelationContext())
             {
                 Log.Write(logEventLevel, "");
 
-                TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(context.Guid).Should().ContainSingle();
+                SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(context.Guid).Should().ContainSingle();
             }
         }
 
         [Fact]
-        public void TestSerilogLogEvents_enriches_LogEvents_from_LogContext()
+        public void SerilogTestCorrelator_enriches_LogEvents_from_LogContext()
         {
-            using (var context = TestSerilogLogEvents.CreateTestCorrelationContext())
+            using (var context = SerilogTestCorrelator.CreateTestCorrelationContext())
             {
                 const string propertyName = "Property name";
 
@@ -70,7 +71,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                     Log.Information("");
                 }
 
-                TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(context.Guid)
+                SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(context.Guid)
                     .Should()
                     .ContainSingle()
                     .Which.Properties.Keys.Should()

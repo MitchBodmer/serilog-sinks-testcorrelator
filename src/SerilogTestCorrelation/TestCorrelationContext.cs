@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Serilog.Utilities.ConcurrentCorrelator
+namespace SerilogTestCorrelation
 {
     class TestCorrelationContext : ITestCorrelationContext
     {

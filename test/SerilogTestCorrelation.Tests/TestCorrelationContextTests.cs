@@ -2,32 +2,33 @@
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Serilog;
 using Serilog.Events;
 using Xunit;
 
-namespace Serilog.Utilities.ConcurrentCorrelator.Tests
+namespace SerilogTestCorrelation.Tests
 {
-    public partial class TestSerilogLogEventsTests
+    public partial class SerilogTestCorrelatorTests
     {
         [Fact]
         public void A_TestCorrelationContext_does_capture_LogEvents_inside_its_scope()
         {
-            using (var context = TestSerilogLogEvents.CreateTestCorrelationContext())
+            using (var context = SerilogTestCorrelator.CreateTestCorrelationContext())
             {
                 Log.Information("");
 
-                TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(context.Guid).Should().ContainSingle();
+                SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(context.Guid).Should().ContainSingle();
             }
         }
 
         [Fact]
         public void A_TestCorrelationContext_does_capture_LogEvents_inside_its_scope_even_in_extracted_methods()
         {
-            using (var context = TestSerilogLogEvents.CreateTestCorrelationContext())
+            using (var context = SerilogTestCorrelator.CreateTestCorrelationContext())
             {
                 LogInformation();
 
-                TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(context.Guid).Should().ContainSingle();
+                SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(context.Guid).Should().ContainSingle();
             }
         }
 
@@ -41,26 +42,26 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         {
             Guid testCorrelationContextGuid;
 
-            using (var context = TestSerilogLogEvents.CreateTestCorrelationContext())
+            using (var context = SerilogTestCorrelator.CreateTestCorrelationContext())
             {
                 testCorrelationContextGuid = context.Guid;
             }
 
             Log.Information("");
 
-            TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(testCorrelationContextGuid).Should().BeEmpty();
+            SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(testCorrelationContextGuid).Should().BeEmpty();
         }
 
         [Fact]
         public void A_TestCorrelationContext_does_capture_LogEvents_inside_the_same_logical_call_context()
         {
-            using (var context = TestSerilogLogEvents.CreateTestCorrelationContext())
+            using (var context = SerilogTestCorrelator.CreateTestCorrelationContext())
             {
                 var logTask = Task.Run(() => { Log.Information(""); });
 
                 Task.WaitAll(logTask);
 
-                TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(context.Guid).Should().ContainSingle();
+                SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(context.Guid).Should().ContainSingle();
             }
         }
 
@@ -71,7 +72,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             Task logTask;
             Guid testCorrelationContextGuid;
 
-            using (var context = TestSerilogLogEvents.CreateTestCorrelationContext())
+            using (var context = SerilogTestCorrelator.CreateTestCorrelationContext())
             {
                 logTask = new Task(() => { Log.Information(""); });
 
@@ -82,7 +83,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             Task.WaitAll(logTask);
 
-            TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(testCorrelationContextGuid).Should().ContainSingle();
+            SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(testCorrelationContextGuid).Should().ContainSingle();
         }
 
         [Fact]
@@ -106,7 +107,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             var logContextTask = Task.Run(() =>
             {
-                using (var context = TestSerilogLogEvents.CreateTestCorrelationContext())
+                using (var context = SerilogTestCorrelator.CreateTestCorrelationContext())
                 {
                     usingEnteredSignal.Set();
                     loggingFinishedSignal.WaitOne();
@@ -116,7 +117,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
 
             Task.WaitAll(logTask, logContextTask);
 
-            TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(testCorrelationContextGuid).Should().BeEmpty();
+            SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(testCorrelationContextGuid).Should().BeEmpty();
         }
 
         [Fact]
@@ -125,30 +126,30 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         {
             var logTask = new Task(() => { Log.Information(""); });
 
-            using (var context = TestSerilogLogEvents.CreateTestCorrelationContext())
+            using (var context = SerilogTestCorrelator.CreateTestCorrelationContext())
             {
                 logTask.Start();
 
                 Task.WaitAll(logTask);
 
-                TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(context.Guid).Should().BeEmpty();
+                SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(context.Guid).Should().BeEmpty();
             }
         }
 
         [Fact]
         public void A_TestCorrelationContext_within_a_TestCorrelationContext_adds_an_additional_TestCorrelationContext_to_LogEvents()
         {
-            using (var outerContext = TestSerilogLogEvents.CreateTestCorrelationContext())
+            using (var outerContext = SerilogTestCorrelator.CreateTestCorrelationContext())
             {
-                using (var innerContext = TestSerilogLogEvents.CreateTestCorrelationContext())
+                using (var innerContext = SerilogTestCorrelator.CreateTestCorrelationContext())
                 {
                     Log.Information("");
 
-                    TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(innerContext.Guid)
+                    SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(innerContext.Guid)
                         .Should()
                         .ContainSingle();
 
-                    TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(outerContext.Guid)
+                    SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(outerContext.Guid)
                         .Should()
                         .ContainSingle();
                 }
@@ -158,11 +159,11 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         [Fact]
         public void A_TestCorrelationContext_does_not_enrich_LogEvents_emitted_within_it()
         {
-            using (var context = TestSerilogLogEvents.CreateTestCorrelationContext())
+            using (var context = SerilogTestCorrelator.CreateTestCorrelationContext())
             {
                 Log.Write(LogEventLevel.Information, "");
 
-                TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(context.Guid)
+                SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(context.Guid)
                     .Should()
                     .ContainSingle()
                     .Which.Properties.Should()

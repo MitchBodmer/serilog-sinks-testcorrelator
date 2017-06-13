@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{22CF5E35-E44D-4570-B7C0-37A75D8A5D0B}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		appveyor.yml = appveyor.yml
+		LICENSE = LICENSE
+		NuGet.Config = NuGet.Config
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6AC3F0B2-2B32-43AB-B122-45D134A1C1A2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{CEDC90DD-9FFB-4D0E-89AE-BCAE2C285408}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SerilogTestCorrelation", "src\SerilogTestCorrelation\SerilogTestCorrelation.csproj", "{A0A8ED49-6F73-4A24-B81C-A6131F3951E8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SerilogTestCorrelation.Tests", "test\SerilogTestCorrelation.Tests\SerilogTestCorrelation.Tests.csproj", "{1CEA9540-B31C-4D07-B444-92C744CE0927}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A0A8ED49-6F73-4A24-B81C-A6131F3951E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0A8ED49-6F73-4A24-B81C-A6131F3951E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0A8ED49-6F73-4A24-B81C-A6131F3951E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0A8ED49-6F73-4A24-B81C-A6131F3951E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CEA9540-B31C-4D07-B444-92C744CE0927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CEA9540-B31C-4D07-B444-92C744CE0927}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CEA9540-B31C-4D07-B444-92C744CE0927}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CEA9540-B31C-4D07-B444-92C744CE0927}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A0A8ED49-6F73-4A24-B81C-A6131F3951E8} = {6AC3F0B2-2B32-43AB-B122-45D134A1C1A2}
+		{1CEA9540-B31C-4D07-B444-92C744CE0927} = {CEDC90DD-9FFB-4D0E-89AE-BCAE2C285408}
+	EndGlobalSection
+EndGlobal

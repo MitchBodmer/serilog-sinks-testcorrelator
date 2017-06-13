@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Xunit;
 
-namespace Serilog.Utilities.ConcurrentCorrelator.Tests
+namespace SerilogTestCorrelation.Tests
 {
     public class GlobalLoggerNotConfiguredForTestCorrelationExceptionTests
     {

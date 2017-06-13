@@ -1,32 +1,33 @@
 ﻿using System;
 using FluentAssertions;
+using Serilog;
 using Xunit;
 
-namespace Serilog.Utilities.ConcurrentCorrelator.Tests
+namespace SerilogTestCorrelation.Tests
 {
-    public partial class TestSerilogLogEventsTests
+    public partial class SerilogTestCorrelatorTests
     {
-        public TestSerilogLogEventsTests()
+        public SerilogTestCorrelatorTests()
         {
-            TestSerilogLogEvents.ConfigureGlobalLoggerForTestCorrelation();
+            SerilogTestCorrelator.ConfigureGlobalLoggerForTestCorrelation();
         }
 
         [Fact]
         public void After_ConfigureGlobalLoggerForTestCorrelation_is_called_the_global_logger_is_a_Logger()
         {
-            Log.Logger.Should().BeOfType<Core.Logger>();
+            Log.Logger.Should().BeOfType<Serilog.Core.Logger>();
         }
 
         [Fact]
         public void Calling_ConfigureGlobalLoggerForTestCorrelation_twice_does_not_clear_previously_collected_LogEvents()
         {
-            using (var context = TestSerilogLogEvents.CreateTestCorrelationContext())
+            using (var context = SerilogTestCorrelator.CreateTestCorrelationContext())
             {
                 Log.Information("");
 
-                TestSerilogLogEvents.ConfigureGlobalLoggerForTestCorrelation();
+                SerilogTestCorrelator.ConfigureGlobalLoggerForTestCorrelation();
 
-                TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(context.Guid).Should().ContainSingle();
+                SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(context.Guid).Should().ContainSingle();
             }
         }
 
@@ -35,7 +36,7 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
         {
             var oldLogger = Log.Logger;
 
-            TestSerilogLogEvents.ConfigureGlobalLoggerForTestCorrelation();
+            SerilogTestCorrelator.ConfigureGlobalLoggerForTestCorrelation();
 
             Log.Logger.Should().Be(oldLogger);
         }
@@ -49,13 +50,13 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
             {
                 MisconfigureGlobalLoggerForTesting();
 
-                Action throwingAction = () => TestSerilogLogEvents.CreateTestCorrelationContext();
+                Action throwingAction = () => SerilogTestCorrelator.CreateTestCorrelationContext();
 
                 throwingAction.ShouldThrow<GlobalLoggerNotConfiguredForTestCorrelationException>();
             }
             finally
             {
-                TestSerilogLogEvents.ConfigureGlobalLoggerForTestCorrelation();
+                SerilogTestCorrelator.ConfigureGlobalLoggerForTestCorrelation();
             }
         }
 
@@ -69,13 +70,13 @@ namespace Serilog.Utilities.ConcurrentCorrelator.Tests
                 MisconfigureGlobalLoggerForTesting();
 
                 Action throwingAction =
-                    () => TestSerilogLogEvents.GetLogEventsFromTestCorrelationContext(Guid.Empty);
+                    () => SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(Guid.Empty);
 
                 throwingAction.ShouldThrow<GlobalLoggerNotConfiguredForTestCorrelationException>();
             }
             finally
             {
-                TestSerilogLogEvents.ConfigureGlobalLoggerForTestCorrelation();
+                SerilogTestCorrelator.ConfigureGlobalLoggerForTestCorrelation();
             }
         }
 
