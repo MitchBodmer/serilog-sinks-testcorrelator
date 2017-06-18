@@ -13,7 +13,7 @@ namespace SerilogTestCorrelation.Tests
         }
 
         [Fact]
-        public void After_ConfigureGlobalLoggerForTestCorrelation_is_called_the_global_logger_is_a_Logger()
+        public void After_calling_ConfigureGlobalLoggerForTestCorrelation_the_global_logger_is_a_Logger()
         {
             Log.Logger.Should().BeOfType<Serilog.Core.Logger>();
         }
@@ -43,12 +43,12 @@ namespace SerilogTestCorrelation.Tests
 
         [Fact]
         public void
-            CreateTestCorrelationContext_throws_a_GlobalLoggerNotConfiguredForTestCorrelationException_if_the_global_logger_is_not_configured_for_testing
+            Calling_CreateTestCorrelationContext_throws_a_GlobalLoggerNotConfiguredForTestCorrelationException_if_the_global_logger_is_not_configured_for_test_correlation
             ()
         {
             try
             {
-                MisconfigureGlobalLoggerForTesting();
+                MisconfigureGlobalLoggerForTestCorrelation();
 
                 Action throwingAction = () => SerilogTestCorrelator.CreateTestCorrelationContext();
 
@@ -62,12 +62,12 @@ namespace SerilogTestCorrelation.Tests
 
         [Fact]
         public void
-            GetLogEventsFromTestCorrelationContext_throws_a_GlobalLoggerNotConfiguredForTestCorrelationException_if_the_global_logger_is_not_configured_for_testing
+            Calling_GetLogEventsFromTestCorrelationContext_throws_a_GlobalLoggerNotConfiguredForTestCorrelationException_if_the_global_logger_is_not_configured_for_test_correlation
             ()
         {
             try
             {
-                MisconfigureGlobalLoggerForTesting();
+                MisconfigureGlobalLoggerForTestCorrelation();
 
                 Action throwingAction =
                     () => SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(Guid.Empty);
@@ -80,7 +80,7 @@ namespace SerilogTestCorrelation.Tests
             }
         }
 
-        static void MisconfigureGlobalLoggerForTesting()
+        static void MisconfigureGlobalLoggerForTestCorrelation()
         {
             Log.Logger = new LoggerConfiguration().CreateLogger();
         }

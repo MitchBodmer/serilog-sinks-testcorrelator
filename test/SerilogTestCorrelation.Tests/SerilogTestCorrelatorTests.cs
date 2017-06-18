@@ -35,11 +35,10 @@ namespace SerilogTestCorrelation.Tests
             }
 
             SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(testCorrelationContextGuid)
-                .Should()
-                .ContainSingle(logEvent => logEvent.Level == LogEventLevel.Information).And
-                .ContainSingle(logEvent => logEvent.Level == LogEventLevel.Warning).And
-                .ContainSingle(logEvent => logEvent.Level == LogEventLevel.Error).And
-                .HaveCount(3);
+                .Should().ContainSingle(logEvent => logEvent.Level == LogEventLevel.Information)
+                .And.ContainSingle(logEvent => logEvent.Level == LogEventLevel.Warning)
+                .And.ContainSingle(logEvent => logEvent.Level == LogEventLevel.Error)
+                .And.HaveCount(3);
         }
 
         [Theory]
@@ -60,7 +59,7 @@ namespace SerilogTestCorrelation.Tests
         }
 
         [Fact]
-        public void SerilogTestCorrelator_enriches_LogEvents_from_LogContext()
+        public void SerilogTestCorrelator_enriches_LogEvents_with_LogContext()
         {
             using (var context = SerilogTestCorrelator.CreateTestCorrelationContext())
             {
@@ -72,10 +71,8 @@ namespace SerilogTestCorrelation.Tests
                 }
 
                 SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(context.Guid)
-                    .Should()
-                    .ContainSingle()
-                    .Which.Properties.Keys.Should()
-                    .ContainSingle(key => key == propertyName);
+                    .Should().ContainSingle().Which.Properties.Keys
+                    .Should().ContainSingle().Which.Should().Be(propertyName);
             }
         }
     }
