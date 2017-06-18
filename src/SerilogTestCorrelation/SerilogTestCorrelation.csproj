@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard1.3</TargetFrameworks>
     <Authors>Microsoft</Authors>
-    <PackageLicenseUrl>https://github.com/Microsoft/serilog-utilities-concurrent-correlator/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/Microsoft/serilog-utilities-concurrent-correlator</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Microsoft/serilog-utilities-concurrent-correlator</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/Microsoft/serilog-test-correlation/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/Microsoft/serilog-test-correlation</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Microsoft/serilog-test-correlation</RepositoryUrl>
     <PackageTags>serilog;log;logging;unit;test;testing;unittest;unittesting</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Description>A library for unit testing Serilog log events in concurrent testing frameworks.</Description>
