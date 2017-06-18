@@ -1,9 +1,9 @@
-# Serilog Concurrent Correlator
+# Serilog Test Correlation
 
 [![AppVeyor Badge](https://ci.appveyor.com/api/projects/status/wf2emjam7xsviebw/branch/master?svg=true)](https://ci.appveyor.com/project/SerilogUtilitiesConcurrentCorrelatorSA/serilog-utilities-concurrent-correlator/branch/master)
 [![NuGet Badge](https://buildstats.info/nuget/Serilog.Utilities.ConcurrentCorrelator)](https://www.nuget.org/packages/Serilog.Utilities.ConcurrentCorrelator/)
 
-The Serilog Concurrent Correlator is a small library for unit testing Serilog logging in concurrent testing frameworks.
+Serilog Test Correlation is a library for unit testing Serilog logging.
 
 ## The Problem
 
@@ -11,10 +11,10 @@ Logging libraries like [Serilog](https://github.com/serilog/serilog) often provi
 
 ## Our Solution
 
-This library provides tools to help you correlate your ```LogEvents``` to the test that produced them:
-* ```ConfigureGlobalLoggerForTesting``` allows you to configure the global logger to output all ```LogEvents``` to a single thread safe collection.
-* ```EstablishTestLogContext``` enriches each LogEvent written within its logical call context with a context identifier.
-* ```GetLogEventsWithContextIdentifier``` allows you filter down to the LogEvents enriched with a specific context identifier.
+This library provides a ```SerilogTestCorrelator``` to help you correlate your ```LogEvent```s to the test code that produced them.
+* ```ConfigureGlobalLoggerForTestCorrelation``` configures Serilog's global logger to emit all ```LogEvent```s to a thread safe collection.
+* ```CreateTestCorrelationContext``` creates an ```ITestCorrelationContext``` with a GUID identifier.
+* ```GetLogEventsFromTestCorrelationContext``` returns the ```LogEvent```s emitted within the ```ITestCorrelationContext``` with the provided GUID identifier.
 
 ## Examples
 
@@ -22,40 +22,24 @@ This library provides tools to help you correlate your ```LogEvents``` to the te
 Put this line wherever pre-test setup happens in your test framework.
 
 ```csharp
-TestSerilogLogEvents.ConfigureGlobalLoggerForTesting();
+SerilogTestCorrelator.ConfigureGlobalLoggerForTestCorrelation();
 ```
 
-### Basic Usage
+### Usage
 
 ```csharp
 public void TestMethod()
 {
-    using (var context = TestSerilogLogEvents.EstablishTestLogContext())
+    using (var context = SerilogTestCorrelator.CreateTestCorrelationContext())
     {
-        Log.Information("My information log!");
+        Log.Information("My log message.");
 
-        TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Identifier).Should().ContainSingle();
+        SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(context.Guid).Should().ContainSingle();
     }
 }
 ```
 
-### Concurrency
-
-```csharp
-public void ConcurrencyTestMethod()
-{
-    using (var context = TestSerilogLogEvents.EstablishTestLogContext())
-    {
-        var logTask = Task.Run(() => { Log.Information("My information log!"); });
-
-        Task.WaitAll(logTask);
-
-        TestSerilogLogEvents.GetLogEventsWithContextIdentifier(context.Identifier).Should().ContainSingle();
-    }
-}
-```
-
-For more examples check out the [unit tests](https://github.com/Microsoft/serilog-utilities-concurrent-correlator/tree/master/serilog-utilities-concurrent-correlator-tests)!
+For more examples check out the [unit tests](https://github.com/Microsoft/serilog-test-correlation/tree/master/test/SerilogTestCorrelation.Tests)!
 
 ## Contributing
 
