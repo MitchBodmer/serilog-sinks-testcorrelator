@@ -81,6 +81,66 @@ namespace SerilogTestCorrelation.Tests
             }
         }
 
+        [Fact]
+        public void A_GlobalLoggerNotConfiguredForTestCorrelationException_message_should_contain_the_problem()
+        {
+            try
+            {
+                MisconfigureGlobalLoggerForTestCorrelation();
+
+                SerilogTestCorrelator.CreateTestCorrelationContext();
+            }
+            catch (GlobalLoggerNotConfiguredForTestCorrelationException exception)
+            {
+                exception.Message.Should()
+                    .Contain("Serilog's global logger has not been configured for test correlation.");
+            }
+            finally
+            {
+                SerilogTestCorrelator.ConfigureGlobalLoggerForTestCorrelation();
+            }
+        }
+
+        [Fact]
+        public void A_GlobalLoggerNotConfiguredForTestCorrelationException_should_contain_the_consequence()
+        {
+            try
+            {
+                MisconfigureGlobalLoggerForTestCorrelation();
+
+                SerilogTestCorrelator.CreateTestCorrelationContext();
+            }
+            catch (GlobalLoggerNotConfiguredForTestCorrelationException exception)
+            {
+                exception.Message.Should().Contain("The SerilogTestCorrelator will not be able to collect LogEvents.");
+            }
+            finally
+            {
+                SerilogTestCorrelator.ConfigureGlobalLoggerForTestCorrelation();
+            }
+        }
+
+        [Fact]
+        public void A_GlobalLoggerNotConfiguredForTestCorrelationException_should_contain_the_reason()
+        {
+            try
+            {
+                MisconfigureGlobalLoggerForTestCorrelation();
+
+                SerilogTestCorrelator.CreateTestCorrelationContext();
+            }
+            catch (GlobalLoggerNotConfiguredForTestCorrelationException exception)
+            {
+                exception.Message.Should()
+                    .Contain(
+                        "This may be because you did not call SerilogTestCorrelator.ConfigureGlobalLoggerForTestCorrelation(), or because other code has overwritten Serilog.Log.Logger since you did.");
+            }
+            finally
+            {
+                SerilogTestCorrelator.ConfigureGlobalLoggerForTestCorrelation();
+            }
+        }
+
         static void MisconfigureGlobalLoggerForTestCorrelation()
         {
             Log.Logger = new LoggerConfiguration().CreateLogger();
