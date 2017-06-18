@@ -83,7 +83,8 @@ namespace SerilogTestCorrelation.Tests
 
             Task.WaitAll(logTask);
 
-            SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(testCorrelationContextGuid).Should().ContainSingle();
+            SerilogTestCorrelator.GetLogEventsFromTestCorrelationContext(testCorrelationContextGuid).Should()
+                .ContainSingle();
         }
 
         [Fact]
@@ -137,7 +138,8 @@ namespace SerilogTestCorrelation.Tests
         }
 
         [Fact]
-        public void A_TestCorrelationContext_within_a_TestCorrelationContext_adds_an_additional_TestCorrelationContext_to_LogEvents()
+        public void
+            A_TestCorrelationContext_within_a_TestCorrelationContext_adds_an_additional_TestCorrelationContext_to_LogEvents()
         {
             using (var outerContext = SerilogTestCorrelator.CreateTestCorrelationContext())
             {

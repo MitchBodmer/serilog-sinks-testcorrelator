@@ -41,7 +41,7 @@ namespace SerilogTestCorrelation
 
         static ImmutableList<Guid> GetOrCreateGuidList()
         {
-            return 
+            return
 #if ASYNCLOCAL
                 GuidAsyncLocal.Value ??
 #elif REMOTING

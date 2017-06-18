@@ -8,7 +8,8 @@ namespace SerilogTestCorrelation
 {
     class TestCorrelationContextSink : ILogEventSink
     {
-        readonly ConcurrentDictionary<Guid, ConcurrentBag<LogEvent>> testCorrelationContextGuidBags = new ConcurrentDictionary<Guid, ConcurrentBag<LogEvent>>();
+        readonly ConcurrentDictionary<Guid, ConcurrentBag<LogEvent>> testCorrelationContextGuidBags =
+            new ConcurrentDictionary<Guid, ConcurrentBag<LogEvent>>();
 
         public void Emit(LogEvent logEvent)
         {

@@ -19,7 +19,8 @@ namespace SerilogTestCorrelation.Tests
         }
 
         [Fact]
-        public void Calling_ConfigureGlobalLoggerForTestCorrelation_twice_does_not_clear_previously_collected_LogEvents()
+        public void
+            Calling_ConfigureGlobalLoggerForTestCorrelation_twice_does_not_clear_previously_collected_LogEvents()
         {
             using (var context = SerilogTestCorrelator.CreateTestCorrelationContext())
             {
