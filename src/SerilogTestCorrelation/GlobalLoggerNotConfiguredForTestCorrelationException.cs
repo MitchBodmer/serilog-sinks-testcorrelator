@@ -3,6 +3,9 @@ using Serilog;
 
 namespace SerilogTestCorrelation
 {
+    /// <summary>
+    /// Exception thrown when Serilog's global logger is not configured for test correlation and a method on <seealso cref="SerilogTestCorrelator"/> is called that requires it.
+    /// </summary>
     public class GlobalLoggerNotConfiguredForTestCorrelationException : Exception
     {
         internal GlobalLoggerNotConfiguredForTestCorrelationException() :
