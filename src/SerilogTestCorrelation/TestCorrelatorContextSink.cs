@@ -6,7 +6,7 @@ using Serilog.Events;
 
 namespace SerilogTestCorrelation
 {
-    class TestCorrelationContextSink : ILogEventSink
+    class TestCorrelatorContextSink : ILogEventSink
     {
         readonly ConcurrentDictionary<Guid, ConcurrentBag<LogEvent>> testCorrelationContextGuidBags =
             new ConcurrentDictionary<Guid, ConcurrentBag<LogEvent>>();
@@ -22,9 +22,9 @@ namespace SerilogTestCorrelation
             }
         }
 
-        public TestCorrelationContext CreateTestCorrelationContext()
+        public TestCorrelatorContext CreateTestCorrelationContext()
         {
-            var testCorrelationContext = new TestCorrelationContext();
+            var testCorrelationContext = new TestCorrelatorContext();
 
             testCorrelationContextGuidBags.GetOrAdd(testCorrelationContext.Guid, new ConcurrentBag<LogEvent>());
 

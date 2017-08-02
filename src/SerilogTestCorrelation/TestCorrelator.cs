@@ -9,17 +9,17 @@ namespace SerilogTestCorrelation
     /// <summary>
     /// Correlates Serilog LogEvents to the test code that produced them.
     /// </summary>
-    public static class SerilogTestCorrelator
+    public static class TestCorrelator
     {
         static readonly Logger TestLogger;
 
-        static readonly TestCorrelationContextSink TestCorrelationContextSink = new TestCorrelationContextSink();
+        static readonly TestCorrelatorContextSink TestCorrelatorContextSink = new TestCorrelatorContextSink();
 
-        static SerilogTestCorrelator()
+        static TestCorrelator()
         {
             TestLogger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
-                .WriteTo.Sink(TestCorrelationContextSink)
+                .WriteTo.Sink(TestCorrelatorContextSink)
                 .Enrich.FromLogContext()
                 .CreateLogger();
         }
@@ -33,28 +33,28 @@ namespace SerilogTestCorrelation
         }
 
         /// <summary>
-        /// Creates a disposable <seealso cref="ITestCorrelationContext"/> that captures all LogEvents emitted within it.
+        /// Creates a disposable <seealso cref="ITestCorrelatorContext"/> that captures all LogEvents emitted within it.
         /// </summary>
-        /// <returns>The <seealso cref="ITestCorrelationContext"/>.</returns>
+        /// <returns>The <seealso cref="ITestCorrelatorContext"/>.</returns>
         /// <exception cref="GlobalLoggerNotConfiguredForTestCorrelationException">Thrown when Serilog's global logger has not be configured for test correlation.</exception>
-        public static ITestCorrelationContext CreateTestCorrelationContext()
+        public static ITestCorrelatorContext CreateTestCorrelationContext()
         {
             ThrowIfGlobalLoggerIsNotConfiguredForTesting();
 
-            return TestCorrelationContextSink.CreateTestCorrelationContext();
+            return TestCorrelatorContextSink.CreateTestCorrelationContext();
         }
 
         /// <summary>
-        /// Gets the LogEvents emitted within an <seealso cref="ITestCorrelationContext"/> with the provided GUID.
+        /// Gets the LogEvents emitted within an <seealso cref="ITestCorrelatorContext"/> with the provided GUID.
         /// </summary>
-        /// <param name="testCorrelationContextGuid">The <seealso cref="ITestCorrelationContext.Guid"/> of the desired context.</param>
+        /// <param name="testCorrelationContextGuid">The <seealso cref="ITestCorrelatorContext.Guid"/> of the desired context.</param>
         /// <returns>LogEvents emitted within the context.</returns>
         /// <exception cref="GlobalLoggerNotConfiguredForTestCorrelationException">Thrown when Serilog's global logger has not be configured for test correlation.</exception>
         public static IEnumerable<LogEvent> GetLogEventsFromTestCorrelationContext(Guid testCorrelationContextGuid)
         {
             ThrowIfGlobalLoggerIsNotConfiguredForTesting();
 
-            return TestCorrelationContextSink.GetLogEventsFromTestCorrelationContext(testCorrelationContextGuid);
+            return TestCorrelatorContextSink.GetLogEventsFromTestCorrelationContext(testCorrelationContextGuid);
         }
 
         static void ThrowIfGlobalLoggerIsNotConfiguredForTesting()

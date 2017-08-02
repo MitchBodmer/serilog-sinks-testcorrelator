@@ -2,9 +2,9 @@
 
 namespace SerilogTestCorrelation
 {
-    class TestCorrelationContext : ITestCorrelationContext
+    class TestCorrelatorContext : ITestCorrelatorContext
     {
-        public TestCorrelationContext()
+        public TestCorrelatorContext()
         {
             Guid = Guid.NewGuid();
             LogicalCallContext.Add(Guid);
