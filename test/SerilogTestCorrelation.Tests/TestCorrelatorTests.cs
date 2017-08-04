@@ -1,15 +1,132 @@
-﻿using System;
+﻿using FluentAssertions;
+using Serilog;
+using Serilog.Context;
+using Serilog.Events;
+using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
-using Serilog;
-using Serilog.Events;
 using Xunit;
 
 namespace SerilogTestCorrelation.Tests
 {
-    public partial class SerilogTestCorrelatorTests
+    public class TestCorrelatorTests
     {
+        public TestCorrelatorTests()
+        {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .WriteTo.TestCorrelator()
+                .Enrich.FromLogContext()
+                .CreateLogger();
+        }
+
+        [Fact]
+        public void TestCorrelator_allows_you_to_filter_to_LogEvents_emitted_within_a_context()
+        {
+            Log.Information("");
+            Log.Warning("");
+            Log.Error("");
+
+            using (TestCorrelator.CreateContext())
+            {
+                Log.Information("");
+                Log.Warning("");
+                Log.Error("");
+            }
+
+            Guid testCorrelationContextGuid;
+
+            using (var context = TestCorrelator.CreateContext())
+            {
+                Log.Information("");
+                Log.Warning("");
+                Log.Error("");
+
+                testCorrelationContextGuid = context.Guid;
+            }
+
+            TestCorrelator.GetLogEventsFromContext(testCorrelationContextGuid)
+                .Should().ContainSingle(logEvent => logEvent.Level == LogEventLevel.Information)
+                .And.ContainSingle(logEvent => logEvent.Level == LogEventLevel.Warning)
+                .And.ContainSingle(logEvent => logEvent.Level == LogEventLevel.Error)
+                .And.HaveCount(3);
+        }
+
+        [Theory]
+        [InlineData(LogEventLevel.Information)]
+        [InlineData(LogEventLevel.Debug)]
+        [InlineData(LogEventLevel.Error)]
+        [InlineData(LogEventLevel.Fatal)]
+        [InlineData(LogEventLevel.Verbose)]
+        [InlineData(LogEventLevel.Warning)]
+        public void TestCorrelator_receives_LogEvents_of_all_LogEventLevels(LogEventLevel logEventLevel)
+        {
+            using (var context = TestCorrelator.CreateContext())
+            {
+                Log.Write(logEventLevel, "");
+
+                TestCorrelator.GetLogEventsFromContext(context.Guid).Should().ContainSingle();
+            }
+        }
+
+        [Fact]
+        public void TestCorrelator_enriches_LogEvents_with_LogContext()
+        {
+            using (var context = TestCorrelator.CreateContext())
+            {
+                const string propertyName = "Property name";
+
+                using (LogContext.PushProperty(propertyName, new object()))
+                {
+                    Log.Information("");
+                }
+
+                TestCorrelator.GetLogEventsFromContext(context.Guid)
+                    .Should().ContainSingle().Which.Properties.Keys
+                    .Should().ContainSingle().Which.Should().Be(propertyName);
+            }
+        }
+
+        [Fact]
+        public void GetLogEventsFromTestCorrelationContext_returns_empty_if_no_LogEvents_have_been_emitted()
+        {
+            using (var context = TestCorrelator.CreateContext())
+            {
+                TestCorrelator.GetLogEventsFromContext(context.Guid).Should().BeEmpty();
+            }
+        }
+
+        [Fact]
+        public void
+            GetLogEventsFromTestCorrelationContext_returns_empty_if_no_LogEvents_have_been_emitted_within_the_context()
+        {
+            Log.Information("");
+
+            using (var context = TestCorrelator.CreateContext())
+            {
+                TestCorrelator.GetLogEventsFromContext(context.Guid).Should().BeEmpty();
+            }
+        }
+
+        [Fact]
+        public void
+            GetLogEventsFromTestCorrelationContext_returns_all_LogEvents_that_have_been_emitted_within_the_context()
+        {
+            using (var context = TestCorrelator.CreateContext())
+            {
+                const int expectedCount = 4;
+
+                foreach (var unused in Enumerable.Range(0, expectedCount))
+                {
+                    Log.Information("");
+                }
+
+                TestCorrelator.GetLogEventsFromContext(context.Guid)
+                    .Should().HaveCount(expectedCount);
+            }
+        }
+
         [Fact]
         public void A_TestCorrelationContext_does_capture_LogEvents_inside_its_scope()
         {
