@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.13
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{22CF5E35-E44D-4570-B7C0-37A75D8A5D0B}"
 	ProjectSection(SolutionItems) = preProject
@@ -16,9 +16,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6AC3F0B2-2B3
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{CEDC90DD-9FFB-4D0E-89AE-BCAE2C285408}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SerilogTestCorrelation", "src\SerilogTestCorrelation\SerilogTestCorrelation.csproj", "{A0A8ED49-6F73-4A24-B81C-A6131F3951E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.TestCorrelator", "src\SerilogTestCorrelation\Serilog.Sinks.TestCorrelator.csproj", "{A0A8ED49-6F73-4A24-B81C-A6131F3951E8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SerilogTestCorrelation.Tests", "test\SerilogTestCorrelation.Tests\SerilogTestCorrelation.Tests.csproj", "{1CEA9540-B31C-4D07-B444-92C744CE0927}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.TestCorrelator.Tests", "test\SerilogTestCorrelation.Tests\Serilog.Sinks.TestCorrelator.Tests.csproj", "{1CEA9540-B31C-4D07-B444-92C744CE0927}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

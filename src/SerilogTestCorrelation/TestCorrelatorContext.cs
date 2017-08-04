@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SerilogTestCorrelation
+namespace Serilog.Sinks.TestCorrelator
 {
     class TestCorrelatorContext : ITestCorrelatorContext
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SerilogTestCorrelation
+namespace Serilog.Sinks.TestCorrelator
 {
     /// <summary>
     /// A disposable used to capture LogEvents emitted to the <seealso cref="TestCorrelator"/>.

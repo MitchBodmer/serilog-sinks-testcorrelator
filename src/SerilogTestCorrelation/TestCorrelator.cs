@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Serilog.Events;
 
-namespace SerilogTestCorrelation
+namespace Serilog.Sinks.TestCorrelator
 {
     /// <summary>
     /// Correlates Serilog LogEvents to the test code that produced them.

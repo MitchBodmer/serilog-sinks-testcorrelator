@@ -6,7 +6,7 @@ using System.Threading;
 using System.Runtime.Remoting.Messaging;
 #endif
 
-namespace SerilogTestCorrelation
+namespace Serilog.Sinks.TestCorrelator
 {
     static class LogicalCallContext
     {

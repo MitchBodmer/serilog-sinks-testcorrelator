@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog.Sinks.TestCorrelator;
 using Xunit;
 
 namespace SerilogTestCorrelation.Tests
@@ -24,14 +25,10 @@ namespace SerilogTestCorrelation.Tests
         [Fact]
         public void TestCorrelator_allows_you_to_filter_to_LogEvents_emitted_within_a_context()
         {
-            Log.Information("");
-            Log.Warning("");
             Log.Error("");
 
             using (TestCorrelator.CreateContext())
             {
-                Log.Information("");
-                Log.Warning("");
                 Log.Error("");
             }
 
@@ -40,17 +37,12 @@ namespace SerilogTestCorrelation.Tests
             using (var context = TestCorrelator.CreateContext())
             {
                 Log.Information("");
-                Log.Warning("");
-                Log.Error("");
 
                 testCorrelationContextGuid = context.Guid;
             }
 
             TestCorrelator.GetLogEventsFromContext(testCorrelationContextGuid)
-                .Should().ContainSingle(logEvent => logEvent.Level == LogEventLevel.Information)
-                .And.ContainSingle(logEvent => logEvent.Level == LogEventLevel.Warning)
-                .And.ContainSingle(logEvent => logEvent.Level == LogEventLevel.Error)
-                .And.HaveCount(3);
+                .Should().ContainSingle().Which.Level.Should().Be(LogEventLevel.Information);
         }
 
         [Theory]

@@ -1,7 +1,7 @@
 ﻿using Serilog.Core;
 using Serilog.Events;
 
-namespace SerilogTestCorrelation
+namespace Serilog.Sinks.TestCorrelator
 {
     public class TestCorrelatorSink : ILogEventSink
     {
