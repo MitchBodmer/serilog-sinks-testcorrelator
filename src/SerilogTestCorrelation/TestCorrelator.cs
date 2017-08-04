@@ -17,7 +17,7 @@ namespace SerilogTestCorrelation
         /// Creates a disposable <seealso cref="ITestCorrelatorContext"/> that captures all LogEvents emitted within it.
         /// </summary>
         /// <returns>The <seealso cref="ITestCorrelatorContext"/>.</returns>
-        public static ITestCorrelatorContext CreateTestCorrelationContext()
+        public static ITestCorrelatorContext CreateContext()
         {
             var testCorrelationContext = new TestCorrelatorContext();
 
@@ -31,7 +31,7 @@ namespace SerilogTestCorrelation
         /// </summary>
         /// <param name="contextGuid">The <seealso cref="ITestCorrelatorContext.Guid"/> of the desired context.</param>
         /// <returns>LogEvents emitted within the context.</returns>
-        public static IEnumerable<LogEvent> GetLogEventsFromTestCorrelationContext(Guid contextGuid)
+        public static IEnumerable<LogEvent> GetLogEventsFromContext(Guid contextGuid)
         {
             return TestCorrelationContextGuidBags[contextGuid];
         }

@@ -16,7 +16,7 @@ namespace SerilogTestCorrelation.Tests
             Log.Warning("");
             Log.Error("");
 
-            using (TestCorrelator.CreateTestCorrelationContext())
+            using (TestCorrelator.CreateContext())
             {
                 Log.Information("");
                 Log.Warning("");
@@ -25,7 +25,7 @@ namespace SerilogTestCorrelation.Tests
 
             Guid testCorrelationContextGuid;
 
-            using (var context = TestCorrelator.CreateTestCorrelationContext())
+            using (var context = TestCorrelator.CreateContext())
             {
                 Log.Information("");
                 Log.Warning("");
@@ -34,7 +34,7 @@ namespace SerilogTestCorrelation.Tests
                 testCorrelationContextGuid = context.Guid;
             }
 
-            TestCorrelator.GetLogEventsFromTestCorrelationContext(testCorrelationContextGuid)
+            TestCorrelator.GetLogEventsFromContext(testCorrelationContextGuid)
                 .Should().ContainSingle(logEvent => logEvent.Level == LogEventLevel.Information)
                 .And.ContainSingle(logEvent => logEvent.Level == LogEventLevel.Warning)
                 .And.ContainSingle(logEvent => logEvent.Level == LogEventLevel.Error)
@@ -50,18 +50,18 @@ namespace SerilogTestCorrelation.Tests
         [InlineData(LogEventLevel.Warning)]
         public void TestCorrelator_receives_LogEvents_of_all_LogEventLevels(LogEventLevel logEventLevel)
         {
-            using (var context = TestCorrelator.CreateTestCorrelationContext())
+            using (var context = TestCorrelator.CreateContext())
             {
                 Log.Write(logEventLevel, "");
 
-                TestCorrelator.GetLogEventsFromTestCorrelationContext(context.Guid).Should().ContainSingle();
+                TestCorrelator.GetLogEventsFromContext(context.Guid).Should().ContainSingle();
             }
         }
 
         [Fact]
         public void TestCorrelator_enriches_LogEvents_with_LogContext()
         {
-            using (var context = TestCorrelator.CreateTestCorrelationContext())
+            using (var context = TestCorrelator.CreateContext())
             {
                 const string propertyName = "Property name";
 
@@ -70,7 +70,7 @@ namespace SerilogTestCorrelation.Tests
                     Log.Information("");
                 }
 
-                TestCorrelator.GetLogEventsFromTestCorrelationContext(context.Guid)
+                TestCorrelator.GetLogEventsFromContext(context.Guid)
                     .Should().ContainSingle().Which.Properties.Keys
                     .Should().ContainSingle().Which.Should().Be(propertyName);
             }
