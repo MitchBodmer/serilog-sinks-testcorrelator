@@ -3,7 +3,7 @@
 namespace SerilogTestCorrelation
 {
     /// <summary>
-    /// A context used to capture and group LogEvents emitted by Serilog within a test.
+    /// A disposable used to capture LogEvents emitted to the <seealso cref="TestCorrelator"/>.
     /// </summary>
     public interface ITestCorrelatorContext : IDisposable
     {
