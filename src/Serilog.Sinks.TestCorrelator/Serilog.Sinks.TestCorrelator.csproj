@@ -12,6 +12,7 @@
     <Description>A library for unit testing Serilog log events in concurrent testing frameworks.</Description>
     <Copyright>Copyright © 2017 Microsoft</Copyright>
     <IncludeSymbols>true</IncludeSymbols>
+    <RootNamespace>Serilog</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

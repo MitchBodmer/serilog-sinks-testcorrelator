@@ -1,8 +1,9 @@
 ﻿using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
+using Serilog.Sinks.TestCorrelator;
 
-namespace Serilog.Sinks.TestCorrelator
+namespace Serilog
 {
     public static class LoggerSinkConfigurationExtensions
     {
