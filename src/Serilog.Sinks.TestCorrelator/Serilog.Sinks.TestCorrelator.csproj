@@ -13,6 +13,7 @@
     <Copyright>Copyright © 2017 Microsoft</Copyright>
     <IncludeSymbols>true</IncludeSymbols>
     <RootNamespace>Serilog</RootNamespace>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
