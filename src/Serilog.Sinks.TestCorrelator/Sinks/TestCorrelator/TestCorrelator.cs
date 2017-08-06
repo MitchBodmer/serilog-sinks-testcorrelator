@@ -14,7 +14,7 @@ namespace Serilog.Sinks.TestCorrelator
             new ConcurrentDictionary<Guid, ConcurrentBag<LogEvent>>();
 
         /// <summary>
-        /// Creates a disposable <seealso cref="ITestCorrelatorContext"/> that captures all LogEvents emitted within it.
+        /// Creates a disposable <seealso cref="ITestCorrelatorContext"/> that groups all LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within it.
         /// </summary>
         /// <returns>The <seealso cref="ITestCorrelatorContext"/>.</returns>
         public static ITestCorrelatorContext CreateContext()
@@ -27,11 +27,11 @@ namespace Serilog.Sinks.TestCorrelator
         }
 
         /// <summary>
-        /// Gets the LogEvents emitted within an <seealso cref="ITestCorrelatorContext"/> with the provided GUID.
+        /// Gets the LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within an <seealso cref="ITestCorrelatorContext"/> with the provided GUID.
         /// </summary>
         /// <param name="contextGuid">The <seealso cref="ITestCorrelatorContext.Guid"/> of the desired context.</param>
         /// <returns>LogEvents emitted within the context.</returns>
-        public static IEnumerable<LogEvent> GetLogEventsFromContext(Guid contextGuid)
+        public static IEnumerable<LogEvent> GetLogEventsFromContextGuid(Guid contextGuid)
         {
             return TestCorrelatorContextGuidBags[contextGuid];
         }
