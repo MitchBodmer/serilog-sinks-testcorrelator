@@ -14,6 +14,8 @@
     <IncludeSymbols>true</IncludeSymbols>
     <RootNamespace>Serilog</RootNamespace>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>Serilog.Sinks.TestCorrelator.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
