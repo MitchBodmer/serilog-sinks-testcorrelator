@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using Serilog.Events;
 
 namespace Serilog.Sinks.TestCorrelator
@@ -10,8 +11,10 @@ namespace Serilog.Sinks.TestCorrelator
     /// </summary>
     public static class TestCorrelator
     {
-        static readonly ConcurrentDictionary<Guid, ConcurrentBag<LogEvent>> TestCorrelatorContextGuidBags =
-            new ConcurrentDictionary<Guid, ConcurrentBag<LogEvent>>();
+        static readonly ConcurrentDictionary<LogEvent, ConcurrentBag<Guid>> LogEventGuidDictionary =
+            new ConcurrentDictionary<LogEvent, ConcurrentBag<Guid>>();
+
+        static readonly ConcurrentBag<Guid> TestCorrelationContextGuids = new ConcurrentBag<Guid>();
 
         /// <summary>
         /// Creates a disposable <seealso cref="ITestCorrelatorContext"/> that groups all LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within it.
@@ -21,7 +24,7 @@ namespace Serilog.Sinks.TestCorrelator
         {
             var testCorrelatorContext = new TestCorrelatorContext();
 
-            TestCorrelatorContextGuidBags.GetOrAdd(testCorrelatorContext.Guid, new ConcurrentBag<LogEvent>());
+            TestCorrelationContextGuids.Add(testCorrelatorContext.Guid);
 
             return testCorrelatorContext;
         }
@@ -33,17 +36,15 @@ namespace Serilog.Sinks.TestCorrelator
         /// <returns>LogEvents emitted within the context.</returns>
         public static IEnumerable<LogEvent> GetLogEventsFromContextGuid(Guid contextGuid)
         {
-            return TestCorrelatorContextGuidBags[contextGuid];
+           return LogEventGuidDictionary.Keys.Where(logEvent => LogEventGuidDictionary[logEvent].Contains(contextGuid));
         }
 
         internal static void AddLogEvent(LogEvent logEvent)
         {
-            foreach (var guid in TestCorrelatorContextGuidBags.Keys)
+            var guidBag = LogEventGuidDictionary.GetOrAdd(logEvent, new ConcurrentBag<Guid>());
+            foreach (var guid in TestCorrelationContextGuids.Where(LogicalCallContext.Contains))
             {
-                if (LogicalCallContext.Contains(guid))
-                {
-                    TestCorrelatorContextGuidBags[guid].Add(logEvent);
-                }
+                guidBag.Add(guid);
             }
         }
     }
