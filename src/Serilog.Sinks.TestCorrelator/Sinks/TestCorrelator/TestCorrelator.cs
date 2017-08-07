@@ -14,7 +14,7 @@ namespace Serilog.Sinks.TestCorrelator
         static readonly ConcurrentDictionary<LogEvent, ConcurrentBag<Guid>> LogEventGuidDictionary =
             new ConcurrentDictionary<LogEvent, ConcurrentBag<Guid>>();
 
-        static readonly ConcurrentBag<Guid> TestCorrelationContextGuids = new ConcurrentBag<Guid>();
+        static readonly ConcurrentBag<Guid> TestCorrelatorContextGuids = new ConcurrentBag<Guid>();
 
         /// <summary>
         /// Creates a disposable <seealso cref="ITestCorrelatorContext"/> that groups all LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within it.
@@ -24,7 +24,7 @@ namespace Serilog.Sinks.TestCorrelator
         {
             var testCorrelatorContext = new TestCorrelatorContext();
 
-            TestCorrelationContextGuids.Add(testCorrelatorContext.Guid);
+            TestCorrelatorContextGuids.Add(testCorrelatorContext.Guid);
 
             return testCorrelatorContext;
         }
@@ -45,7 +45,7 @@ namespace Serilog.Sinks.TestCorrelator
         /// <returns>LogEvents emitted within the current <seealso cref="ITestCorrelatorContext"/>.</returns>
         public static IEnumerable<LogEvent> GetLogEventsFromCurrentContext()
         {
-            var currentContextGuids = TestCorrelationContextGuids.Where(LogicalCallContext.Contains);
+            var currentContextGuids = TestCorrelatorContextGuids.Where(LogicalCallContext.Contains);
 
             return LogEventGuidDictionary.Keys.Where(
                 logEvent => currentContextGuids.All(
@@ -55,7 +55,7 @@ namespace Serilog.Sinks.TestCorrelator
         internal static void AddLogEvent(LogEvent logEvent)
         {
             var guidBag = LogEventGuidDictionary.GetOrAdd(logEvent, new ConcurrentBag<Guid>());
-            foreach (var guid in TestCorrelationContextGuids.Where(LogicalCallContext.Contains))
+            foreach (var guid in TestCorrelatorContextGuids.Where(LogicalCallContext.Contains))
             {
                 guidBag.Add(guid);
             }
