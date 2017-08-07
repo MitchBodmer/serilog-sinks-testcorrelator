@@ -4,11 +4,11 @@ platform: Any CPU
 before_build:
 - dotnet restore
 build_script:
-- dotnet build .\src\SerilogTestCorrelation\SerilogTestCorrelation.csproj /property:Configuration=Release /property:Version=%APPVEYOR_BUILD_VERSION%
+- dotnet build .\src\Serilog.Sinks.TestCorrelator\Serilog.Sinks.TestCorrelator.csproj /property:Configuration=Release /property:Version=%APPVEYOR_BUILD_VERSION%
 artifacts:
 - path: '**\*.nupkg'
 test_script:
-- dotnet test .\test\SerilogTestCorrelation.Tests\SerilogTestCorrelation.Tests.csproj /property:Configuration=Release
+- dotnet test .\test\Serilog.Sinks.TestCorrelator.Tests\Serilog.Sinks.TestCorrelator.Tests.csproj /property:Configuration=Release
 deploy:
 - provider: NuGet
   api_key:
