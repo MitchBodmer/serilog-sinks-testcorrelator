@@ -163,6 +163,42 @@ namespace Serilog.Sinks.TestCorrelator.Tests
         }
 
         [Fact]
+        public void Getting_LogEvents_from_the_current_context_gets_LogEvents_from_the_innermost_context()
+        {
+            using (TestCorrelator.CreateContext())
+            {
+                Log.Information("");
+
+                using (TestCorrelator.CreateContext())
+                {
+                    Log.Information("");
+
+                    TestCorrelator.GetLogEventsFromCurrentContext()
+                        .Should()
+                        .ContainSingle();
+                }
+            }
+        }
+
+        [Fact]
+        public void Getting_LogEvents_from_the_current_context_gets_LogEvents_emitted_within_sub_contexts()
+        {
+            using (TestCorrelator.CreateContext())
+            {
+                Log.Information("");
+
+                using (TestCorrelator.CreateContext())
+                {
+                    Log.Information("");
+                }
+
+                TestCorrelator.GetLogEventsFromCurrentContext()
+                    .Should()
+                    .HaveCount(2);
+            }
+        }
+
+        [Fact]
         public void A_context_does_not_enrich_LogEvents_emitted_within_it()
         {
             using (var context = TestCorrelator.CreateContext())

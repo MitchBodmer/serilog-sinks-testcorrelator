@@ -39,6 +39,19 @@ namespace Serilog.Sinks.TestCorrelator
            return LogEventGuidDictionary.Keys.Where(logEvent => LogEventGuidDictionary[logEvent].Contains(contextGuid));
         }
 
+        /// <summary>
+        /// Gets the LogEvents emitted within the current <seealso cref="ITestCorrelatorContext"/>.
+        /// </summary>
+        /// <returns>LogEvents emitted within the current <seealso cref="ITestCorrelatorContext"/>.</returns>
+        public static IEnumerable<LogEvent> GetLogEventsFromCurrentContext()
+        {
+            var currentContextGuids = TestCorrelationContextGuids.Where(LogicalCallContext.Contains);
+
+            return LogEventGuidDictionary.Keys.Where(
+                logEvent => currentContextGuids.All(
+                    currentContextGuid => LogEventGuidDictionary[logEvent].Contains(currentContextGuid)));
+        }
+
         internal static void AddLogEvent(LogEvent logEvent)
         {
             var guidBag = LogEventGuidDictionary.GetOrAdd(logEvent, new ConcurrentBag<Guid>());
