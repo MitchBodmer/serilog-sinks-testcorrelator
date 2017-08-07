@@ -17,23 +17,22 @@ namespace Serilog.Sinks.TestCorrelator.Tests
         [Fact]
         public void A_context_captures_all_LogEvents_emitted_to_a_TestCorrelatorContext_within_it()
         {
-            using (var context = TestCorrelator.CreateContext())
+            using (TestCorrelator.CreateContext())
             {
                 Log.Information("");
 
-                TestCorrelator.GetLogEventsFromContextGuid(context.Guid)
-                    .Should().ContainSingle();
+                TestCorrelator.GetLogEventsFromCurrentContext().Should().ContainSingle();
             }
         }
 
         [Fact]
         public void A_context_captures_LogEvents_even_in_sub_methods()
         {
-            using (var context = TestCorrelator.CreateContext())
+            using (TestCorrelator.CreateContext())
             {
                 LogInformation();
 
-                TestCorrelator.GetLogEventsFromContextGuid(context.Guid).Should().ContainSingle();
+                TestCorrelator.GetLogEventsFromCurrentContext().Should().ContainSingle();
             }
         }
 
@@ -60,13 +59,13 @@ namespace Serilog.Sinks.TestCorrelator.Tests
         [Fact]
         public void A_context_captures_LogEvents_inside_the_same_logical_call_context()
         {
-            using (var context = TestCorrelator.CreateContext())
+            using (TestCorrelator.CreateContext())
             {
                 var logTask = Task.Run(() => { Log.Information(""); });
 
                 Task.WaitAll(logTask);
 
-                TestCorrelator.GetLogEventsFromContextGuid(context.Guid).Should().ContainSingle();
+                TestCorrelator.GetLogEventsFromCurrentContext().Should().ContainSingle();
             }
         }
 
@@ -100,7 +99,7 @@ namespace Serilog.Sinks.TestCorrelator.Tests
 
             var loggingFinishedSignal = new ManualResetEvent(false);
 
-            var contextGuid = Guid.NewGuid();
+            var contextGuid = Guid.Empty;
 
             var logTask = Task.Run(() =>
             {
@@ -132,13 +131,13 @@ namespace Serilog.Sinks.TestCorrelator.Tests
         {
             var logTask = new Task(() => { Log.Information(""); });
 
-            using (var context = TestCorrelator.CreateContext())
+            using (TestCorrelator.CreateContext())
             {
                 logTask.Start();
 
                 Task.WaitAll(logTask);
 
-                TestCorrelator.GetLogEventsFromContextGuid(context.Guid).Should().BeEmpty();
+                TestCorrelator.GetLogEventsFromCurrentContext().Should().BeEmpty();
             }
         }
 
