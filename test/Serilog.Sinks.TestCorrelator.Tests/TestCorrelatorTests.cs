@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Serilog.Events;
 using Xunit;
 
 namespace Serilog.Sinks.TestCorrelator.Tests
@@ -202,7 +201,7 @@ namespace Serilog.Sinks.TestCorrelator.Tests
         {
             using (var context = TestCorrelator.CreateContext())
             {
-                Log.Write(LogEventLevel.Information, "");
+                Log.Information("");
 
                 TestCorrelator.GetLogEventsFromContextGuid(context.Guid)
                     .Should()
