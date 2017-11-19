@@ -1,7 +1,7 @@
 environment:
   major: 3
   minor: 0
-  patch: 0
+  patch: 1
 
 image: Visual Studio 2017
 configuration: Release
