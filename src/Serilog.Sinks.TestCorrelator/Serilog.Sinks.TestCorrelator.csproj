@@ -3,11 +3,11 @@
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard1.3</TargetFrameworks>
     <Authors>Microsoft</Authors>
+    <Version></Version>
     <PackageLicenseUrl>https://github.com/Microsoft/serilog-sinks-testcorrelator/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/Microsoft/serilog-sinks-testcorrelator</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Microsoft/serilog-sinks-testcorrelator</RepositoryUrl>
     <PackageTags>serilog;sink;log;logging;unit;test;testing;unittest;unittesting</PackageTags>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Description>A Serilog sink that correlates log events with the code that produced them, enabling unit testing of log output.</Description>
     <Copyright>Copyright © 2017 Microsoft</Copyright>
