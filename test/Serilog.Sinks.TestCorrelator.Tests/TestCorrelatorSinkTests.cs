@@ -1,11 +1,12 @@
 ﻿using FluentAssertions;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Serilog.Sinks.TestCorrelator.Tests
 {
+    [TestClass]
     public class TestCorrelatorSinkTests
     {
-        [Fact]
+        [TestMethod]
         public void A_TestCorrelatorSink_writes_LogEvents_emited_to_it_to_a_TestCorrelator()
         {
             var logger = new LoggerConfiguration().WriteTo.Sink(new TestCorrelatorSink()).CreateLogger();
