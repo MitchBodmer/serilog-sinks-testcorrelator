@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 #if ASYNCLOCAL
 using System.Threading;
 #elif REMOTING
+using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 #endif
 
@@ -21,7 +22,7 @@ namespace Serilog.Sinks.TestCorrelator
 #if ASYNCLOCAL
             GuidAsyncLocal.Value = GetOrCreateGuidList().Add(guid);
 #elif REMOTING
-            CallContext.LogicalSetData(DataSlotName, GetOrCreateGuidList().Add(guid));
+            CallContext.LogicalSetData(DataSlotName, new ObjectHandle(GetOrCreateGuidList().Add(guid)));
 #endif
         }
 
@@ -30,7 +31,7 @@ namespace Serilog.Sinks.TestCorrelator
 #if ASYNCLOCAL
             GuidAsyncLocal.Value = GetOrCreateGuidList().Remove(guid);
 #elif REMOTING
-            CallContext.LogicalSetData(DataSlotName, GetOrCreateGuidList().Remove(guid));
+            CallContext.LogicalSetData(DataSlotName, new ObjectHandle(GetOrCreateGuidList().Remove(guid)));
 #endif
         }
 
@@ -41,13 +42,16 @@ namespace Serilog.Sinks.TestCorrelator
 
         static ImmutableList<Guid> GetOrCreateGuidList()
         {
-            return
 #if ASYNCLOCAL
-                GuidAsyncLocal.Value ??
+            return GuidAsyncLocal.Value ?? ImmutableList<Guid>.Empty;
 #elif REMOTING
-                CallContext.LogicalGetData(DataSlotName) as ImmutableList<Guid> ??
+            if (CallContext.LogicalGetData(DataSlotName) is ObjectHandle objectHandle)
+            {
+                return objectHandle.Unwrap() as ImmutableList<Guid>;
+            }
+
+            return ImmutableList<Guid>.Empty;
 #endif
-                ImmutableList<Guid>.Empty;
         }
     }
 }
