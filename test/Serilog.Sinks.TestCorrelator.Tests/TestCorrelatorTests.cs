@@ -9,7 +9,8 @@ namespace Serilog.Sinks.TestCorrelator.Tests
     [TestClass]
     public class TestCorrelatorTests
     {
-        public TestCorrelatorTests()
+        [AssemblyInitialize]
+        public static void ConfigureGlobalLogger(TestContext testContext)
         {
             Log.Logger = new LoggerConfiguration().WriteTo.TestCorrelator().CreateLogger();
         }
