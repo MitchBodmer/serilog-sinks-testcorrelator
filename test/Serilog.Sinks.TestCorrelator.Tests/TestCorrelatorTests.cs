@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Serilog.Events;
+using Serilog.Parsing;
 
 namespace Serilog.Sinks.TestCorrelator.Tests
 {
@@ -210,6 +213,31 @@ namespace Serilog.Sinks.TestCorrelator.Tests
                     .ContainSingle()
                     .Which.Properties.Should()
                     .BeEmpty();
+            }
+        }
+
+        [TestMethod]
+        public void Getting_LogEvents_preserves_the_order_in_which_they_were_emitted()
+        {
+            var logEvents =
+                Enumerable.Range(0, 100)
+                .Select(_ =>
+                    new LogEvent(
+                        DateTimeOffset.MinValue,
+                        LogEventLevel.Information,
+                        null,
+                        new MessageTemplate(Enumerable.Empty<MessageTemplateToken>()),
+                        Enumerable.Empty<LogEventProperty>()))
+                .ToList();
+
+            using (var context = TestCorrelator.CreateContext())
+            {
+                foreach (var logEvent in logEvents)
+                {
+                    Log.Write(logEvent);
+                }
+
+                TestCorrelator.GetLogEventsFromCurrentContext().Should().Equal(logEvents);
             }
         }
     }
