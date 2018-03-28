@@ -11,8 +11,8 @@ namespace Serilog.Sinks.TestCorrelator
     /// </summary>
     public static class TestCorrelator
     {
-        static readonly ConcurrentDictionary<LogEvent, ConcurrentBag<Guid>> LogEventGuidDictionary =
-            new ConcurrentDictionary<LogEvent, ConcurrentBag<Guid>>();
+        static readonly ConcurrentQueue<(LogEvent LogEvent, IEnumerable<Guid> Guids)> LogEventsWithGuids =
+            new ConcurrentQueue<(LogEvent, IEnumerable<Guid>)>();
 
         static readonly ConcurrentBag<Guid> TestCorrelatorContextGuids = new ConcurrentBag<Guid>();
 
@@ -36,7 +36,9 @@ namespace Serilog.Sinks.TestCorrelator
         /// <returns>LogEvents emitted within the context.</returns>
         public static IEnumerable<LogEvent> GetLogEventsFromContextGuid(Guid contextGuid)
         {
-           return LogEventGuidDictionary.Keys.Where(logEvent => LogEventGuidDictionary[logEvent].Contains(contextGuid));
+           return LogEventsWithGuids
+                .Where(logEventWithGuids => logEventWithGuids.Guids.Contains(contextGuid))
+                .Select(logEventWithGuids => logEventWithGuids.LogEvent);
         }
 
         /// <summary>
@@ -47,18 +49,16 @@ namespace Serilog.Sinks.TestCorrelator
         {
             var currentContextGuids = TestCorrelatorContextGuids.Where(LogicalCallContext.Contains);
 
-            return LogEventGuidDictionary.Keys.Where(
-                logEvent => currentContextGuids.All(
-                    currentContextGuid => LogEventGuidDictionary[logEvent].Contains(currentContextGuid)));
+            return LogEventsWithGuids
+                .Where(logEventWithGuids =>
+                    currentContextGuids.All(currentContextGuid => logEventWithGuids.Guids.Contains(currentContextGuid)))
+                .Select(logEventWithGuids => logEventWithGuids.LogEvent);
         }
 
         internal static void AddLogEvent(LogEvent logEvent)
         {
-            var guidBag = LogEventGuidDictionary.GetOrAdd(logEvent, new ConcurrentBag<Guid>());
-            foreach (var guid in TestCorrelatorContextGuids.Where(LogicalCallContext.Contains))
-            {
-                guidBag.Add(guid);
-            }
+            LogEventsWithGuids
+                .Enqueue((logEvent, TestCorrelatorContextGuids.Where(LogicalCallContext.Contains).ToList()));
         }
     }
 }
