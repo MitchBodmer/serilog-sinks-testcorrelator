@@ -1,7 +1,7 @@
 environment:
   major: 3
   minor: 0
-  patch: 2
+  patch: 3
 
 version: $(major).$(minor).$(patch)+{branch}-{build}
 
