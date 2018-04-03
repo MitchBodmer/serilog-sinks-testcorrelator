@@ -11,10 +11,9 @@ namespace Serilog.Sinks.TestCorrelator
     /// </summary>
     public static class TestCorrelator
     {
-        static readonly ConcurrentQueue<(LogEvent LogEvent, IEnumerable<Guid> Guids)> LogEventsWithGuids =
-            new ConcurrentQueue<(LogEvent, IEnumerable<Guid>)>();
+        static readonly ConcurrentQueue<ContextGuidDecoratedLogEvent> ContextGuidDecoratedLogEvents = new ConcurrentQueue<ContextGuidDecoratedLogEvent>();
 
-        static readonly ConcurrentBag<Guid> TestCorrelatorContextGuids = new ConcurrentBag<Guid>();
+        static readonly ConcurrentBag<Guid> ContextGuids = new ConcurrentBag<Guid>();
 
         /// <summary>
         /// Creates a disposable <seealso cref="ITestCorrelatorContext"/> that groups all LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within it.
@@ -24,7 +23,7 @@ namespace Serilog.Sinks.TestCorrelator
         {
             var testCorrelatorContext = new TestCorrelatorContext();
 
-            TestCorrelatorContextGuids.Add(testCorrelatorContext.Guid);
+            ContextGuids.Add(testCorrelatorContext.Guid);
 
             return testCorrelatorContext;
         }
@@ -36,9 +35,9 @@ namespace Serilog.Sinks.TestCorrelator
         /// <returns>LogEvents emitted within the context.</returns>
         public static IEnumerable<LogEvent> GetLogEventsFromContextGuid(Guid contextGuid)
         {
-           return LogEventsWithGuids
-                .Where(logEventWithGuids => logEventWithGuids.Guids.Contains(contextGuid))
-                .Select(logEventWithGuids => logEventWithGuids.LogEvent);
+           return ContextGuidDecoratedLogEvents
+                .Where(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.ContextGuids.Contains(contextGuid))
+                .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
         }
 
         /// <summary>
@@ -47,18 +46,17 @@ namespace Serilog.Sinks.TestCorrelator
         /// <returns>LogEvents emitted within the current <seealso cref="ITestCorrelatorContext"/>.</returns>
         public static IEnumerable<LogEvent> GetLogEventsFromCurrentContext()
         {
-            var currentContextGuids = TestCorrelatorContextGuids.Where(LogicalCallContext.Contains);
+            var currentContextGuids = ContextGuids.Where(LogicalCallContext.Contains);
 
-            return LogEventsWithGuids
-                .Where(logEventWithGuids =>
-                    currentContextGuids.All(currentContextGuid => logEventWithGuids.Guids.Contains(currentContextGuid)))
-                .Select(logEventWithGuids => logEventWithGuids.LogEvent);
+            return ContextGuidDecoratedLogEvents
+                .Where(contextGuidDecoratedLogEvent => currentContextGuids.All(currentContextGuid => contextGuidDecoratedLogEvent.ContextGuids.Contains(currentContextGuid)))
+                .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
         }
 
         internal static void AddLogEvent(LogEvent logEvent)
         {
-            LogEventsWithGuids
-                .Enqueue((logEvent, TestCorrelatorContextGuids.Where(LogicalCallContext.Contains).ToList()));
+            ContextGuidDecoratedLogEvents
+                .Enqueue(new ContextGuidDecoratedLogEvent(logEvent, ContextGuids.Where(LogicalCallContext.Contains).ToList()));
         }
     }
 }
