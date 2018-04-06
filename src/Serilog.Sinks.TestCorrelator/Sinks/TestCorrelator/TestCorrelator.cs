@@ -11,10 +11,9 @@ namespace Serilog.Sinks.TestCorrelator
     /// </summary>
     public static class TestCorrelator
     {
-        static readonly ConcurrentDictionary<LogEvent, ConcurrentBag<Guid>> LogEventGuidDictionary =
-            new ConcurrentDictionary<LogEvent, ConcurrentBag<Guid>>();
+        static readonly ConcurrentQueue<ContextGuidDecoratedLogEvent> ContextGuidDecoratedLogEvents = new ConcurrentQueue<ContextGuidDecoratedLogEvent>();
 
-        static readonly ConcurrentBag<Guid> TestCorrelatorContextGuids = new ConcurrentBag<Guid>();
+        static readonly ConcurrentBag<Guid> ContextGuids = new ConcurrentBag<Guid>();
 
         /// <summary>
         /// Creates a disposable <seealso cref="ITestCorrelatorContext"/> that groups all LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within it.
@@ -24,7 +23,7 @@ namespace Serilog.Sinks.TestCorrelator
         {
             var testCorrelatorContext = new TestCorrelatorContext();
 
-            TestCorrelatorContextGuids.Add(testCorrelatorContext.Guid);
+            ContextGuids.Add(testCorrelatorContext.Guid);
 
             return testCorrelatorContext;
         }
@@ -36,7 +35,9 @@ namespace Serilog.Sinks.TestCorrelator
         /// <returns>LogEvents emitted within the context.</returns>
         public static IEnumerable<LogEvent> GetLogEventsFromContextGuid(Guid contextGuid)
         {
-           return LogEventGuidDictionary.Keys.Where(logEvent => LogEventGuidDictionary[logEvent].Contains(contextGuid));
+           return ContextGuidDecoratedLogEvents
+                .Where(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.ContextGuids.Contains(contextGuid))
+                .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
         }
 
         /// <summary>
@@ -45,20 +46,17 @@ namespace Serilog.Sinks.TestCorrelator
         /// <returns>LogEvents emitted within the current <seealso cref="ITestCorrelatorContext"/>.</returns>
         public static IEnumerable<LogEvent> GetLogEventsFromCurrentContext()
         {
-            var currentContextGuids = TestCorrelatorContextGuids.Where(LogicalCallContext.Contains);
+            var currentContextGuids = ContextGuids.Where(LogicalCallContext.Contains);
 
-            return LogEventGuidDictionary.Keys.Where(
-                logEvent => currentContextGuids.All(
-                    currentContextGuid => LogEventGuidDictionary[logEvent].Contains(currentContextGuid)));
+            return ContextGuidDecoratedLogEvents
+                .Where(contextGuidDecoratedLogEvent => currentContextGuids.All(currentContextGuid => contextGuidDecoratedLogEvent.ContextGuids.Contains(currentContextGuid)))
+                .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
         }
 
         internal static void AddLogEvent(LogEvent logEvent)
         {
-            var guidBag = LogEventGuidDictionary.GetOrAdd(logEvent, new ConcurrentBag<Guid>());
-            foreach (var guid in TestCorrelatorContextGuids.Where(LogicalCallContext.Contains))
-            {
-                guidBag.Add(guid);
-            }
+            ContextGuidDecoratedLogEvents
+                .Enqueue(new ContextGuidDecoratedLogEvent(logEvent, ContextGuids.Where(LogicalCallContext.Contains).ToList()));
         }
     }
 }
