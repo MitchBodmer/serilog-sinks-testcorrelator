@@ -57,6 +57,13 @@ namespace Serilog.Sinks.TestCorrelator
                 .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
         }
 
+        public static IObservable<LogEvent> GetLogEventStreamFromContextGuid(Guid contextGuid)
+        {
+            return ContextGuidDecoratedLogEventSubject
+                .Where(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.ContextGuids.Contains(contextGuid))
+                .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
+        }
+
         public static IObservable<LogEvent> GetLogEventStreamFromCurrentContext()
         {
             var currentContextGuids = ContextGuids.Where(LogicalCallContext.Contains);

@@ -277,5 +277,21 @@ namespace Serilog.Sinks.TestCorrelator.Tests
                     .Which.Value.Kind.Should().Be(NotificationKind.OnNext);
             }
         }
+
+        [TestMethod]
+        public void The_LogEvent_stream_for_a_context_guid_creates_notifications_for_LogEvents_emitted_within_that_context()
+        {
+            var scheduler = new TestScheduler();
+
+            using (var context = TestCorrelator.CreateContext())
+            {
+                scheduler.Schedule(TimeSpan.FromTicks(2), () => Log.Information(""));
+
+                scheduler.Start(() => TestCorrelator.GetLogEventStreamFromContextGuid(context.Guid), 0, 1, 3)
+                    .Messages
+                    .Should().ContainSingle()
+                    .Which.Value.Kind.Should().Be(NotificationKind.OnNext);
+            }
+        }
     }
 }
