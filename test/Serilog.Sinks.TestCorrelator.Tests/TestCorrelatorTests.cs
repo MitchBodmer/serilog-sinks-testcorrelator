@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Reactive.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -256,6 +259,22 @@ namespace Serilog.Sinks.TestCorrelator.Tests
 
                 TestCorrelator.GetLogEventsFromCurrentContext()
                     .Should().Equal(logEvents);
+            }
+        }
+
+        [TestMethod]
+        public void The_LogEvent_stream_for_the_current_context_creates_notifications_for_LogEvents_emitted_within_the_current_context()
+        {
+            var scheduler = new TestScheduler();
+
+            using (TestCorrelator.CreateContext())
+            {
+                scheduler.Schedule(TimeSpan.FromTicks(2), () => Log.Information(""));
+
+                scheduler.Start(TestCorrelator.GetLogEventStreamFromCurrentContext, 0, 1, 3)
+                    .Messages
+                    .Should().ContainSingle()
+                    .Which.Value.Kind.Should().Be(NotificationKind.OnNext);
             }
         }
     }

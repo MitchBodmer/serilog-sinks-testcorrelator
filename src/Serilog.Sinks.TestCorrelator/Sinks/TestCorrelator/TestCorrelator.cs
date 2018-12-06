@@ -2,6 +2,8 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using Serilog.Events;
 
 namespace Serilog.Sinks.TestCorrelator
@@ -14,6 +16,8 @@ namespace Serilog.Sinks.TestCorrelator
         static readonly ConcurrentQueue<ContextGuidDecoratedLogEvent> ContextGuidDecoratedLogEvents = new ConcurrentQueue<ContextGuidDecoratedLogEvent>();
 
         static readonly ConcurrentBag<Guid> ContextGuids = new ConcurrentBag<Guid>();
+
+        static readonly Subject<ContextGuidDecoratedLogEvent> ContextGuidDecoratedLogEventSubject = new Subject<ContextGuidDecoratedLogEvent>();
 
         /// <summary>
         /// Creates a disposable <seealso cref="ITestCorrelatorContext"/> that groups all LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within it.
@@ -53,10 +57,22 @@ namespace Serilog.Sinks.TestCorrelator
                 .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
         }
 
+        public static IObservable<LogEvent> GetLogEventStreamFromCurrentContext()
+        {
+            var currentContextGuids = ContextGuids.Where(LogicalCallContext.Contains);
+
+            return ContextGuidDecoratedLogEventSubject
+                .Where(contextGuidDecoratedLogEvent => !currentContextGuids.Except(contextGuidDecoratedLogEvent.ContextGuids).Any())
+                .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
+        }
+
         internal static void AddLogEvent(LogEvent logEvent)
         {
-            ContextGuidDecoratedLogEvents
-                .Enqueue(new ContextGuidDecoratedLogEvent(logEvent, ContextGuids.Where(LogicalCallContext.Contains).ToList()));
+            var contextGuidDecoratedLogEvent = new ContextGuidDecoratedLogEvent(logEvent, ContextGuids.Where(LogicalCallContext.Contains).ToList());
+
+            ContextGuidDecoratedLogEvents.Enqueue(contextGuidDecoratedLogEvent);
+
+            ContextGuidDecoratedLogEventSubject.OnNext(contextGuidDecoratedLogEvent);
         }
     }
 }
