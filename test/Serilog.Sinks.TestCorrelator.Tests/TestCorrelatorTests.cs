@@ -206,7 +206,7 @@ namespace Serilog.Sinks.TestCorrelator.Tests
         [TestMethod]
         public void A_context_does_not_enrich_LogEvents_emitted_within_it()
         {
-            using (var context = TestCorrelator.CreateContext())
+            using (TestCorrelator.CreateContext())
             {
                 Log.Information("");
 
