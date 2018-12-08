@@ -293,5 +293,24 @@ namespace Serilog.Sinks.TestCorrelator.Tests
                     .Which.Value.Kind.Should().Be(NotificationKind.OnNext);
             }
         }
+
+        [TestMethod]
+        public void The_LogEvent_stream_for_the_current_context_does_not_create_notifications_for_LogEvents_emitted_outside_the_current_context()
+        {
+            var scheduler = new TestScheduler();
+
+            scheduler.Schedule(TimeSpan.FromTicks(2), () => Log.Information(""));
+
+            scheduler.Start(() =>
+                    {
+                        using (TestCorrelator.CreateContext())
+                        {
+                            return TestCorrelator.GetLogEventStreamFromCurrentContext();
+                        }
+                    }
+                    , 0, 1, 3)
+                .Messages
+                .Should().BeEmpty();
+        }
     }
 }
