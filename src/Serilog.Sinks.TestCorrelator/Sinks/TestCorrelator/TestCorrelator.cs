@@ -46,7 +46,7 @@ namespace Serilog.Sinks.TestCorrelator
         /// <returns>LogEvents emitted within the current <seealso cref="ITestCorrelatorContext"/>.</returns>
         public static IEnumerable<LogEvent> GetLogEventsFromCurrentContext()
         {
-            var currentContextGuids = ContextGuids.Where(LogicalCallContext.Contains);
+            var currentContextGuids = ContextGuids.Where(LogicalCallContext.Contains).ToList();
 
             return ContextGuidDecoratedLogEvents
                 .Where(contextGuidDecoratedLogEvent => !currentContextGuids.Except(contextGuidDecoratedLogEvent.ContextGuids).Any())

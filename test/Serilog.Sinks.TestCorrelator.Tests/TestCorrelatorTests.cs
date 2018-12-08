@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -201,6 +202,22 @@ namespace Serilog.Sinks.TestCorrelator.Tests
                 TestCorrelator.GetLogEventsFromCurrentContext()
                     .Should().HaveCount(2);
             }
+        }
+
+        [TestMethod]
+        public void Getting_LogEvents_from_the_current_context_should_return_LogEvents_from_the_context_in_which_it_was_created_even_when_enumerated_outside_of_it()
+        {
+            IEnumerable<LogEvent> logEventsFromCurrentContext;
+            
+            using (TestCorrelator.CreateContext())
+            {
+                Log.Information("");
+                logEventsFromCurrentContext = TestCorrelator.GetLogEventsFromCurrentContext();
+                logEventsFromCurrentContext.Should().HaveCount(1);
+            }
+
+            Log.Information("");
+            logEventsFromCurrentContext.Should().HaveCount(1);
         }
 
         [TestMethod]
