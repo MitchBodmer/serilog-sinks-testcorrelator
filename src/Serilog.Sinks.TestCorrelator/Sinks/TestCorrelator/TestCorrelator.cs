@@ -57,6 +57,11 @@ namespace Serilog.Sinks.TestCorrelator
                 .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
         }
 
+        /// <summary>
+        /// Gets an observable that emits LogEvents as they are emitted to a <seealso cref="TestCorrelatorSink"/> within an <seealso cref="ITestCorrelatorContext"/> with the provided GUID.
+        /// </summary>
+        /// <param name="contextGuid">The <seealso cref="ITestCorrelatorContext.Guid"/> of the desired context.</param>
+        /// <returns>The observable for the LogEvents emitted within the <seealso cref="ITestCorrelatorContext"/> with the provided GUID.</returns>
         public static IObservable<LogEvent> GetLogEventStreamFromContextGuid(Guid contextGuid)
         {
             return ContextGuidDecoratedLogEventSubject
@@ -64,6 +69,10 @@ namespace Serilog.Sinks.TestCorrelator
                 .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
         }
 
+        /// <summary>
+        /// Gets an observable that emits LogEvents as they are emitted to a <seealso cref="TestCorrelatorSink"/> within the current <seealso cref="ITestCorrelatorContext"/>.
+        /// </summary>
+        /// <returns>The observable for the LogEvents emitted within the current <seealso cref="ITestCorrelatorContext"/>.</returns>
         public static IObservable<LogEvent> GetLogEventStreamFromCurrentContext()
         {
             var currentContextGuids = GetCurrentContextGuids().ToList();
