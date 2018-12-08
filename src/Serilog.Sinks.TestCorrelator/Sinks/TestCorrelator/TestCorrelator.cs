@@ -49,7 +49,7 @@ namespace Serilog.Sinks.TestCorrelator
             var currentContextGuids = ContextGuids.Where(LogicalCallContext.Contains);
 
             return ContextGuidDecoratedLogEvents
-                .Where(contextGuidDecoratedLogEvent => currentContextGuids.All(currentContextGuid => contextGuidDecoratedLogEvent.ContextGuids.Contains(currentContextGuid)))
+                .Where(contextGuidDecoratedLogEvent => !currentContextGuids.Except(contextGuidDecoratedLogEvent.ContextGuids).Any())
                 .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
         }
 
