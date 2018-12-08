@@ -32,7 +32,7 @@ namespace Serilog.Sinks.TestCorrelator
         /// Gets the LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within an <seealso cref="ITestCorrelatorContext"/> with the provided GUID.
         /// </summary>
         /// <param name="contextGuid">The <seealso cref="ITestCorrelatorContext.Guid"/> of the desired context.</param>
-        /// <returns>LogEvents emitted within the context.</returns>
+        /// <returns>LogEvents emitted within the <seealso cref="ITestCorrelatorContext"/> with the provided GUID.</returns>
         public static IEnumerable<LogEvent> GetLogEventsFromContextGuid(Guid contextGuid)
         {
            return ContextGuidDecoratedLogEvents
@@ -41,7 +41,7 @@ namespace Serilog.Sinks.TestCorrelator
         }
 
         /// <summary>
-        /// Gets the LogEvents emitted within the current <seealso cref="ITestCorrelatorContext"/>.
+        /// Gets the LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within the current <seealso cref="ITestCorrelatorContext"/>.
         /// </summary>
         /// <returns>LogEvents emitted within the current <seealso cref="ITestCorrelatorContext"/>.</returns>
         public static IEnumerable<LogEvent> GetLogEventsFromCurrentContext()
