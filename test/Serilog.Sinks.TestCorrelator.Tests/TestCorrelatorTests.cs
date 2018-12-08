@@ -25,7 +25,8 @@ namespace Serilog.Sinks.TestCorrelator.Tests
             {
                 Log.Information("");
 
-                TestCorrelator.GetLogEventsFromCurrentContext().Should().ContainSingle();
+                TestCorrelator.GetLogEventsFromCurrentContext()
+                    .Should().ContainSingle();
             }
         }
 
@@ -36,7 +37,8 @@ namespace Serilog.Sinks.TestCorrelator.Tests
             {
                 LogInformation();
 
-                TestCorrelator.GetLogEventsFromCurrentContext().Should().ContainSingle();
+                TestCorrelator.GetLogEventsFromCurrentContext()
+                    .Should().ContainSingle();
             }
         }
 
@@ -57,7 +59,8 @@ namespace Serilog.Sinks.TestCorrelator.Tests
 
             Log.Information("");
 
-            TestCorrelator.GetLogEventsFromContextGuid(contextGuid).Should().BeEmpty();
+            TestCorrelator.GetLogEventsFromContextGuid(contextGuid)
+                .Should().BeEmpty();
         }
 
         [TestMethod]
@@ -69,7 +72,8 @@ namespace Serilog.Sinks.TestCorrelator.Tests
 
                 Task.WaitAll(logTask);
 
-                TestCorrelator.GetLogEventsFromCurrentContext().Should().ContainSingle();
+                TestCorrelator.GetLogEventsFromCurrentContext()
+                    .Should().ContainSingle();
             }
         }
 
@@ -91,8 +95,8 @@ namespace Serilog.Sinks.TestCorrelator.Tests
 
             Task.WaitAll(logTask);
 
-            TestCorrelator.GetLogEventsFromContextGuid(contextGuid).Should()
-                .ContainSingle();
+            TestCorrelator.GetLogEventsFromContextGuid(contextGuid)
+                .Should().ContainSingle();
         }
 
         [TestMethod]
@@ -126,7 +130,8 @@ namespace Serilog.Sinks.TestCorrelator.Tests
 
             Task.WaitAll(logTask, logContextTask);
 
-            TestCorrelator.GetLogEventsFromContextGuid(contextGuid).Should().BeEmpty();
+            TestCorrelator.GetLogEventsFromContextGuid(contextGuid)
+                .Should().BeEmpty();
         }
 
         [TestMethod]
@@ -141,7 +146,8 @@ namespace Serilog.Sinks.TestCorrelator.Tests
 
                 Task.WaitAll(logTask);
 
-                TestCorrelator.GetLogEventsFromCurrentContext().Should().BeEmpty();
+                TestCorrelator.GetLogEventsFromCurrentContext()
+                    .Should().BeEmpty();
             }
         }
 
@@ -155,12 +161,10 @@ namespace Serilog.Sinks.TestCorrelator.Tests
                     Log.Information("");
 
                     TestCorrelator.GetLogEventsFromContextGuid(innerContext.Guid)
-                        .Should()
-                        .ContainSingle();
+                        .Should().ContainSingle();
 
                     TestCorrelator.GetLogEventsFromContextGuid(outerContext.Guid)
-                        .Should()
-                        .ContainSingle();
+                        .Should().ContainSingle();
                 }
             }
         }
@@ -177,8 +181,7 @@ namespace Serilog.Sinks.TestCorrelator.Tests
                     Log.Information("");
 
                     TestCorrelator.GetLogEventsFromCurrentContext()
-                        .Should()
-                        .ContainSingle();
+                        .Should().ContainSingle();
                 }
             }
         }
@@ -196,8 +199,7 @@ namespace Serilog.Sinks.TestCorrelator.Tests
                 }
 
                 TestCorrelator.GetLogEventsFromCurrentContext()
-                    .Should()
-                    .HaveCount(2);
+                    .Should().HaveCount(2);
             }
         }
 
@@ -208,11 +210,9 @@ namespace Serilog.Sinks.TestCorrelator.Tests
             {
                 Log.Information("");
 
-                TestCorrelator.GetLogEventsFromContextGuid(context.Guid)
-                    .Should()
-                    .ContainSingle()
-                    .Which.Properties.Should()
-                    .BeEmpty();
+                TestCorrelator.GetLogEventsFromCurrentContext()
+                    .Should().ContainSingle()
+                    .Which.Properties.Should().BeEmpty();
             }
         }
 
@@ -230,14 +230,15 @@ namespace Serilog.Sinks.TestCorrelator.Tests
                         Enumerable.Empty<LogEventProperty>()))
                 .ToList();
 
-            using (var context = TestCorrelator.CreateContext())
+            using (TestCorrelator.CreateContext())
             {
                 foreach (var logEvent in logEvents)
                 {
                     Log.Write(logEvent);
                 }
 
-                TestCorrelator.GetLogEventsFromCurrentContext().Should().Equal(logEvents);
+                TestCorrelator.GetLogEventsFromCurrentContext()
+                    .Should().Equal(logEvents);
             }
         }
     }
