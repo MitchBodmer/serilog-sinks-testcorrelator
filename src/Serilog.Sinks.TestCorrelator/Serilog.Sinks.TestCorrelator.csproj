@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard1.3</TargetFrameworks>
+    <TargetFrameworks>net46;netstandard2.0</TargetFrameworks>
     <Authors>Microsoft</Authors>
     <Version></Version>
     <PackageLicenseUrl>https://github.com/Microsoft/serilog-sinks-testcorrelator/blob/master/LICENSE</PackageLicenseUrl>
@@ -18,15 +18,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Serilog" Version="2.5.0" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
+    <PackageReference Include="Serilog" Version="2.7.1" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
+    <PackageReference Include="System.Reactive" Version="4.1.2" />
   </ItemGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
     <DefineConstants>$(DefineConstants);REMOTING</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <DefineConstants>$(DefineConstants);ASYNCLOCAL</DefineConstants>
   </PropertyGroup>
 

@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Reactive.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -25,7 +29,8 @@ namespace Serilog.Sinks.TestCorrelator.Tests
             {
                 Log.Information("");
 
-                TestCorrelator.GetLogEventsFromCurrentContext().Should().ContainSingle();
+                TestCorrelator.GetLogEventsFromCurrentContext()
+                    .Should().ContainSingle();
             }
         }
 
@@ -36,7 +41,8 @@ namespace Serilog.Sinks.TestCorrelator.Tests
             {
                 LogInformation();
 
-                TestCorrelator.GetLogEventsFromCurrentContext().Should().ContainSingle();
+                TestCorrelator.GetLogEventsFromCurrentContext()
+                    .Should().ContainSingle();
             }
         }
 
@@ -57,7 +63,8 @@ namespace Serilog.Sinks.TestCorrelator.Tests
 
             Log.Information("");
 
-            TestCorrelator.GetLogEventsFromContextGuid(contextGuid).Should().BeEmpty();
+            TestCorrelator.GetLogEventsFromContextGuid(contextGuid)
+                .Should().BeEmpty();
         }
 
         [TestMethod]
@@ -69,7 +76,8 @@ namespace Serilog.Sinks.TestCorrelator.Tests
 
                 Task.WaitAll(logTask);
 
-                TestCorrelator.GetLogEventsFromCurrentContext().Should().ContainSingle();
+                TestCorrelator.GetLogEventsFromCurrentContext()
+                    .Should().ContainSingle();
             }
         }
 
@@ -91,8 +99,8 @@ namespace Serilog.Sinks.TestCorrelator.Tests
 
             Task.WaitAll(logTask);
 
-            TestCorrelator.GetLogEventsFromContextGuid(contextGuid).Should()
-                .ContainSingle();
+            TestCorrelator.GetLogEventsFromContextGuid(contextGuid)
+                .Should().ContainSingle();
         }
 
         [TestMethod]
@@ -126,7 +134,8 @@ namespace Serilog.Sinks.TestCorrelator.Tests
 
             Task.WaitAll(logTask, logContextTask);
 
-            TestCorrelator.GetLogEventsFromContextGuid(contextGuid).Should().BeEmpty();
+            TestCorrelator.GetLogEventsFromContextGuid(contextGuid)
+                .Should().BeEmpty();
         }
 
         [TestMethod]
@@ -141,7 +150,8 @@ namespace Serilog.Sinks.TestCorrelator.Tests
 
                 Task.WaitAll(logTask);
 
-                TestCorrelator.GetLogEventsFromCurrentContext().Should().BeEmpty();
+                TestCorrelator.GetLogEventsFromCurrentContext()
+                    .Should().BeEmpty();
             }
         }
 
@@ -155,12 +165,10 @@ namespace Serilog.Sinks.TestCorrelator.Tests
                     Log.Information("");
 
                     TestCorrelator.GetLogEventsFromContextGuid(innerContext.Guid)
-                        .Should()
-                        .ContainSingle();
+                        .Should().ContainSingle();
 
                     TestCorrelator.GetLogEventsFromContextGuid(outerContext.Guid)
-                        .Should()
-                        .ContainSingle();
+                        .Should().ContainSingle();
                 }
             }
         }
@@ -177,8 +185,7 @@ namespace Serilog.Sinks.TestCorrelator.Tests
                     Log.Information("");
 
                     TestCorrelator.GetLogEventsFromCurrentContext()
-                        .Should()
-                        .ContainSingle();
+                        .Should().ContainSingle();
                 }
             }
         }
@@ -196,23 +203,36 @@ namespace Serilog.Sinks.TestCorrelator.Tests
                 }
 
                 TestCorrelator.GetLogEventsFromCurrentContext()
-                    .Should()
-                    .HaveCount(2);
+                    .Should().HaveCount(2);
             }
+        }
+
+        [TestMethod]
+        public void Getting_LogEvents_from_the_current_context_should_return_LogEvents_from_the_context_in_which_it_was_created_even_when_enumerated_outside_of_it()
+        {
+            IEnumerable<LogEvent> logEventsFromCurrentContext;
+            
+            using (TestCorrelator.CreateContext())
+            {
+                Log.Information("");
+                logEventsFromCurrentContext = TestCorrelator.GetLogEventsFromCurrentContext();
+                logEventsFromCurrentContext.Should().HaveCount(1);
+            }
+
+            Log.Information("");
+            logEventsFromCurrentContext.Should().HaveCount(1);
         }
 
         [TestMethod]
         public void A_context_does_not_enrich_LogEvents_emitted_within_it()
         {
-            using (var context = TestCorrelator.CreateContext())
+            using (TestCorrelator.CreateContext())
             {
                 Log.Information("");
 
-                TestCorrelator.GetLogEventsFromContextGuid(context.Guid)
-                    .Should()
-                    .ContainSingle()
-                    .Which.Properties.Should()
-                    .BeEmpty();
+                TestCorrelator.GetLogEventsFromCurrentContext()
+                    .Should().ContainSingle()
+                    .Which.Properties.Should().BeEmpty();
             }
         }
 
@@ -230,15 +250,67 @@ namespace Serilog.Sinks.TestCorrelator.Tests
                         Enumerable.Empty<LogEventProperty>()))
                 .ToList();
 
-            using (var context = TestCorrelator.CreateContext())
+            using (TestCorrelator.CreateContext())
             {
                 foreach (var logEvent in logEvents)
                 {
                     Log.Write(logEvent);
                 }
 
-                TestCorrelator.GetLogEventsFromCurrentContext().Should().Equal(logEvents);
+                TestCorrelator.GetLogEventsFromCurrentContext()
+                    .Should().Equal(logEvents);
             }
+        }
+
+        [TestMethod]
+        public void The_LogEvent_stream_for_the_current_context_creates_notifications_for_LogEvents_emitted_within_the_current_context()
+        {
+            var scheduler = new TestScheduler();
+
+            using (TestCorrelator.CreateContext())
+            {
+                scheduler.Schedule(TimeSpan.FromTicks(2), () => Log.Information(""));
+
+                scheduler.Start(TestCorrelator.GetLogEventStreamFromCurrentContext, 0, 1, 3)
+                    .Messages
+                    .Should().ContainSingle()
+                    .Which.Value.Kind.Should().Be(NotificationKind.OnNext);
+            }
+        }
+
+        [TestMethod]
+        public void The_LogEvent_stream_for_a_context_guid_creates_notifications_for_LogEvents_emitted_within_that_context()
+        {
+            var scheduler = new TestScheduler();
+
+            using (var context = TestCorrelator.CreateContext())
+            {
+                scheduler.Schedule(TimeSpan.FromTicks(2), () => Log.Information(""));
+
+                scheduler.Start(() => TestCorrelator.GetLogEventStreamFromContextGuid(context.Guid), 0, 1, 3)
+                    .Messages
+                    .Should().ContainSingle()
+                    .Which.Value.Kind.Should().Be(NotificationKind.OnNext);
+            }
+        }
+
+        [TestMethod]
+        public void The_LogEvent_stream_for_the_current_context_does_not_create_notifications_for_LogEvents_emitted_outside_the_current_context()
+        {
+            var scheduler = new TestScheduler();
+
+            scheduler.Schedule(TimeSpan.FromTicks(2), () => Log.Information(""));
+
+            scheduler.Start(() =>
+                    {
+                        using (TestCorrelator.CreateContext())
+                        {
+                            return TestCorrelator.GetLogEventStreamFromCurrentContext();
+                        }
+                    }
+                    , 0, 1, 3)
+                .Messages
+                .Should().BeEmpty();
         }
     }
 }
