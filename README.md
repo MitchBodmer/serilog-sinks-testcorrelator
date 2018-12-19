@@ -30,9 +30,9 @@ You can also get a stream of log events as an observable, which can be useful fo
 using (TestCorrelator.CreateContext())
 {
     TestCorrelator.GetLogEventStreamFromCurrentContext()
-		.Subscribe(logEvent => logEvent.MessageTemplate.Text.Should().Be("My log message!"));
+        .Subscribe(logEvent => logEvent.MessageTemplate.Text.Should().Be("My log message!"));
 
-	Log.Information("My log message!");
+    Log.Information("My log message!");
 }
 ```
 
