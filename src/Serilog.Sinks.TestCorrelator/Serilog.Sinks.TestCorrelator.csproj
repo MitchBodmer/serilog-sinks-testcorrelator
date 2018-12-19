@@ -10,7 +10,7 @@
     <PackageTags>serilog;sink;log;logging;unit;test;testing;unittest;unittesting</PackageTags>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Description>A Serilog sink that correlates log events with the code that produced them, enabling unit testing of log output.</Description>
-    <Copyright>Copyright © 2017 Microsoft</Copyright>
+    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
     <IncludeSymbols>true</IncludeSymbols>
     <RootNamespace>Serilog</RootNamespace>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
