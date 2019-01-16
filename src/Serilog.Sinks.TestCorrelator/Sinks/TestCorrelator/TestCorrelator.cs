@@ -19,6 +19,8 @@ namespace Serilog.Sinks.TestCorrelator
 
         static readonly Subject<ContextGuidDecoratedLogEvent> ContextGuidDecoratedLogEventSubject = new Subject<ContextGuidDecoratedLogEvent>();
 
+        static ITestCorrelatorContext GlobalTestContext = new GlobalTestCorrelatorContext(Guid.Empty);
+
         /// <summary>
         /// Creates a disposable <seealso cref="ITestCorrelatorContext"/> that groups all LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within it.
         /// </summary>
@@ -26,8 +28,19 @@ namespace Serilog.Sinks.TestCorrelator
         public static ITestCorrelatorContext CreateContext()
         {
             var testCorrelatorContext = new TestCorrelatorContext();
-
             ContextGuids.Add(testCorrelatorContext.Guid);
+
+            return testCorrelatorContext;
+        }
+
+        /// <summary>
+        /// Creates a disposable <seealso cref="ITestCorrelatorContext"/> that groups all (including outside the same logical call) LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within it.
+        /// </summary>
+        /// <returns>The <seealso cref="ITestCorrelatorContext"/>.</returns>
+        public static ITestCorrelatorContext CreateGlobalContext()
+        {
+            var testCorrelatorContext = new GlobalTestCorrelatorContext(Guid.NewGuid());
+            GlobalTestContext = testCorrelatorContext;
 
             return testCorrelatorContext;
         }
@@ -52,9 +65,10 @@ namespace Serilog.Sinks.TestCorrelator
         {
             var currentContextGuids = GetCurrentContextGuids().ToList();
 
-            return ContextGuidDecoratedLogEvents
+            var logEvents = ContextGuidDecoratedLogEvents
                 .Where(contextGuidDecoratedLogEvent => !currentContextGuids.Except(contextGuidDecoratedLogEvent.ContextGuids).Any())
                 .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
+            return logEvents;
         }
 
         /// <summary>
@@ -89,7 +103,12 @@ namespace Serilog.Sinks.TestCorrelator
 
         internal static void AddLogEvent(LogEvent logEvent)
         {
-            var contextGuidDecoratedLogEvent = new ContextGuidDecoratedLogEvent(logEvent, ContextGuids.Where(LogicalCallContext.Contains).ToList());
+            var contextGuids = ContextGuids.Where(LogicalCallContext.Contains).ToList();
+
+            if (GlobalTestContext != null && GlobalTestContext.Guid != Guid.Empty)
+                contextGuids.Insert(0, GlobalTestContext.Guid);
+
+            var contextGuidDecoratedLogEvent = new ContextGuidDecoratedLogEvent(logEvent, contextGuids);
 
             ContextGuidDecoratedLogEvents.Enqueue(contextGuidDecoratedLogEvent);
 

@@ -10,11 +10,27 @@ namespace Serilog.Sinks.TestCorrelator
             LogicalCallContext.Add(Guid);
         }
 
-        public Guid Guid { get; }
+        public Guid Guid { get; private set; }
 
         public void Dispose()
         {
             LogicalCallContext.Remove(Guid);
+            Guid = Guid.Empty;
+        }
+    }
+
+    class GlobalTestCorrelatorContext : ITestCorrelatorContext
+    {
+        public GlobalTestCorrelatorContext(Guid guid)
+        {
+            Guid = guid;
+        }
+
+        public Guid Guid { get; private set; }
+
+        public void Dispose()
+        {
+            Guid = Guid.Empty;
         }
     }
 }

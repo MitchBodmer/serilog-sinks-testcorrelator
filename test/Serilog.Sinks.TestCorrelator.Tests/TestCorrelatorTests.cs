@@ -136,6 +136,9 @@ namespace Serilog.Sinks.TestCorrelator.Tests
 
             TestCorrelator.GetLogEventsFromContextGuid(contextGuid)
                 .Should().BeEmpty();
+
+            var temp = TestCorrelator.GetLogEventsFromContextGuid(Guid.Empty).ToArray();
+
         }
 
         [TestMethod]
@@ -152,6 +155,27 @@ namespace Serilog.Sinks.TestCorrelator.Tests
 
                 TestCorrelator.GetLogEventsFromCurrentContext()
                     .Should().BeEmpty();
+            }
+        }
+
+        [TestMethod]
+        public void
+            A_global_context_does_capture_LogEvents_outside_the_same_logical_call()
+        {
+            var globalContextGuid = TestCorrelator.CreateGlobalContext().Guid;
+
+            var logTask = new Task(() => { Log.Information(""); });
+
+            using (TestCorrelator.CreateContext())
+            {
+                logTask.Start();
+
+                Task.WaitAll(logTask);
+
+                TestCorrelator.GetLogEventsFromCurrentContext()
+                    .Should().BeEmpty();
+
+                TestCorrelator.GetLogEventsFromContextGuid(globalContextGuid).Should().ContainSingle();
             }
         }
 
@@ -205,6 +229,29 @@ namespace Serilog.Sinks.TestCorrelator.Tests
                 TestCorrelator.GetLogEventsFromCurrentContext()
                     .Should().HaveCount(2);
             }
+        }
+
+        [TestMethod]
+        public void Getting_LogEvents_from_the_global_context_gets_LogEvents_emitted_within_all_contexts()
+        {
+            var globalContextGuid = TestCorrelator.CreateGlobalContext().Guid;
+
+            Log.Information("");
+
+            using (TestCorrelator.CreateContext())
+            {
+                Log.Information("");
+
+                using (TestCorrelator.CreateContext())
+                {
+                    Log.Information("");
+                }
+
+                TestCorrelator.GetLogEventsFromCurrentContext()
+                    .Should().HaveCount(2);
+            }
+
+            TestCorrelator.GetLogEventsFromContextGuid(globalContextGuid).Should().HaveCount(3);
         }
 
         [TestMethod]
