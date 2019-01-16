@@ -255,6 +255,42 @@ namespace Serilog.Sinks.TestCorrelator.Tests
         }
 
         [TestMethod]
+        public void Getting_LogEvents_from_multiple_global_contexts()
+        {
+            var globalContextGuid1 = TestCorrelator.CreateGlobalContext().Guid;
+
+            Log.Information("");
+
+            using (TestCorrelator.CreateContext())
+            {
+                Log.Information("");
+
+                using (TestCorrelator.CreateContext())
+                {
+                    Log.Information("");
+                }
+
+                TestCorrelator.GetLogEventsFromCurrentContext()
+                    .Should().HaveCount(2);
+            }
+
+            var globalContextGuid2 = TestCorrelator.CreateGlobalContext().Guid;
+
+            Log.Information("");
+
+            using (TestCorrelator.CreateContext())
+            {
+                Log.Information("");
+
+                TestCorrelator.GetLogEventsFromCurrentContext()
+                    .Should().HaveCount(1);
+            }
+
+            TestCorrelator.GetLogEventsFromContextGuid(globalContextGuid1).Should().HaveCount(3);
+            TestCorrelator.GetLogEventsFromContextGuid(globalContextGuid2).Should().HaveCount(2);
+        }
+
+        [TestMethod]
         public void Getting_LogEvents_from_the_current_context_should_return_LogEvents_from_the_context_in_which_it_was_created_even_when_enumerated_outside_of_it()
         {
             IEnumerable<LogEvent> logEventsFromCurrentContext;

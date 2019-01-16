@@ -19,7 +19,7 @@ namespace Serilog.Sinks.TestCorrelator
 
         static readonly Subject<ContextGuidDecoratedLogEvent> ContextGuidDecoratedLogEventSubject = new Subject<ContextGuidDecoratedLogEvent>();
 
-        static ITestCorrelatorContext GlobalTestContext = new GlobalTestCorrelatorContext(Guid.Empty);
+        private static ITestCorrelatorContext _globalTestContext = new GlobalTestCorrelatorContext(Guid.Empty);
 
         /// <summary>
         /// Creates a disposable <seealso cref="ITestCorrelatorContext"/> that groups all LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within it.
@@ -40,7 +40,7 @@ namespace Serilog.Sinks.TestCorrelator
         public static ITestCorrelatorContext CreateGlobalContext()
         {
             var testCorrelatorContext = new GlobalTestCorrelatorContext(Guid.NewGuid());
-            GlobalTestContext = testCorrelatorContext;
+            _globalTestContext = testCorrelatorContext;
 
             return testCorrelatorContext;
         }
@@ -64,11 +64,10 @@ namespace Serilog.Sinks.TestCorrelator
         public static IEnumerable<LogEvent> GetLogEventsFromCurrentContext()
         {
             var currentContextGuids = GetCurrentContextGuids().ToList();
-
-            var logEvents = ContextGuidDecoratedLogEvents
+ 
+            return ContextGuidDecoratedLogEvents
                 .Where(contextGuidDecoratedLogEvent => !currentContextGuids.Except(contextGuidDecoratedLogEvent.ContextGuids).Any())
-                .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
-            return logEvents;
+                .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent); ;
         }
 
         /// <summary>
@@ -105,8 +104,8 @@ namespace Serilog.Sinks.TestCorrelator
         {
             var contextGuids = ContextGuids.Where(LogicalCallContext.Contains).ToList();
 
-            if (GlobalTestContext != null && GlobalTestContext.Guid != Guid.Empty)
-                contextGuids.Insert(0, GlobalTestContext.Guid);
+            if (_globalTestContext != null && _globalTestContext.Guid != Guid.Empty)
+                contextGuids.Insert(0, _globalTestContext.Guid);
 
             var contextGuidDecoratedLogEvent = new ContextGuidDecoratedLogEvent(logEvent, contextGuids);
 
