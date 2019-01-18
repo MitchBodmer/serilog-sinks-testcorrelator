@@ -2,15 +2,15 @@
 
   <PropertyGroup>
     <TargetFrameworks>net46;netstandard2.0</TargetFrameworks>
-    <Authors>Microsoft</Authors>
+    <Authors>Mitch Bodmer</Authors>
     <Version></Version>
-    <PackageLicenseUrl>https://github.com/Microsoft/serilog-sinks-testcorrelator/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/Microsoft/serilog-sinks-testcorrelator</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Microsoft/serilog-sinks-testcorrelator</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/MitchBodmer/serilog-sinks-testcorrelator/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/MitchBodmer/serilog-sinks-testcorrelator</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/MitchBodmer/serilog-sinks-testcorrelator</RepositoryUrl>
     <PackageTags>serilog;sink;log;logging;unit;test;testing;unittest;unittesting</PackageTags>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Description>A Serilog sink that correlates log events with the code that produced them, enabling unit testing of log output.</Description>
-    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
+    <Copyright>© Mitch Bodmer</Copyright>
     <IncludeSymbols>true</IncludeSymbols>
     <RootNamespace>Serilog</RootNamespace>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
