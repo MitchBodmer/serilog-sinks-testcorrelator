@@ -36,4 +36,4 @@ using (TestCorrelator.CreateContext())
 }
 ```
 
-For more examples check out the [unit tests](https://github.com/Microsoft/serilog-sinks-testcorrelator/tree/master/test/Serilog.Sinks.TestCorrelator.Tests)!
+For more examples check out the [unit tests](https://github.com/MitchBodmer/serilog-sinks-testcorrelator/tree/master/test/Serilog.Sinks.TestCorrelator.Tests)!
