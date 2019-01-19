@@ -1,4 +1,4 @@
-# Serilog.Sinks.TestCorrelator [![AppVeyor Badge](https://ci.appveyor.com/api/projects/status/wf2emjam7xsviebw/branch/master?svg=true)](https://ci.appveyor.com/project/SerilogUtilitiesConcurrentCorrelatorSA/serilog-utilities-concurrent-correlator/branch/master) [![NuGet Badge](https://buildstats.info/nuget/Serilog.Sinks.TestCorrelator)](https://www.nuget.org/packages/Serilog.Sinks.TestCorrelator/)
+# Serilog.Sinks.TestCorrelator [![AppVeyor Badge](https://ci.appveyor.com/api/projects/status/rjdxaaq2ry50v30c/branch/master?svg=true)](https://ci.appveyor.com/project/MitchBodmer/serilog-sinks-testcorrelator/branch/master) [![NuGet Badge](https://buildstats.info/nuget/Serilog.Sinks.TestCorrelator)](https://www.nuget.org/packages/Serilog.Sinks.TestCorrelator/)
 
 A [Serilog](https://github.com/serilog/serilog) sink that correlates log events with the code that produced them, enabling unit testing of log output.
 
