@@ -7,7 +7,7 @@ namespace Serilog.Sinks.TestCorrelator.Tests
     public class TestCorrelatorSinkTests
     {
         [TestMethod]
-        public void A_TestCorrelatorSink_writes_LogEvents_emited_to_it_to_a_TestCorrelator()
+        public void A_TestCorrelatorSink_writes_LogEvents_emitted_to_it_to_a_TestCorrelator()
         {
             var logger = new LoggerConfiguration().WriteTo.Sink(new TestCorrelatorSink()).CreateLogger();
 
