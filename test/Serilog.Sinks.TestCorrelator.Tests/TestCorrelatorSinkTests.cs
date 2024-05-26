@@ -1,22 +1,21 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Serilog.Sinks.TestCorrelator.Tests
+namespace Serilog.Sinks.TestCorrelator.Tests;
+
+[TestClass]
+public class TestCorrelatorSinkTests
 {
-    [TestClass]
-    public class TestCorrelatorSinkTests
+    [TestMethod]
+    public void A_TestCorrelatorSink_writes_LogEvents_emitted_to_it_to_a_TestCorrelator()
     {
-        [TestMethod]
-        public void A_TestCorrelatorSink_writes_LogEvents_emitted_to_it_to_a_TestCorrelator()
+        var logger = new LoggerConfiguration().WriteTo.Sink(new TestCorrelatorSink()).CreateLogger();
+
+        using (TestCorrelator.CreateContext())
         {
-            var logger = new LoggerConfiguration().WriteTo.Sink(new TestCorrelatorSink()).CreateLogger();
+            logger.Information("");
 
-            using (TestCorrelator.CreateContext())
-            {
-                logger.Information("");
-
-                TestCorrelator.GetLogEventsFromCurrentContext().Should().ContainSingle();
-            }
+            TestCorrelator.GetLogEventsFromCurrentContext().Should().ContainSingle();
         }
     }
 }

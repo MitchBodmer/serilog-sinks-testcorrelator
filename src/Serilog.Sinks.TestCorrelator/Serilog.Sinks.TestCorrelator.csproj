@@ -17,6 +17,7 @@
 	<PackageIcon>icon.png</PackageIcon>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Serilog.Sinks.TestCorrelator.snk</AssemblyOriginatorKeyFile>
+	<LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

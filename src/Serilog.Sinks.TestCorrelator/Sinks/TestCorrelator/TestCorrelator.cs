@@ -6,94 +6,93 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Serilog.Events;
 
-namespace Serilog.Sinks.TestCorrelator
+namespace Serilog.Sinks.TestCorrelator;
+
+/// <summary>
+/// Correlates Serilog LogEvents to the test code that produced them.
+/// </summary>
+public static class TestCorrelator
 {
+    static readonly ConcurrentQueue<ContextGuidDecoratedLogEvent> ContextGuidDecoratedLogEvents = new ConcurrentQueue<ContextGuidDecoratedLogEvent>();
+
+    static readonly ConcurrentBag<Guid> ContextGuids = new ConcurrentBag<Guid>();
+
+    static readonly Subject<ContextGuidDecoratedLogEvent> ContextGuidDecoratedLogEventSubject = new Subject<ContextGuidDecoratedLogEvent>();
+
     /// <summary>
-    /// Correlates Serilog LogEvents to the test code that produced them.
+    /// Creates a disposable <seealso cref="ITestCorrelatorContext"/> that groups all LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within it.
     /// </summary>
-    public static class TestCorrelator
+    /// <returns>The <seealso cref="ITestCorrelatorContext"/>.</returns>
+    public static ITestCorrelatorContext CreateContext()
     {
-        static readonly ConcurrentQueue<ContextGuidDecoratedLogEvent> ContextGuidDecoratedLogEvents = new ConcurrentQueue<ContextGuidDecoratedLogEvent>();
+        var testCorrelatorContext = new TestCorrelatorContext();
 
-        static readonly ConcurrentBag<Guid> ContextGuids = new ConcurrentBag<Guid>();
+        ContextGuids.Add(testCorrelatorContext.Guid);
 
-        static readonly Subject<ContextGuidDecoratedLogEvent> ContextGuidDecoratedLogEventSubject = new Subject<ContextGuidDecoratedLogEvent>();
+        return testCorrelatorContext;
+    }
 
-        /// <summary>
-        /// Creates a disposable <seealso cref="ITestCorrelatorContext"/> that groups all LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within it.
-        /// </summary>
-        /// <returns>The <seealso cref="ITestCorrelatorContext"/>.</returns>
-        public static ITestCorrelatorContext CreateContext()
-        {
-            var testCorrelatorContext = new TestCorrelatorContext();
+    /// <summary>
+    /// Gets the LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within an <seealso cref="ITestCorrelatorContext"/> with the provided GUID.
+    /// </summary>
+    /// <param name="contextGuid">The <seealso cref="ITestCorrelatorContext.Guid"/> of the desired context.</param>
+    /// <returns>LogEvents emitted within the <seealso cref="ITestCorrelatorContext"/> with the provided GUID.</returns>
+    public static IEnumerable<LogEvent> GetLogEventsFromContextGuid(Guid contextGuid)
+    {
+        return ContextGuidDecoratedLogEvents
+            .Where(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.ContextGuids.Contains(contextGuid))
+            .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
+    }
 
-            ContextGuids.Add(testCorrelatorContext.Guid);
+    /// <summary>
+    /// Gets the LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within the current <seealso cref="ITestCorrelatorContext"/>.
+    /// </summary>
+    /// <returns>LogEvents emitted within the current <seealso cref="ITestCorrelatorContext"/>.</returns>
+    public static IEnumerable<LogEvent> GetLogEventsFromCurrentContext()
+    {
+        var currentContextGuids = GetCurrentContextGuids().ToList();
 
-            return testCorrelatorContext;
-        }
+        return ContextGuidDecoratedLogEvents
+            .Where(contextGuidDecoratedLogEvent => !currentContextGuids.Except(contextGuidDecoratedLogEvent.ContextGuids).Any())
+            .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
+    }
 
-        /// <summary>
-        /// Gets the LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within an <seealso cref="ITestCorrelatorContext"/> with the provided GUID.
-        /// </summary>
-        /// <param name="contextGuid">The <seealso cref="ITestCorrelatorContext.Guid"/> of the desired context.</param>
-        /// <returns>LogEvents emitted within the <seealso cref="ITestCorrelatorContext"/> with the provided GUID.</returns>
-        public static IEnumerable<LogEvent> GetLogEventsFromContextGuid(Guid contextGuid)
-        {
-           return ContextGuidDecoratedLogEvents
-                .Where(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.ContextGuids.Contains(contextGuid))
-                .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
-        }
+    /// <summary>
+    /// Gets an observable that emits LogEvents as they are emitted to a <seealso cref="TestCorrelatorSink"/> within an <seealso cref="ITestCorrelatorContext"/> with the provided GUID.
+    /// </summary>
+    /// <param name="contextGuid">The <seealso cref="ITestCorrelatorContext.Guid"/> of the desired context.</param>
+    /// <returns>The observable for the LogEvents emitted within the <seealso cref="ITestCorrelatorContext"/> with the provided GUID.</returns>
+    public static IObservable<LogEvent> GetLogEventStreamFromContextGuid(Guid contextGuid)
+    {
+        return ContextGuidDecoratedLogEventSubject
+            .Where(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.ContextGuids.Contains(contextGuid))
+            .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
+    }
 
-        /// <summary>
-        /// Gets the LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within the current <seealso cref="ITestCorrelatorContext"/>.
-        /// </summary>
-        /// <returns>LogEvents emitted within the current <seealso cref="ITestCorrelatorContext"/>.</returns>
-        public static IEnumerable<LogEvent> GetLogEventsFromCurrentContext()
-        {
-            var currentContextGuids = GetCurrentContextGuids().ToList();
+    /// <summary>
+    /// Gets an observable that emits LogEvents as they are emitted to a <seealso cref="TestCorrelatorSink"/> within the current <seealso cref="ITestCorrelatorContext"/>.
+    /// </summary>
+    /// <returns>The observable for the LogEvents emitted within the current <seealso cref="ITestCorrelatorContext"/>.</returns>
+    public static IObservable<LogEvent> GetLogEventStreamFromCurrentContext()
+    {
+        var currentContextGuids = GetCurrentContextGuids().ToList();
 
-            return ContextGuidDecoratedLogEvents
-                .Where(contextGuidDecoratedLogEvent => !currentContextGuids.Except(contextGuidDecoratedLogEvent.ContextGuids).Any())
-                .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
-        }
+        return ContextGuidDecoratedLogEventSubject
+            .Where(contextGuidDecoratedLogEvent => !currentContextGuids.Except(contextGuidDecoratedLogEvent.ContextGuids).Any())
+            .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
+    }
 
-        /// <summary>
-        /// Gets an observable that emits LogEvents as they are emitted to a <seealso cref="TestCorrelatorSink"/> within an <seealso cref="ITestCorrelatorContext"/> with the provided GUID.
-        /// </summary>
-        /// <param name="contextGuid">The <seealso cref="ITestCorrelatorContext.Guid"/> of the desired context.</param>
-        /// <returns>The observable for the LogEvents emitted within the <seealso cref="ITestCorrelatorContext"/> with the provided GUID.</returns>
-        public static IObservable<LogEvent> GetLogEventStreamFromContextGuid(Guid contextGuid)
-        {
-            return ContextGuidDecoratedLogEventSubject
-                .Where(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.ContextGuids.Contains(contextGuid))
-                .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
-        }
+    private static IEnumerable<Guid> GetCurrentContextGuids()
+    {
+        return ContextGuids.Where(LogicalCallContext.Contains);
+    }
 
-        /// <summary>
-        /// Gets an observable that emits LogEvents as they are emitted to a <seealso cref="TestCorrelatorSink"/> within the current <seealso cref="ITestCorrelatorContext"/>.
-        /// </summary>
-        /// <returns>The observable for the LogEvents emitted within the current <seealso cref="ITestCorrelatorContext"/>.</returns>
-        public static IObservable<LogEvent> GetLogEventStreamFromCurrentContext()
-        {
-            var currentContextGuids = GetCurrentContextGuids().ToList();
+    internal static void AddLogEvent(LogEvent logEvent)
+    {
+        var contextGuidDecoratedLogEvent = new ContextGuidDecoratedLogEvent(logEvent, ContextGuids.Where(LogicalCallContext.Contains).ToList());
 
-            return ContextGuidDecoratedLogEventSubject
-                .Where(contextGuidDecoratedLogEvent => !currentContextGuids.Except(contextGuidDecoratedLogEvent.ContextGuids).Any())
-                .Select(contextGuidDecoratedLogEvent => contextGuidDecoratedLogEvent.LogEvent);
-        }
+        ContextGuidDecoratedLogEvents.Enqueue(contextGuidDecoratedLogEvent);
 
-        private static IEnumerable<Guid> GetCurrentContextGuids()
-        {
-            return ContextGuids.Where(LogicalCallContext.Contains);
-        }
-
-        internal static void AddLogEvent(LogEvent logEvent)
-        {
-            var contextGuidDecoratedLogEvent = new ContextGuidDecoratedLogEvent(logEvent, ContextGuids.Where(LogicalCallContext.Contains).ToList());
-
-            ContextGuidDecoratedLogEvents.Enqueue(contextGuidDecoratedLogEvent);
-
-            ContextGuidDecoratedLogEventSubject.OnNext(contextGuidDecoratedLogEvent);
-        }
+        ContextGuidDecoratedLogEventSubject.OnNext(contextGuidDecoratedLogEvent);
     }
 }

@@ -1,20 +1,19 @@
 ﻿using System;
 
-namespace Serilog.Sinks.TestCorrelator
+namespace Serilog.Sinks.TestCorrelator;
+
+class TestCorrelatorContext : ITestCorrelatorContext
 {
-    class TestCorrelatorContext : ITestCorrelatorContext
+    public TestCorrelatorContext()
     {
-        public TestCorrelatorContext()
-        {
-            Guid = Guid.NewGuid();
-            LogicalCallContext.Add(Guid);
-        }
+        Guid = Guid.NewGuid();
+        LogicalCallContext.Add(Guid);
+    }
 
-        public Guid Guid { get; }
+    public Guid Guid { get; }
 
-        public void Dispose()
-        {
-            LogicalCallContext.Remove(Guid);
-        }
+    public void Dispose()
+    {
+        LogicalCallContext.Remove(Guid);
     }
 }
