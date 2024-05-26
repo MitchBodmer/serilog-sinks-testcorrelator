@@ -4,7 +4,7 @@
     <TargetFrameworks>net471;net462;net8.0;net6.0;netstandard2.0</TargetFrameworks>
     <Authors>Mitch Bodmer</Authors>
     <Version></Version>
-    <PackageLicenseUrl>https://github.com/MitchBodmer/serilog-sinks-testcorrelator/blob/master/LICENSE</PackageLicenseUrl>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/MitchBodmer/serilog-sinks-testcorrelator</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MitchBodmer/serilog-sinks-testcorrelator</RepositoryUrl>
     <PackageTags>serilog;sink;log;logging;unit;test;testing;unittest;unittesting</PackageTags>
