@@ -27,4 +27,7 @@
     <PackageReference Include="System.Reactive" Version="6.0.1" />
   </ItemGroup>
 
+<PropertyGroup Condition="'$(TargetFramework)' == 'net471' Or  '$(TargetFramework)' == 'net462' Or  '$(TargetFramework)' == 'netstandard2.0'">
+	<DefineConstants>$(DefineConstants);DefineIsExternalInit</DefineConstants>
+</PropertyGroup>
 </Project>

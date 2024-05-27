@@ -8,7 +8,7 @@ namespace Serilog.Sinks.TestCorrelator;
 public interface ITestCorrelatorContext : IDisposable
 {
     /// <summary>
-    /// Uniquely identifies a context. Can be passed to <seealso cref="TestCorrelator.GetLogEventsFromContextGuid"/> to get the LogEvents emitted within the context.
+    /// Uniquely identifies a context. Can be passed to <seealso cref="TestCorrelator.GetLogEventsFromContextId"/> to get the LogEvents emitted within the context.
     /// </summary>
-    Guid Guid { get; }
+    TestCorrelatorContextId Id { get; }
 }

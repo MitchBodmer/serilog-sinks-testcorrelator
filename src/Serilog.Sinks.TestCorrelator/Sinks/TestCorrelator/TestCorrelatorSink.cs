@@ -12,8 +12,5 @@ public class TestCorrelatorSink : ILogEventSink
     /// Emits the provided log event to the sink.
     /// </summary>
     /// <param name="logEvent">The log event to write.</param>
-    public void Emit(LogEvent logEvent)
-    {
-        TestCorrelator.AddLogEvent(logEvent);
-    }
+    public void Emit(LogEvent logEvent) => TestCorrelator.AddLogEvent(logEvent);
 }

@@ -46,7 +46,7 @@ public class TestCorrelatorTests
         }
     }
 
-    static void LogInformation()
+    private static void LogInformation()
     {
         Log.Information("");
     }
@@ -54,16 +54,16 @@ public class TestCorrelatorTests
     [TestMethod]
     public void A_context_does_not_capture_LogEvents_outside_of_it()
     {
-        Guid contextGuid;
+        TestCorrelatorContextId contextId;
 
         using (var context = TestCorrelator.CreateContext())
         {
-            contextGuid = context.Guid;
+            contextId = context.Id;
         }
 
         Log.Information("");
 
-        TestCorrelator.GetLogEventsFromContextGuid(contextGuid)
+        TestCorrelator.GetLogEventsFromContextId(contextId)
             .Should().BeEmpty();
     }
 
@@ -86,20 +86,20 @@ public class TestCorrelatorTests
         A_context_captures_LogEvents_inside_the_same_logical_call_context_even_when_they_are_in_tasks_started_outside_of_it()
     {
         Task logTask;
-        Guid contextGuid;
+        TestCorrelatorContextId contextId;
 
         using (var context = TestCorrelator.CreateContext())
         {
             logTask = new Task(() => { Log.Information(""); });
 
-            contextGuid = context.Guid;
+            contextId = context.Id;
         }
 
         logTask.Start();
 
         Task.WaitAll(logTask);
 
-        TestCorrelator.GetLogEventsFromContextGuid(contextGuid)
+        TestCorrelator.GetLogEventsFromContextId(contextId)
             .Should().ContainSingle();
     }
 
@@ -111,7 +111,7 @@ public class TestCorrelatorTests
 
         var loggingFinishedSignal = new ManualResetEvent(false);
 
-        var contextGuid = Guid.Empty;
+        var contextId = new TestCorrelatorContextId();
 
         var logTask = Task.Run(() =>
         {
@@ -128,13 +128,13 @@ public class TestCorrelatorTests
             {
                 usingEnteredSignal.Set();
                 loggingFinishedSignal.WaitOne();
-                contextGuid = context.Guid;
+                contextId = context.Id;
             }
         });
 
         Task.WaitAll(logTask, logContextTask);
 
-        TestCorrelator.GetLogEventsFromContextGuid(contextGuid)
+        TestCorrelator.GetLogEventsFromContextId(contextId)
             .Should().BeEmpty();
     }
 
@@ -164,10 +164,10 @@ public class TestCorrelatorTests
             {
                 Log.Information("");
 
-                TestCorrelator.GetLogEventsFromContextGuid(innerContext.Guid)
+                TestCorrelator.GetLogEventsFromContextId(innerContext.Id)
                     .Should().ContainSingle();
 
-                TestCorrelator.GetLogEventsFromContextGuid(outerContext.Guid)
+                TestCorrelator.GetLogEventsFromContextId(outerContext.Id)
                     .Should().ContainSingle();
             }
         }
@@ -279,7 +279,7 @@ public class TestCorrelatorTests
     }
 
     [TestMethod]
-    public void The_LogEvent_stream_for_a_context_guid_creates_notifications_for_LogEvents_emitted_within_that_context()
+    public void The_LogEvent_stream_for_a_context_id_creates_notifications_for_LogEvents_emitted_within_that_context()
     {
         var scheduler = new TestScheduler();
 
@@ -287,7 +287,7 @@ public class TestCorrelatorTests
         {
             scheduler.Schedule(TimeSpan.FromTicks(2), () => Log.Information(""));
 
-            scheduler.Start(() => TestCorrelator.GetLogEventStreamFromContextGuid(context.Guid), 0, 1, 3)
+            scheduler.Start(() => TestCorrelator.GetLogEventStreamFromcontextId(context.Id), 0, 1, 3)
                 .Messages
                 .Should().ContainSingle()
                 .Which.Value.Kind.Should().Be(NotificationKind.OnNext);
