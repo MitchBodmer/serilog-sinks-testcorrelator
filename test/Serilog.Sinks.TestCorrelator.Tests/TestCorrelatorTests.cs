@@ -246,8 +246,8 @@ public class TestCorrelatorTests
                         DateTimeOffset.MinValue,
                         LogEventLevel.Information,
                         null,
-                        new MessageTemplate(Enumerable.Empty<MessageTemplateToken>()),
-                        Enumerable.Empty<LogEventProperty>()))
+                        new MessageTemplate([]),
+                        []))
                 .ToList();
 
         using (TestCorrelator.CreateContext())

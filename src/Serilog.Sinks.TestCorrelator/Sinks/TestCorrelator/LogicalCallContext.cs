@@ -6,7 +6,7 @@ namespace Serilog.Sinks.TestCorrelator;
 
 static class LogicalCallContext
 {
-    static readonly AsyncLocal<ImmutableList<Guid>> GuidAsyncLocal = new AsyncLocal<ImmutableList<Guid>>();
+    static readonly AsyncLocal<ImmutableList<Guid>> GuidAsyncLocal = new();
 
     public static void Add(Guid guid)
     {

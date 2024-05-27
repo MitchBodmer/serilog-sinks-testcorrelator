@@ -13,11 +13,11 @@ namespace Serilog.Sinks.TestCorrelator;
 /// </summary>
 public static class TestCorrelator
 {
-    static readonly ConcurrentQueue<ContextGuidDecoratedLogEvent> ContextGuidDecoratedLogEvents = new ConcurrentQueue<ContextGuidDecoratedLogEvent>();
+    static readonly ConcurrentQueue<ContextGuidDecoratedLogEvent> ContextGuidDecoratedLogEvents = new();
 
-    static readonly ConcurrentBag<Guid> ContextGuids = new ConcurrentBag<Guid>();
+    static readonly ConcurrentBag<Guid> ContextGuids = [];
 
-    static readonly Subject<ContextGuidDecoratedLogEvent> ContextGuidDecoratedLogEventSubject = new Subject<ContextGuidDecoratedLogEvent>();
+    static readonly Subject<ContextGuidDecoratedLogEvent> ContextGuidDecoratedLogEventSubject = new();
 
     /// <summary>
     /// Creates a disposable <seealso cref="ITestCorrelatorContext"/> that groups all LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within it.
