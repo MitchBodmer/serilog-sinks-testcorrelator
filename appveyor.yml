@@ -5,16 +5,13 @@ environment:
 
 version: $(major).$(minor).$(patch)+{branch}-{build}
 
-image: Visual Studio 2017
+image: Visual Studio 2022
 configuration: Release    
 
 dotnet_csproj:
   patch: true
   version: $(major).$(minor).$(patch)
   file: src\Serilog.Sinks.TestCorrelator\Serilog.Sinks.TestCorrelator.csproj
-
-before_build:
- - nuget restore
 
 build:
   publish_nuget: true
@@ -23,7 +20,7 @@ build:
 deploy:
   - provider: NuGet
     api_key:
-      secure: 4V5H0Mrj8VZTitcpGsgrqUnKMHs4kAV1rpwGN2gGcK/XsGAkNJLvolxJyuXsOkAj
+      secure: GIkK80gDIOajEcbXULOSj4OMFF+4xlu+l0w/oKg2j1+56psPUGJBQxWwbbnQ+mpm
     skip_symbols: false
     on:
-      branch: master
+      branch: main
