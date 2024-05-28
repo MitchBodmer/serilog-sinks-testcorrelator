@@ -9,7 +9,6 @@ using FluentAssertions;
 using Microsoft.Reactive.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Events;
-using Serilog.Parsing;
 
 namespace Serilog.Sinks.TestCorrelator.Tests;
 
@@ -124,12 +123,10 @@ public class TestCorrelatorTests
 
         var logContextTask = Task.Run(() =>
         {
-            using (var context = TestCorrelator.CreateContext())
-            {
-                usingEnteredSignal.Set();
-                loggingFinishedSignal.WaitOne();
-                contextId = context.Id;
-            }
+            using var context = TestCorrelator.CreateContext();
+            usingEnteredSignal.Set();
+            loggingFinishedSignal.WaitOne();
+            contextId = context.Id;
         });
 
         Task.WaitAll(logTask, logContextTask);
@@ -158,19 +155,15 @@ public class TestCorrelatorTests
     [TestMethod]
     public void A_context_within_a_context_adds_an_additional_context_to_LogEvents()
     {
-        using (var outerContext = TestCorrelator.CreateContext())
-        {
-            using (var innerContext = TestCorrelator.CreateContext())
-            {
-                Log.Information("");
+        using var outerContext = TestCorrelator.CreateContext();
+        using var innerContext = TestCorrelator.CreateContext();
+        Log.Information("");
 
-                TestCorrelator.GetLogEventsFromContextId(innerContext.Id)
-                    .Should().ContainSingle();
+        TestCorrelator.GetLogEventsFromContextId(innerContext.Id)
+            .Should().ContainSingle();
 
-                TestCorrelator.GetLogEventsFromContextId(outerContext.Id)
-                    .Should().ContainSingle();
-            }
-        }
+        TestCorrelator.GetLogEventsFromContextId(outerContext.Id)
+            .Should().ContainSingle();
     }
 
     [TestMethod]
@@ -283,15 +276,14 @@ public class TestCorrelatorTests
     {
         var scheduler = new TestScheduler();
 
-        using (var context = TestCorrelator.CreateContext())
-        {
-            scheduler.Schedule(TimeSpan.FromTicks(2), () => Log.Information(""));
+        using var context = TestCorrelator.CreateContext();
 
-            scheduler.Start(() => TestCorrelator.GetLogEventStreamFromcontextId(context.Id), 0, 1, 3)
-                .Messages
-                .Should().ContainSingle()
-                .Which.Value.Kind.Should().Be(NotificationKind.OnNext);
-        }
+        scheduler.Schedule(TimeSpan.FromTicks(2), () => Log.Information(""));
+
+        scheduler.Start(() => TestCorrelator.GetLogEventStreamFromContextId(context.Id), 0, 1, 3)
+            .Messages
+            .Should().ContainSingle()
+            .Which.Value.Kind.Should().Be(NotificationKind.OnNext);
     }
 
     [TestMethod]
@@ -311,5 +303,135 @@ public class TestCorrelatorTests
                 , 0, 1, 3)
             .Messages
             .Should().BeEmpty();
+    }
+
+    [TestMethod]
+    public void A_context_captures_LogEvents_emitted_by_a_sink_with_an_associated_ID()
+    {
+        ILogger logger = new LoggerConfiguration().WriteTo.TestCorrelator(new TestCorrelatorSinkId()).CreateLogger();
+
+        using (TestCorrelator.CreateContext())
+        {
+            logger.Information("");
+
+            TestCorrelator.GetLogEventsFromCurrentContext().Should().HaveCount(1);
+        }
+    }
+
+    [TestMethod]
+    public void A_context_can_be_filtered_to_only_LogEvents_emitted_by_a_sink_with_an_associated_ID()
+    {
+        TestCorrelatorSinkId testCorrelatorSinkId = new();
+        ILogger logger = new LoggerConfiguration().WriteTo.TestCorrelator(testCorrelatorSinkId).CreateLogger();
+
+        using (TestCorrelator.CreateContext())
+        {
+            logger.Information("");
+
+            TestCorrelator.GetLogEventsForSinksFromCurrentContext(testCorrelatorSinkId).Should().HaveCount(1);
+        }
+    }
+
+    [TestMethod]
+    public void A_context_can_filter_out_LogEvents_emitted_by_a_sink_without_an_associated_ID()
+    {
+        TestCorrelatorSinkId testCorrelatorSinkId = new();
+
+        using (TestCorrelator.CreateContext())
+        {
+            Log.Information("");
+
+            TestCorrelator.GetLogEventsForSinksFromCurrentContext(testCorrelatorSinkId).Should().BeEmpty();
+        }
+    }
+
+    [TestMethod]
+    public void A_context_can_be_filtered_to_only_LogEvents_emitted_by_a_sink_with_multiple_associated_IDs()
+    {
+        TestCorrelatorSinkId firstTestCorrelatorSinkId = new();
+        TestCorrelatorSinkId secondTestCorrelatorSinkId = new();
+        ILogger logger = new LoggerConfiguration().WriteTo.TestCorrelator(firstTestCorrelatorSinkId, secondTestCorrelatorSinkId).CreateLogger();
+
+        using (TestCorrelator.CreateContext())
+        {
+            logger.Information("");
+
+            TestCorrelator.GetLogEventsForSinksFromCurrentContext(firstTestCorrelatorSinkId).Should().HaveCount(1);
+            TestCorrelator.GetLogEventsForSinksFromCurrentContext(secondTestCorrelatorSinkId).Should().HaveCount(1);
+        }
+    }
+
+    [TestMethod]
+    public void The_LogEvent_stream_for_the_current_context_creates_notifications_for_LogEvents_emitted_by_a_sink_with_an_associated_ID()
+    {
+        ILogger logger = new LoggerConfiguration().WriteTo.TestCorrelator(new TestCorrelatorSinkId()).CreateLogger();
+
+        var scheduler = new TestScheduler();
+
+        using (TestCorrelator.CreateContext())
+        {
+            scheduler.Schedule(TimeSpan.FromTicks(2), () => logger.Information(""));
+
+            scheduler.Start(TestCorrelator.GetLogEventStreamFromCurrentContext, 0, 1, 3)
+                .Messages
+                .Should().ContainSingle()
+                .Which.Value.Kind.Should().Be(NotificationKind.OnNext);
+        }
+    }
+
+    [TestMethod]
+    public void The_LogEvent_stream_for_the_current_context_can_be_filtered_to_only_LogEvents_emitted_by_a_sink_with_an_associated_ID()
+    {
+        TestCorrelatorSinkId testCorrelatorSinkId = new();
+        ILogger logger = new LoggerConfiguration().WriteTo.TestCorrelator(testCorrelatorSinkId).CreateLogger();
+
+        var scheduler = new TestScheduler();
+
+        using (TestCorrelator.CreateContext())
+        {
+            scheduler.Schedule(TimeSpan.FromTicks(2), () => logger.Information(""));
+
+            scheduler.Start(() => TestCorrelator.GetLogEventStreamForSinksFromCurrentContext(testCorrelatorSinkId), 0, 1, 3)
+                .Messages
+                .Should().ContainSingle()
+                .Which.Value.Kind.Should().Be(NotificationKind.OnNext);
+        }
+    }
+
+    [TestMethod]
+    public void The_LogEvent_stream_for_the_current_context_can_filter_out_LogEvents_emitted_by_a_sink_without_an_associated_ID()
+    {
+        TestCorrelatorSinkId testCorrelatorSinkId = new();
+
+        var scheduler = new TestScheduler();
+
+        using (TestCorrelator.CreateContext())
+        {
+            scheduler.Schedule(TimeSpan.FromTicks(2), () => Log.Information(""));
+
+            scheduler.Start(() => TestCorrelator.GetLogEventStreamForSinksFromCurrentContext(testCorrelatorSinkId), 0, 1, 3)
+                .Messages
+                .Should().BeEmpty();
+        }
+    }
+
+    [TestMethod]
+    public void The_LogEvent_stream_for_the_current_context_can_be_filtered_to_only_LogEvents_emitted_by_a_sink_with_multiple_associated_IDs()
+    {
+        TestCorrelatorSinkId firstTestCorrelatorSinkId = new();
+        TestCorrelatorSinkId secondTestCorrelatorSinkId = new();
+        ILogger logger = new LoggerConfiguration().WriteTo.TestCorrelator(firstTestCorrelatorSinkId, secondTestCorrelatorSinkId).CreateLogger();
+
+        var scheduler = new TestScheduler();
+
+        using (TestCorrelator.CreateContext())
+        {
+            scheduler.Schedule(TimeSpan.FromTicks(2), () => logger.Information(""));
+
+            scheduler.Start(() => TestCorrelator.GetLogEventStreamForSinksFromCurrentContext(firstTestCorrelatorSinkId), 0, 1, 3)
+                .Messages
+                .Should().ContainSingle()
+                .Which.Value.Kind.Should().Be(NotificationKind.OnNext);
+        }
     }
 }

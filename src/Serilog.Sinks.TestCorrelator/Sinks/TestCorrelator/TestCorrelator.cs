@@ -11,7 +11,7 @@ using Serilog.Events;
 namespace Serilog.Sinks.TestCorrelator;
 
 /// <summary>
-/// Correlates Serilog LogEvents to the test code that produced them.
+/// Correlates <seealso cref="LogEvent"/>s to the test code that produced them.
 /// </summary>
 public static class TestCorrelator
 {
@@ -20,16 +20,16 @@ public static class TestCorrelator
     private static readonly Subject<CapturedLogEvent> CapturedLogEventSubject = new();
 
     /// <summary>
-    /// Creates a disposable <seealso cref="ITestCorrelatorContext"/> that groups all LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within it.
+    /// Creates an <seealso cref="ITestCorrelatorContext"/> that groups all <seealso cref="LogEvent"/>s emitted to a <seealso cref="TestCorrelatorSink"/> within it.
     /// </summary>
-    /// <returns>The <seealso cref="ITestCorrelatorContext"/>.</returns>
+    /// <returns>The context.</returns>
     public static ITestCorrelatorContext CreateContext() => new TestCorrelatorContext();
 
     /// <summary>
-    /// Gets the LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within an <seealso cref="ITestCorrelatorContext"/> with the provided <seealso cref="TestCorrelatorContextId"/>.
+    /// Gets the <seealso cref="LogEvent"/>s emitted to a <seealso cref="TestCorrelatorSink"/> within a context with the provided <seealso cref="TestCorrelatorContextId"/>.
     /// </summary>
-    /// <param name="contextId">The <seealso cref="ITestCorrelatorContext.Id"/> of the desired context.</param>
-    /// <returns>LogEvents emitted within the <seealso cref="ITestCorrelatorContext"/> with the provided <seealso cref="TestCorrelatorContextId"/>.</returns>
+    /// <param name="contextId">The <seealso cref="TestCorrelatorContextId"/> of the desired context.</param>
+    /// <returns><seealso cref="LogEvent"/>s emitted within the context with the provided <seealso cref="TestCorrelatorContextId"/>.</returns>
     public static IReadOnlyList<LogEvent> GetLogEventsFromContextId(TestCorrelatorContextId contextId) =>
         CapturedLogEventConcurrentQueue
             .Where(capturedLogEvent => capturedLogEvent.ContextIds.Contains(contextId))
@@ -38,9 +38,9 @@ public static class TestCorrelator
             .AsReadOnly();
 
     /// <summary>
-    /// Gets the LogEvents emitted to a <seealso cref="TestCorrelatorSink"/> within the current <seealso cref="ITestCorrelatorContext"/>.
+    /// Gets the <seealso cref="LogEvent"/>s emitted to a <seealso cref="TestCorrelatorSink"/> within the current context.
     /// </summary>
-    /// <returns>LogEvents emitted within the current <seealso cref="ITestCorrelatorContext"/>.</returns>
+    /// <returns><seealso cref="LogEvent"/>s emitted within the current context.</returns>
     public static IReadOnlyList<LogEvent> GetLogEventsFromCurrentContext()
     {
         var currentContextIds = TestCorrelatorContext.CurrentIds;
@@ -53,19 +53,48 @@ public static class TestCorrelator
     }
 
     /// <summary>
-    /// Gets an observable that emits LogEvents as they are emitted to a <seealso cref="TestCorrelatorSink"/> within an <seealso cref="ITestCorrelatorContext"/> with the provided <seealso cref="TestCorrelatorContextId"/>.
+    /// Gets the <seealso cref="LogEvent"/>s emitted to a <seealso cref="TestCorrelatorSink"/> within a context with the provided <seealso cref="TestCorrelatorContextId"/> by a sink with the provided <seealso cref="TestCorrelatorSinkId"/>.
     /// </summary>
-    /// <param name="contextId">The <seealso cref="ITestCorrelatorContext.Id"/> of the desired context.</param>
-    /// <returns>The observable for the LogEvents emitted within the <seealso cref="ITestCorrelatorContext"/> with the provided <seealso cref="TestCorrelatorContextId"/>.</returns>
-    public static IObservable<LogEvent> GetLogEventStreamFromcontextId(TestCorrelatorContextId contextId) =>
+    /// <param name="sinkId">The <seealso cref="TestCorrelatorSinkId"/> of the desired sink.</param>
+    /// <param name="contextId">The <seealso cref="TestCorrelatorContextId"/> of the desired context.</param>
+    /// <returns><seealso cref="LogEvent"/>s emitted within the context with the provided <seealso cref="TestCorrelatorContextId"/> by a sink with the provided <seealso cref="TestCorrelatorSinkId"/>.</returns>
+    public static IReadOnlyList<LogEvent> GetLogEventsForSinksFromContextId(TestCorrelatorSinkId sinkId, TestCorrelatorContextId contextId) =>
+        CapturedLogEventConcurrentQueue
+            .Where(capturedLogEvent => capturedLogEvent.ContextIds.Contains(contextId) && capturedLogEvent.SinkIds.Contains(sinkId))
+            .Select(capturedLogEvent => capturedLogEvent.LogEvent)
+            .ToList()
+            .AsReadOnly();
+
+    /// <summary>
+    /// Gets the <seealso cref="LogEvent"/>s emitted to a <seealso cref="TestCorrelatorSink"/> within the current context by a sink with the provided <seealso cref="TestCorrelatorSinkId"/>.
+    /// </summary>
+    /// <param name="sinkId">The <seealso cref="TestCorrelatorSinkId"/> of the desired sink.</param>
+    /// <returns><seealso cref="LogEvent"/>s emitted within the current context by a sink with the provided <seealso cref="TestCorrelatorSinkId"/>.</returns>
+    public static IReadOnlyList<LogEvent> GetLogEventsForSinksFromCurrentContext(TestCorrelatorSinkId sinkId)
+    {
+        var currentContextIds = TestCorrelatorContext.CurrentIds;
+
+        return CapturedLogEventConcurrentQueue
+            .Where(capturedLogEvent => currentContextIds.IsSubsetOf(capturedLogEvent.ContextIds) && capturedLogEvent.SinkIds.Contains(sinkId))
+            .Select(capturedLogEvent => capturedLogEvent.LogEvent)
+            .ToList()
+            .AsReadOnly();
+    }
+
+    /// <summary>
+    /// Gets an observable that emits <seealso cref="LogEvent"/>s as they are emitted to a <seealso cref="TestCorrelatorSink"/> within a context with the provided <seealso cref="TestCorrelatorContextId"/>.
+    /// </summary>
+    /// <param name="contextId">The <seealso cref="TestCorrelatorContextId"/> of the desired context.</param>
+    /// <returns>The observable for the <seealso cref="LogEvent"/>s emitted within the context with the provided <seealso cref="TestCorrelatorContextId"/>.</returns>
+    public static IObservable<LogEvent> GetLogEventStreamFromContextId(TestCorrelatorContextId contextId) =>
         CapturedLogEventSubject
             .Where(capturedLogEvent => capturedLogEvent.ContextIds.Contains(contextId))
             .Select(capturedLogEvent => capturedLogEvent.LogEvent);
 
     /// <summary>
-    /// Gets an observable that emits LogEvents as they are emitted to a <seealso cref="TestCorrelatorSink"/> within the current <seealso cref="ITestCorrelatorContext"/>.
+    /// Gets an observable that emits <seealso cref="LogEvent"/>s as they are emitted to a <seealso cref="TestCorrelatorSink"/> within the current context.
     /// </summary>
-    /// <returns>The observable for the LogEvents emitted within the current <seealso cref="ITestCorrelatorContext"/>.</returns>
+    /// <returns>The observable for the <seealso cref="LogEvent"/>s emitted within the current context.</returns>
     public static IObservable<LogEvent> GetLogEventStreamFromCurrentContext()
     {
         var currentContextIds = TestCorrelatorContext.CurrentIds;
@@ -75,7 +104,32 @@ public static class TestCorrelator
             .Select(capturedLogEvent => capturedLogEvent.LogEvent);
     }
 
-    internal static void AddLogEvent(LogEvent logEvent)
+    /// <summary>
+    /// Gets an observable that emits <seealso cref="LogEvent"/>s as they are emitted to a <seealso cref="TestCorrelatorSink"/> within a context with the provided <seealso cref="TestCorrelatorContextId"/> by a sink with the provided <seealso cref="TestCorrelatorSinkId"/>.
+    /// </summary>
+    /// <param name="sinkId">The <seealso cref="TestCorrelatorSinkId"/> of the desired sink.</param>
+    /// <param name="contextId">The <seealso cref="TestCorrelatorContextId"/> of the desired context.</param>
+    /// <returns>The observable for the <seealso cref="LogEvent"/>s emitted within the context with the provided <seealso cref="TestCorrelatorContextId"/> by a sink with the provided <seealso cref="TestCorrelatorSinkId"/>.</returns>
+    public static IObservable<LogEvent> GetLogEventStreamForSinksFromContextId(TestCorrelatorSinkId sinkId, TestCorrelatorContextId contextId) =>
+        CapturedLogEventSubject
+            .Where(capturedLogEvent => capturedLogEvent.ContextIds.Contains(contextId) && capturedLogEvent.SinkIds.Contains(sinkId))
+            .Select(capturedLogEvent => capturedLogEvent.LogEvent);
+
+    /// <summary>
+    /// Gets an observable that emits <seealso cref="LogEvent"/>s as they are emitted to a <seealso cref="TestCorrelatorSink"/> within the current context by a sink with the provided <seealso cref="TestCorrelatorSinkId"/>.
+    /// </summary>
+    /// <param name="sinkId">The <seealso cref="TestCorrelatorSinkId"/> of the desired sink.</param>
+    /// <returns>The observable for the <seealso cref="LogEvent"/>s emitted within the current context by a sink with the provided <seealso cref="TestCorrelatorSinkId"/>.</returns>
+    public static IObservable<LogEvent> GetLogEventStreamForSinksFromCurrentContext(TestCorrelatorSinkId sinkId)
+    {
+        var currentContextIds = TestCorrelatorContext.CurrentIds;
+
+        return CapturedLogEventSubject
+            .Where(capturedLogEvent => currentContextIds.IsSubsetOf(capturedLogEvent.ContextIds) && capturedLogEvent.SinkIds.Contains(sinkId))
+            .Select(capturedLogEvent => capturedLogEvent.LogEvent);
+    }
+
+    internal static void AddLogEvent(ImmutableHashSet<TestCorrelatorSinkId> sinkIds, LogEvent logEvent)
     {
         if (TestCorrelatorContext.CurrentIds.IsEmpty)
         {
@@ -83,7 +137,7 @@ public static class TestCorrelator
         }
 
         var capturedLogEvent =
-            new CapturedLogEvent(logEvent, TestCorrelatorContext.CurrentIds);
+            new CapturedLogEvent(logEvent, sinkIds, TestCorrelatorContext.CurrentIds);
 
         CapturedLogEventConcurrentQueue.Enqueue(capturedLogEvent);
 
@@ -111,5 +165,5 @@ public static class TestCorrelator
             AsyncLocalIds.Value ?? [];
     }
 
-    private record CapturedLogEvent(LogEvent LogEvent, ImmutableHashSet<TestCorrelatorContextId> ContextIds);
+    private record CapturedLogEvent(LogEvent LogEvent, ImmutableHashSet<TestCorrelatorSinkId> SinkIds, ImmutableHashSet<TestCorrelatorContextId> ContextIds);
 }
