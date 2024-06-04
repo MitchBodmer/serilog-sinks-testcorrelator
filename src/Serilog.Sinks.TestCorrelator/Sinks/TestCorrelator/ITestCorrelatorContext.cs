@@ -1,15 +1,15 @@
 ﻿using System;
+using Serilog.Events;
 
-namespace Serilog.Sinks.TestCorrelator
+namespace Serilog.Sinks.TestCorrelator;
+
+/// <summary>
+/// A context used to group <seealso cref="LogEvent"/>s emitted to the <seealso cref="TestCorrelator"/>.
+/// </summary>
+public interface ITestCorrelatorContext : IDisposable
 {
     /// <summary>
-    /// A disposable used to group LogEvents emitted to the <seealso cref="TestCorrelator"/>.
+    /// Uniquely identifies a context.
     /// </summary>
-    public interface ITestCorrelatorContext : IDisposable
-    {
-        /// <summary>
-        /// Uniquely identifies a context. Can be passed to <seealso cref="TestCorrelator.GetLogEventsFromContextGuid"/> to get the LogEvents emitted within the context.
-        /// </summary>
-        Guid Guid { get; }
-    }
+    TestCorrelatorContextId Id { get; }
 }

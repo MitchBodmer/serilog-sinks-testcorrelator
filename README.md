@@ -36,4 +36,38 @@ using (TestCorrelator.CreateContext())
 }
 ```
 
+__New in v4:__ If you have more than one logger and want to filter to only log events emitted to a specific sink you can pass in an ID that you then use to filter the log events.
+
+```csharp
+TestCorrelatorSinkId firstTestCorrelatorSinkId = new();
+ILogger firstLogger = new LoggerConfiguration().WriteTo.TestCorrelator(firstTestCorrelatorSinkId).CreateLogger();
+
+TestCorrelatorSinkId secondTestCorrelatorSinkId = new();
+ILogger secondLogger = new LoggerConfiguration().WriteTo.TestCorrelator(secondTestCorrelatorSinkId).CreateLogger();
+
+using (TestCorrelator.CreateContext())
+{
+    firstLogger.Information("My first log message!");
+    secondLogger.Information("My second log message!");
+
+    TestCorrelator.GetLogEventsForSinksFromCurrentContext(firstTestCorrelatorSinkId)
+        .Should().ContainSingle()
+        .Which.MessageTemplate.Text
+        .Should().Be("My first log message!");
+
+    TestCorrelator.GetLogEventsForSinksFromCurrentContext(secondTestCorrelatorSinkId)
+        .Should().ContainSingle()
+        .Which.MessageTemplate.Text
+        .Should().Be("My second log message!");
+}
+```
+
 For more examples check out the [unit tests](https://github.com/MitchBodmer/serilog-sinks-testcorrelator/tree/master/test/Serilog.Sinks.TestCorrelator.Tests)!
+
+## v4 Breaking Changes
+Version 4 comes with a few breaking changes.
+- All package dependencies have been updated.
+- Dropped support for .Net Framework 4.6.1 and below. This brings the package in line with Serilog's supported frameworks.
+- A new `TestCorrelatorContextId` class is not being used instead of `Guids`. The corresponding `...ContextGuid()` methods have been renamed to `...ContextId()`.
+- `LogEvent`s emitted outside of a context are no longer captured.
+- `LoggerConfiguration` extension methods with implicitly ignored minimum `LogEventLevel`` parameters were removed.
