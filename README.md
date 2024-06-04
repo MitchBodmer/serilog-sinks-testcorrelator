@@ -70,4 +70,4 @@ Version 4 comes with a few breaking changes.
 - Dropped support for .Net Framework 4.6.1 and below. This brings the package in line with Serilog's supported frameworks.
 - A new `TestCorrelatorContextId` class is not being used instead of `Guids`. The corresponding `...ContextGuid()` methods have been renamed to `...ContextId()`.
 - `LogEvent`s emitted outside of a context are no longer captured.
-- `LoggerConfiguration` extension methods with implicitly ignored minimum `LogEventLevel`` parameters were removed.
+- `LoggerConfiguration` extension methods with implicitly ignored minimum `LogEventLevel` parameters were removed.
