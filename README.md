@@ -1,4 +1,4 @@
-# Serilog.Sinks.TestCorrelator [![AppVeyor Badge](https://ci.appveyor.com/api/projects/status/rjdxaaq2ry50v30c/branch/master?svg=true)](https://ci.appveyor.com/project/MitchBodmer/serilog-sinks-testcorrelator/branch/master) [![NuGet Badge](https://buildstats.info/nuget/Serilog.Sinks.TestCorrelator)](https://www.nuget.org/packages/Serilog.Sinks.TestCorrelator/)
+# Serilog.Sinks.TestCorrelator [![AppVeyor Badge](https://ci.appveyor.com/api/projects/status/rjdxaaq2ry50v30c/branch/main?svg=true)](https://ci.appveyor.com/project/MitchBodmer/serilog-sinks-testcorrelator/branch/main) [![NuGet Badge](https://buildstats.info/nuget/Serilog.Sinks.TestCorrelator)](https://www.nuget.org/packages/Serilog.Sinks.TestCorrelator/)
 
 A [Serilog](https://github.com/serilog/serilog) sink that correlates log events with the code that produced them, enabling unit testing of log output.
 
@@ -62,7 +62,7 @@ using (TestCorrelator.CreateContext())
 }
 ```
 
-For more examples check out the [unit tests](https://github.com/MitchBodmer/serilog-sinks-testcorrelator/tree/master/test/Serilog.Sinks.TestCorrelator.Tests)!
+For more examples check out the [unit tests](https://github.com/MitchBodmer/serilog-sinks-testcorrelator/tree/main/test/Serilog.Sinks.TestCorrelator.Tests)!
 
 ## v4 Breaking Changes
 Version 4 comes with a few breaking changes.
