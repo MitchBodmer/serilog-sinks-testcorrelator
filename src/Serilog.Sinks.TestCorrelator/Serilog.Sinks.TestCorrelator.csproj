@@ -10,7 +10,8 @@
     <PackageTags>serilog;sink;log;logging;unit;test;testing;unittest;unittesting</PackageTags>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Description>A Serilog sink that correlates log events with the code that produced them, enabling unit testing of log output.</Description>
-    <Copyright>© Mitch Bodmer</Copyright>
+	<Copyright>© Mitch Bodmer</Copyright>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
     <IncludeSymbols>true</IncludeSymbols>
     <RootNamespace>Serilog</RootNamespace>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
@@ -22,12 +23,13 @@
 
   <ItemGroup>
 	<None Include="..\..\assets\icon.png" Pack="true" PackagePath=""/>
+	<None Include="..\..\README.md" Pack="true" Visible="false" PackagePath="/" />
 	<PackageReference Include="Serilog" Version="3.1.1" />
     <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
     <PackageReference Include="System.Reactive" Version="6.0.1" />
   </ItemGroup>
 
-<PropertyGroup Condition="'$(TargetFramework)' == 'net471' Or  '$(TargetFramework)' == 'net462' Or  '$(TargetFramework)' == 'netstandard2.0'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net471' Or  '$(TargetFramework)' == 'net462' Or  '$(TargetFramework)' == 'netstandard2.0'">
 	<DefineConstants>$(DefineConstants);DefineIsExternalInit</DefineConstants>
-</PropertyGroup>
+  </PropertyGroup>
 </Project>
