@@ -13,6 +13,7 @@
 	<Copyright>© Mitch Bodmer</Copyright>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
     <IncludeSymbols>true</IncludeSymbols>
+	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <RootNamespace>Serilog</RootNamespace>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 	<PackageIcon>icon.png</PackageIcon>
