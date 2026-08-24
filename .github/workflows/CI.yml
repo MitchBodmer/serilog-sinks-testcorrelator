@@ -1,7 +1,9 @@
-name: Pull Request Build
+name: CI Build
 
 on:
   pull_request:
+    branches: [ "main" ]
+  push:
     branches: [ "main" ]
 
 jobs:
@@ -45,11 +47,11 @@ jobs:
         --no-build
         --configuration ${{ env.CONFIGURATION }}
         --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
-        --property:Version=0.0.0-pr.${{ github.event.pull_request.number }}.${{ github.run_number }}
+        --property:Version=0.0.0-${{ github.event_name }}.${{ github.run_number }}
 
     - name: Upload Package
       uses: actions/upload-artifact@v4
       with:
-        name: NuGet Package
+        name: NuGet Package Output
         path: ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
         if-no-files-found: error
