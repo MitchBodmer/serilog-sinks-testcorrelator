@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Solution Items/">
+    <File Path=".github/workflows/PullRequest.yml" />
     <File Path=".gitignore" />
     <File Path="LICENSE" />
     <File Path="NuGet.Config" />

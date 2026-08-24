@@ -1,0 +1,55 @@
+name: Pull Request Build
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    env:
+      CONFIGURATION: Release
+      PACKAGE_OUTPUT_DIRECTORY: artifacts/package
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Restore NuGet Packages
+      run: dotnet restore
+
+    - name: Build Solution
+      run: >
+        dotnet build
+        --no-restore
+        --configuration ${{ env.CONFIGURATION }}
+        --property:ContinuousIntegrationBuild=true
+
+    - name: Run Tests
+      run: >
+        dotnet test
+        --no-restore
+        --no-build
+        --configuration ${{ env.CONFIGURATION }}
+
+    - name: Pack NuGet Package
+      run: > 
+        dotnet pack
+        --no-restore
+        --no-build
+        --configuration ${{ env.CONFIGURATION }}
+        --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+        --property:Version=0.0.0-pr.${{ github.event.pull_request.number }}.${{ github.run_number }}
+
+    - name: Upload Package
+      uses: actions/upload-artifact@v4
+      with:
+        name: NuGet Package
+        path: ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+        if-no-files-found: error
