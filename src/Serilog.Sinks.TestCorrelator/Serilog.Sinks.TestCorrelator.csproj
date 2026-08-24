@@ -20,6 +20,7 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Serilog.Sinks.TestCorrelator.snk</AssemblyOriginatorKeyFile>
 	<LangVersion>latest</LangVersion>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
   <ItemGroup>
