@@ -16,10 +16,10 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: |
           6.0.x
@@ -53,7 +53,7 @@ jobs:
         --property:Version=0.0.0-${{ github.run_number }}
 
     - name: Upload Package
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: NuGet Package Output
         path: ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
