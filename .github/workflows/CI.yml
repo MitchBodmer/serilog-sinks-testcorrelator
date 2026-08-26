@@ -58,7 +58,7 @@ jobs:
         --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
         --property:VersionSuffix=${{ github.run_number }}
 
-    - name: Upload Package
+    - name: Publish NuGet Package As Artifact
       uses: actions/upload-artifact@v7
       with:
         name: NuGet Package Output
