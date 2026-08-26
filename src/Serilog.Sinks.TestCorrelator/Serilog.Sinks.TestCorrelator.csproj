@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net471;net462;net10.0;net9.0;net8.0;net6.0;netstandard2.0</TargetFrameworks>
     <Authors>Mitch Bodmer</Authors>
-    <Version></Version>
+    <Version>4.0.0</Version>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/MitchBodmer/serilog-sinks-testcorrelator</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MitchBodmer/serilog-sinks-testcorrelator</RepositoryUrl>
@@ -22,6 +22,7 @@
 	<LangVersion>latest</LangVersion>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
 	<EnablePackageValidation>true</EnablePackageValidation>
+	<PackageValidationBaselineVersion>4.0.0</PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <ItemGroup>
