@@ -1,33 +1,39 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net471;net462;net8.0;net6.0;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net471;net462;net10.0;net9.0;net8.0;net6.0;netstandard2.0</TargetFrameworks>
     <Authors>Mitch Bodmer</Authors>
-    <Version></Version>
+    <Version>4.0.0</Version>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/MitchBodmer/serilog-sinks-testcorrelator</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MitchBodmer/serilog-sinks-testcorrelator</RepositoryUrl>
     <PackageTags>serilog;sink;log;logging;unit;test;testing;unittest;unittesting</PackageTags>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Description>A Serilog sink that correlates log events with the code that produced them, enabling unit testing of log output.</Description>
-    <Copyright>© Mitch Bodmer</Copyright>
+	<Copyright>© Mitch Bodmer</Copyright>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
     <IncludeSymbols>true</IncludeSymbols>
+	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <RootNamespace>Serilog</RootNamespace>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 	<PackageIcon>icon.png</PackageIcon>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Serilog.Sinks.TestCorrelator.snk</AssemblyOriginatorKeyFile>
 	<LangVersion>latest</LangVersion>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+	<EnablePackageValidation>true</EnablePackageValidation>
+	<PackageValidationBaselineVersion>4.0.0</PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <ItemGroup>
-	<None Include="..\..\assets\icon.png" Pack="true" PackagePath=""/>
+	<None Include="..\..\assets\icon.png" Pack="true" PackagePath="" />
+	<None Include="..\..\README.md" Pack="true" Visible="false" PackagePath="/" />
 	<PackageReference Include="Serilog" Version="3.1.1" />
     <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
     <PackageReference Include="System.Reactive" Version="6.0.1" />
   </ItemGroup>
 
-<PropertyGroup Condition="'$(TargetFramework)' == 'net471' Or  '$(TargetFramework)' == 'net462' Or  '$(TargetFramework)' == 'netstandard2.0'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net471' Or  '$(TargetFramework)' == 'net462' Or  '$(TargetFramework)' == 'netstandard2.0'">
 	<DefineConstants>$(DefineConstants);DefineIsExternalInit</DefineConstants>
-</PropertyGroup>
+  </PropertyGroup>
 </Project>

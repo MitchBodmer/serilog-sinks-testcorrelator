@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".github/workflows/CI.yml" />
+    <File Path=".github/workflows/Release.yml" />
+    <File Path=".gitignore" />
+    <File Path="LICENSE" />
+    <File Path="NuGet.Config" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Serilog.Sinks.TestCorrelator/Serilog.Sinks.TestCorrelator.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Serilog.Sinks.TestCorrelator.Tests/Serilog.Sinks.TestCorrelator.Tests.csproj" />
+  </Folder>
+</Solution>

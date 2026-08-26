@@ -1,0 +1,66 @@
+name: CI Build
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    env:
+      CONFIGURATION: Release
+      PACKAGE_OUTPUT_DIRECTORY: artifacts/package
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v6
+      with:
+        dotnet-version: |
+          6.0.x
+          8.0.x
+          9.0.x
+          10.0.x
+
+    - name: Restore NuGet Packages
+      run: > 
+        dotnet restore
+        serilog-sinks-testcorrelator.slnx
+
+    - name: Build Solution
+      run: >
+        dotnet build
+        serilog-sinks-testcorrelator.slnx
+        --no-restore
+        --configuration ${{ env.CONFIGURATION }}
+        --property:ContinuousIntegrationBuild=true
+
+    - name: Run Tests
+      run: >
+        dotnet test
+        test/Serilog.Sinks.TestCorrelator.Tests/Serilog.Sinks.TestCorrelator.Tests.csproj
+        --no-restore
+        --no-build
+        --configuration ${{ env.CONFIGURATION }}
+
+    - name: Pack NuGet Package
+      run: > 
+        dotnet pack
+        src/Serilog.Sinks.TestCorrelator/Serilog.Sinks.TestCorrelator.csproj
+        --no-restore
+        --no-build
+        --configuration ${{ env.CONFIGURATION }}
+        --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+        --property:VersionSuffix=${{ github.run_number }}
+
+    - name: Publish NuGet Package As Artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: NuGet Package Output
+        path: ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+        if-no-files-found: error
