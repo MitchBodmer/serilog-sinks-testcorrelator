@@ -28,11 +28,14 @@ jobs:
           10.0.x
 
     - name: Restore NuGet Packages
-      run: dotnet restore
+      run: > 
+        dotnet restore
+        serilog-sinks-testcorrelator.slnx
 
     - name: Build Solution
       run: >
         dotnet build
+        serilog-sinks-testcorrelator.slnx
         --no-restore
         --configuration ${{ env.CONFIGURATION }}
         --property:ContinuousIntegrationBuild=true
@@ -40,6 +43,7 @@ jobs:
     - name: Run Tests
       run: >
         dotnet test
+        test/Serilog.Sinks.TestCorrelator.Tests/Serilog.Sinks.TestCorrelator.Tests.csproj
         --no-restore
         --no-build
         --configuration ${{ env.CONFIGURATION }}
@@ -47,6 +51,7 @@ jobs:
     - name: Pack NuGet Package
       run: > 
         dotnet pack
+        src/Serilog.Sinks.TestCorrelator/Serilog.Sinks.TestCorrelator.csproj
         --no-restore
         --no-build
         --configuration ${{ env.CONFIGURATION }}
