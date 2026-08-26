@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Solution Items/">
     <File Path=".github/workflows/CI.yml" />
+    <File Path=".github/workflows/Release.yml" />
     <File Path=".gitignore" />
     <File Path="LICENSE" />
     <File Path="NuGet.Config" />

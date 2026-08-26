@@ -1,0 +1,80 @@
+name: Release Build
+
+on:
+  release:
+    types:
+      - released
+
+jobs:
+  build:
+    permissions:
+      id-token: write
+
+    env:
+      CONFIGURATION: Release
+      PACKAGE_OUTPUT_DIRECTORY: artifacts/package
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v6
+      with:
+        dotnet-version: |
+          6.0.x
+          8.0.x
+          9.0.x
+          10.0.x
+
+    - name: Restore NuGet Packages
+      run: > 
+        dotnet restore
+        serilog-sinks-testcorrelator.slnx
+
+    - name: Build Solution
+      run: >
+        dotnet build
+        serilog-sinks-testcorrelator.slnx
+        --no-restore
+        --configuration ${{ env.CONFIGURATION }}
+        --property:ContinuousIntegrationBuild=true
+
+    - name: Run Tests
+      run: >
+        dotnet test
+        test/Serilog.Sinks.TestCorrelator.Tests/Serilog.Sinks.TestCorrelator.Tests.csproj
+        --no-restore
+        --no-build
+        --configuration ${{ env.CONFIGURATION }}
+
+    - name: Pack NuGet Package
+      run: > 
+        dotnet pack
+        src/Serilog.Sinks.TestCorrelator/Serilog.Sinks.TestCorrelator.csproj
+        --no-restore
+        --no-build
+        --configuration ${{ env.CONFIGURATION }}
+        --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+
+    - name: Publish NuGet Package As Artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: NuGet Package Output
+        path: ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+        if-no-files-found: error
+
+    - name: NuGet Login
+      id: nuget-login
+      uses: NuGet/login@v1
+      with:
+        user: my-nuget-username
+
+    - name: Push NuGet Package
+      run: >
+        dotnet nuget push
+        ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/Serilog.Sinks.TestCorrelator.nupkg
+        --source https://api.nuget.org/v3/index.json
+        --api-key ${{steps.nuget-login.outputs.NUGET_API_KEY}}
