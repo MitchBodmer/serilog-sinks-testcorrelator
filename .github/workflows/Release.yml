@@ -75,6 +75,6 @@ jobs:
     - name: Push NuGet Package
       run: >
         dotnet nuget push
-        ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/Serilog.Sinks.TestCorrelator.nupkg
+        ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/Serilog.Sinks.TestCorrelator.*.nupkg
         --source https://api.nuget.org/v3/index.json
         --api-key ${{steps.nuget-login.outputs.NUGET_API_KEY}}
