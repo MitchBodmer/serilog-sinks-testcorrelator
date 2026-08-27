@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net471;net462;net10.0;net9.0;net8.0;net6.0;netstandard2.0</TargetFrameworks>
     <Authors>Mitch Bodmer</Authors>
-    <Version>4.0.1</Version>
+    <Version>4.0.2</Version>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/MitchBodmer/serilog-sinks-testcorrelator</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MitchBodmer/serilog-sinks-testcorrelator</RepositoryUrl>
