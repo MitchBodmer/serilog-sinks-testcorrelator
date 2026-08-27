@@ -12,7 +12,7 @@ jobs:
 
     env:
       CONFIGURATION: Release
-      PACKAGE_OUTPUT_DIRECTORY: artifacts/package
+      PACKAGE_OUTPUT_DIRECTORY: artifacts\package
 
     runs-on: windows-latest
 
@@ -45,7 +45,7 @@ jobs:
     - name: Run Tests
       run: >
         dotnet test
-        test/Serilog.Sinks.TestCorrelator.Tests/Serilog.Sinks.TestCorrelator.Tests.csproj
+        test\Serilog.Sinks.TestCorrelator.Tests\Serilog.Sinks.TestCorrelator.Tests.csproj
         --no-restore
         --no-build
         --configuration ${{ env.CONFIGURATION }}
@@ -53,7 +53,7 @@ jobs:
     - name: Pack NuGet Package
       run: > 
         dotnet pack
-        src/Serilog.Sinks.TestCorrelator/Serilog.Sinks.TestCorrelator.csproj
+        src\Serilog.Sinks.TestCorrelator\Serilog.Sinks.TestCorrelator.csproj
         --no-restore
         --no-build
         --configuration ${{ env.CONFIGURATION }}
@@ -75,6 +75,6 @@ jobs:
     - name: Push NuGet Package
       run: >
         dotnet nuget push
-        ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/Serilog.Sinks.TestCorrelator.*.nupkg
+        ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\Serilog.Sinks.TestCorrelator.*.nupkg
         --source https://api.nuget.org/v3/index.json
         --api-key ${{steps.nuget-login.outputs.NUGET_API_KEY}}
